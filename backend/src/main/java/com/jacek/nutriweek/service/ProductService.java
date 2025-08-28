@@ -1,12 +1,9 @@
 package com.jacek.nutriweek.service;
 
-import com.jacek.nutriweek.model.Product;
+import com.jacek.nutriweek.dto.ApiSearchResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -16,10 +13,14 @@ public class ProductService {
     private final WebClient webClient;
 
     public ProductService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(apiUrl).build();
+        this.webClient = webClientBuilder
+                .codecs(configurer -> configurer.defaultCodecs()
+                .maxInMemorySize(1024 * 1024))
+                .baseUrl(apiUrl)
+                .build();
     }
 
-    public List<Product> searchProducts(String query, int page, int size) {
+    public ApiSearchResponse searchProducts(String query, int page, int size) {
         String apiKey = System.getenv("USDA_API_KEY");
 
         try {
@@ -30,16 +31,14 @@ public class ProductService {
                             .queryParam("pageSize", size)
                             .queryParam("pageNumber", page)
                             .queryParam("api_key", apiKey)
-                            .build()
-                    )
+                            .build())
                     .retrieve()
-                    .bodyToFlux(Product.class)
-                    .collectList()
+                    .bodyToMono(ApiSearchResponse.class)
                     .block();
 
         } catch (Exception e){
             log.error(e.getMessage());
-            return new ArrayList<>();
+            return new ApiSearchResponse();
         }
     }
 }

@@ -1,17 +1,20 @@
 package com.jacek.nutriweek.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
+@AllArgsConstructor
 public class Nutrient {
-    private String number;
+
+    @JsonProperty("nutrientId")
+    private int id;
+
+    @JsonProperty("nutrientName")
     private String name;
-    private double amount;
+
+    private double value;
     private String unitName;
+    private int rank;
 }
