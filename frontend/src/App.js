@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { searchProducts } from "./api/ProductService";
 import Product from "./components/Product";
+import ProductOnList from "./components/ProductOnList";
 
 function App() {
   const [data, setData] = useState({});
   const [input, setInput] = useState("");
+  const [list, setList] = useState([]);
 
   const getProducts = async (query, page = 0, size = 10) => {
     try {
@@ -32,12 +34,28 @@ function App() {
           <i className="magnifier"></i> Search
         </button>
       </div>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        {data?.foods?.length > 0 &&
-          data.foods.map((product) => (
-            <Product product={product} key={product.fdcId} />
-          ))}
-      </ul>
+      <div className="grid grid-cols-3">
+        <ul className="auto-rows-min col-span-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+          {data?.foods?.length > 0 &&
+            data.foods.map((product) => (
+              <Product
+                product={product}
+                setList={setList}
+                key={product.fdcId}
+              />
+            ))}
+        </ul>
+        <ul className="bg-gray-700 flex flex-col gap-6 p-6">
+          {list.length > 0 &&
+            list.map((product) => (
+              <ProductOnList
+                product={product}
+                setList={setList}
+                key={product.fdcId}
+              />
+            ))}
+        </ul>
+      </div>
     </>
   );
 }

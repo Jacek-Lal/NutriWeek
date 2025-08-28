@@ -1,8 +1,8 @@
 import React from "react";
 
-const Product = ({ product, setList }) => {
-  const addProduct = () => {
-    setList((prevList) => [...prevList, product]);
+const ProductOnList = ({ product, setList }) => {
+  const removeProduct = () => {
+    setList((prevList) => prevList.filter((p) => p.fdcId !== product.fdcId));
   };
 
   return (
@@ -11,8 +11,8 @@ const Product = ({ product, setList }) => {
         <h1 className="text-lg font-semibold text-gray-800 mb-3">
           {product.description}
         </h1>
-        <button className="p-3" onClick={() => addProduct()}>
-          <i className="bi bi-plus-circle"></i>
+        <button className="p-3" onClick={() => removeProduct()}>
+          <i className="bi bi-trash"></i>
         </button>
       </div>
       <div className="space-y-1 text-sm text-gray-600">
@@ -29,4 +29,4 @@ const Product = ({ product, setList }) => {
   );
 };
 
-export default Product;
+export default ProductOnList;
