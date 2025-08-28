@@ -1,9 +1,13 @@
 package com.jacek.nutriweek.service;
 
 import com.jacek.nutriweek.dto.ApiSearchResponse;
+import com.jacek.nutriweek.model.Nutrient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 @Slf4j
 @Service
@@ -24,7 +28,7 @@ public class ProductService {
         String apiKey = System.getenv("USDA_API_KEY");
 
         try {
-            return webClient.get()
+            ApiSearchResponse response = webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/foods/search")
                             .queryParam("query", query)
@@ -35,6 +39,13 @@ public class ProductService {
                     .retrieve()
                     .bodyToMono(ApiSearchResponse.class)
                     .block();
+
+            response
+                    .getFoods()
+                    .forEach(food -> food.getFoodNutrients().sort(Comparator.comparingInt(Nutrient::getRank)));
+
+
+            return response;
 
         } catch (Exception e){
             log.error(e.getMessage());
