@@ -1,9 +1,16 @@
 import React from "react";
 import ProductOnList from "./ProductOnList";
+import { addMeal } from "../api/MealService.js";
 
-const ProductList = ({ list, setList }) => {
-  const saveMeal = () => {
-    console.log(list);
+const ProductList = ({ list, setList, toggleModal }) => {
+  const saveMeal = async () => {
+    try {
+      const { data } = await addMeal(list);
+      console.log(data);
+      toggleModal(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
