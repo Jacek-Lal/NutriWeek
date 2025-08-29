@@ -1,8 +1,10 @@
 import React from "react";
 
-const Product = ({ product, setList }) => {
+const Product = ({ product, list, setList }) => {
   const addProduct = () => {
-    setList((prevList) => [...prevList, product]);
+    const el = list.find((p) => p.fdcId === product.fdcId);
+
+    if (!el) setList((prevList) => [...prevList, product]);
   };
 
   return (
