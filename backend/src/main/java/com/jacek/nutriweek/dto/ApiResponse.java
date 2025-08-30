@@ -1,6 +1,5 @@
 package com.jacek.nutriweek.dto;
 
-import com.jacek.nutriweek.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiSearchResponse {
+public class ApiResponse {
 
     private int totalHits;
     private int currentPage;
     private int totalPages;
-    private List<Product> foods;
+    private List<ApiProduct> foods;
 }

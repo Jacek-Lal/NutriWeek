@@ -1,23 +1,21 @@
 package com.jacek.nutriweek.model;
 
+import com.jacek.nutriweek.dto.ApiProduct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class Product {
+public class MealItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int fdcId;
-    private String name;
+    private Long id;
+    private float amount;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductNutrient> nutrients;
+    @OneToOne(optional = false)
+    private Product product;
 }

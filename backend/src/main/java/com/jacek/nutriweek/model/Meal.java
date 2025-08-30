@@ -1,20 +1,27 @@
 package com.jacek.nutriweek.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
 public class Meal {
     @Id
-    @Column(unique = true)
-    private Long fdcId;
-    private String description;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private float targetKcal;
+    private float targetCarb;
+    private float targetFat;
+    private float targetProtein;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "meal_id")
+    private List<MealItem> mealItemList;
 }

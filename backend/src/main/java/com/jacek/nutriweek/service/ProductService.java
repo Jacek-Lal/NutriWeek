@@ -1,15 +1,13 @@
 package com.jacek.nutriweek.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jacek.nutriweek.dto.ApiSearchResponse;
-import com.jacek.nutriweek.model.Nutrient;
+import com.jacek.nutriweek.dto.ApiResponse;
+import com.jacek.nutriweek.dto.ApiNutrient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.File;
-import java.util.Collections;
 import java.util.Comparator;
 
 @Slf4j
@@ -28,11 +26,11 @@ public class ProductService {
                 .build();
     }
 
-    public ApiSearchResponse searchProducts(String query, int page, int size) {
+    public ApiResponse searchProducts(String query, int page, int size) {
         String apiKey = System.getenv("USDA_API_KEY");
 
         try {
-            ApiSearchResponse response;
+            ApiResponse response;
             if(!useDummyData){
                 response = webClient.get()
                         .uri(uriBuilder -> uriBuilder
@@ -43,26 +41,26 @@ public class ProductService {
                         .queryParam("api_key", apiKey)
                         .build())
                     .retrieve()
-                    .bodyToMono(ApiSearchResponse.class)
+                    .bodyToMono(ApiResponse.class)
                     .block();
             } else {
                 ObjectMapper mapper = new ObjectMapper();
                 ClassPathResource resource = new ClassPathResource("dummy.json");
                 response = mapper.readValue(
                         resource.getInputStream(),
-                        ApiSearchResponse.class
+                        ApiResponse.class
                 );
             }
 
             response
                     .getFoods()
-                    .forEach(food -> food.getFoodNutrients().sort(Comparator.comparingInt(Nutrient::getRank)));
+                    .forEach(food -> food.getFoodApiNutrients().sort(Comparator.comparingInt(ApiNutrient::getRank)));
 
             return response;
 
         } catch (Exception e){
             log.error(e.getMessage());
-            return new ApiSearchResponse();
+            return new ApiResponse();
         }
     }
 }

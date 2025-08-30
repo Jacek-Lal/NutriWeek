@@ -1,22 +1,21 @@
 package com.jacek.nutriweek.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@Entity
 public class Nutrient {
-
-    @JsonProperty("nutrientId")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @JsonProperty("nutrientName")
     private String name;
-
-    private double value;
-    private String unitName;
-    private int rank;
+    private String unit;
 }

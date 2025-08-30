@@ -5,19 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class Product {
+public class ProductNutrient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int fdcId;
-    private String name;
+    private Long id;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductNutrient> nutrients;
+    @ManyToOne
+    private Product product;
+
+    @ManyToOne
+    private Nutrient nutrient;
+
+    private double amount;
 }
