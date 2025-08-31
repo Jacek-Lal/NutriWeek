@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApiNutrient {
 
-    @JsonProperty("nutrientId")
+    @JsonAlias("nutrientId")
+    @JsonProperty("id")
     private int id;
 
-    @JsonProperty("nutrientName")
+    @JsonAlias("nutrientName")
+    @JsonProperty("name")
     private String name;
 
+    @JsonAlias("unitName")
+    @JsonProperty("unit")
+    private String unit;
+
     private double value;
-    private String unitName;
     private int rank;
 }

@@ -54,7 +54,7 @@ public class ProductService {
 
             response
                     .getFoods()
-                    .forEach(food -> food.getFoodApiNutrients().sort(Comparator.comparingInt(ApiNutrient::getRank)));
+                    .forEach(food -> food.getNutrients().sort(Comparator.comparingInt(ApiNutrient::getRank)));
 
             return response;
 

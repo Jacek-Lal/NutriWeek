@@ -23,5 +23,5 @@ public class Meal {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "meal_id")
-    private List<MealItem> mealItemList;
+    private List<MealItem> mealItems;
 }
