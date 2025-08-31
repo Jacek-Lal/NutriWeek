@@ -17,8 +17,9 @@ public class MealController {
     private final MealService mealService;
 
     @PostMapping("/meals")
-    public ResponseEntity<Meal> addMeal(@RequestBody MealDTO mealDto){
-        return ResponseEntity.ok().body(mealService.addMeal(mealDto));
+    public ResponseEntity<Void> addMeal(@RequestBody MealDTO mealDto){
+        mealService.addMeal(mealDto);
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -1,12 +1,11 @@
 package com.jacek.nutriweek.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +17,9 @@ public class Nutrient {
     private int id;
     private String name;
     private String unit;
+
+    @OneToMany(mappedBy = "nutrient", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<ProductNutrient> products;
 
     public Nutrient(String name, String unit){
         this.name = name;
