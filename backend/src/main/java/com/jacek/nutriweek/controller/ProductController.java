@@ -1,6 +1,6 @@
 package com.jacek.nutriweek.controller;
 
-import com.jacek.nutriweek.dto.ApiResponse;
+import com.jacek.nutriweek.dto.usda.ApiResponse;
 import com.jacek.nutriweek.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

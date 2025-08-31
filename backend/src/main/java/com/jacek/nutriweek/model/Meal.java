@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.model;
 
+import com.jacek.nutriweek.dto.MealDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

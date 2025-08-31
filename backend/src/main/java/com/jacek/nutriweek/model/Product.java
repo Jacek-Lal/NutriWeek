@@ -18,6 +18,6 @@ public class Product {
     private int fdcId;
     private String name;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<ProductNutrient> nutrients;
 }

@@ -1,4 +1,4 @@
-package com.jacek.nutriweek.dto;
+package com.jacek.nutriweek.dto.usda;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

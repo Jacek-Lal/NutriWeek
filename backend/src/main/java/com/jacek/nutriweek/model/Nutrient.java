@@ -18,4 +18,9 @@ public class Nutrient {
     private int id;
     private String name;
     private String unit;
+
+    public Nutrient(String name, String unit){
+        this.name = name;
+        this.unit = unit;
+    }
 }

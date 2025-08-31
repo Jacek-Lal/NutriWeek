@@ -1,8 +1,8 @@
 package com.jacek.nutriweek.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jacek.nutriweek.dto.ApiResponse;
-import com.jacek.nutriweek.dto.ApiNutrient;
+import com.jacek.nutriweek.dto.usda.ApiResponse;
+import com.jacek.nutriweek.dto.usda.ApiNutrient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

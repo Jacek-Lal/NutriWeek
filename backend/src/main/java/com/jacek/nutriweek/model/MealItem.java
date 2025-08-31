@@ -1,6 +1,5 @@
 package com.jacek.nutriweek.model;
 
-import com.jacek.nutriweek.dto.ApiProduct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,6 @@ public class MealItem {
     private Long id;
     private float amount;
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, cascade = CascadeType.PERSIST)
     private Product product;
 }
