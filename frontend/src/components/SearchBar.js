@@ -4,12 +4,12 @@ import { searchProducts } from "../api/ProductService";
 const SearchBar = ({ setData }) => {
   const [input, setInput] = useState("");
 
-  const getProducts = async (query, page = 0, size = 10) => {
+  const getProducts = async (query, page = 0, size = 50) => {
     try {
-      const response = await searchProducts(query, page, size);
+      const { data } = await searchProducts(query, page, size);
 
-      setData(response.data);
-      console.log(response.data);
+      setData(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
     }

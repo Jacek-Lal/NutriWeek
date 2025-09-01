@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import ProductGrid from "./components/ProductGrid";
 import ProductList from "./components/ProductList";
+import { addMeal } from "./api/MealService.js";
 
 function App() {
   const [data, setData] = useState({});
@@ -11,7 +12,25 @@ function App() {
   const toggleModal = (show) => {
     show ? modalRef.current.showModal() : modalRef.current.close();
   };
+  const saveMeal = async () => {
+    try {
+      const data = {
+        name: "Breakfast",
+        targetKcal: 700,
+        targetCarb: 115,
+        targetFat: 20,
+        targetProtein: 35,
+        mealItems: list,
+      };
 
+      const response = await addMeal(data);
+      console.log(response.data);
+
+      toggleModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <button
@@ -20,7 +39,7 @@ function App() {
       >
         <i className="bi bi-plus-circle"></i> Add Meal
       </button>
-      <dialog ref={modalRef} className="w-3/4 h-4/5">
+      <dialog ref={modalRef} className="w-3/4 h-4/5 bg-slate-800">
         <div className="flex justify-between">
           <SearchBar setData={setData} />
           <button
@@ -32,11 +51,7 @@ function App() {
         </div>
         <div className="grid grid-cols-3">
           <ProductGrid data={data} list={list} setList={setList} />
-          <ProductList
-            list={list}
-            setList={setList}
-            toggleModal={toggleModal}
-          />
+          <ProductList list={list} setList={setList} saveMeal={saveMeal} />
         </div>
       </dialog>
     </>
