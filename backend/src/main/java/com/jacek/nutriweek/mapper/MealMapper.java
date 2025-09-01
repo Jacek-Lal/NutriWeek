@@ -19,7 +19,7 @@ public interface MealMapper {
     default ProductNutrient toEntity(NutrientDTO nutrientDto, Product product){
         Nutrient nutrient = new Nutrient(nutrientDto.name(), nutrientDto.unit());
 
-        return new ProductNutrient(nutrientDto.amount(), product, nutrient);
+        return new ProductNutrient(nutrientDto.value(), product, nutrient);
     }
 
 
