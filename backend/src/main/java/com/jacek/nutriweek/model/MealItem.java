@@ -15,6 +15,6 @@ public class MealItem {
     private Long id;
     private float amount;
 
-    @OneToOne(optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(optional = false)
     private Product product;
 }

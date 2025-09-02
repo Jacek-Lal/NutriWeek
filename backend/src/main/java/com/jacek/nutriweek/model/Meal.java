@@ -1,6 +1,5 @@
 package com.jacek.nutriweek.model;
 
-import com.jacek.nutriweek.dto.MealDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class Meal {
     private float targetFat;
     private float targetProtein;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "meal_id")
     private List<MealItem> mealItems;
 }

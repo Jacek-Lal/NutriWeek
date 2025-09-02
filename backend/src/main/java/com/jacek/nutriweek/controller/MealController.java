@@ -9,17 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class MealController {
     private final MealService mealService;
 
     @PostMapping("/meals")
-    public ResponseEntity<Void> addMeal(@RequestBody MealDTO mealDto){
-        mealService.addMeal(mealDto);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Meal> addMeal(@RequestBody MealDTO mealDto){
+        return ResponseEntity.ok().body(mealService.addMeal(mealDto));
     }
 
 }

@@ -1,8 +1,8 @@
 package com.jacek.nutriweek.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jacek.nutriweek.dto.usda.ApiResponse;
 import com.jacek.nutriweek.dto.usda.ApiNutrient;
+import com.jacek.nutriweek.dto.usda.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.util.Comparator;
 @Slf4j
 @Service
 public class ProductService {
-    private final boolean useDummyData = true;
+    private final boolean useDummyData = false;
 
     private final String apiUrl = "https://api.nal.usda.gov/fdc/v1";
     private final WebClient webClient;
