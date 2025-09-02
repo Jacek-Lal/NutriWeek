@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { searchProducts } from "../api/ProductService";
 
-const SearchBar = ({ setData }) => {
-  const [input, setInput] = useState("");
-
+const SearchBar = ({ input, setInput, setData }) => {
   const getProducts = async (query, page = 0, size = 50) => {
     try {
       const { data } = await searchProducts(query, page, size);

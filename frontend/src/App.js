@@ -7,6 +7,8 @@ import { addMeal } from "./api/MealService.js";
 function App() {
   const [data, setData] = useState({});
   const [list, setList] = useState([]);
+  const [input, setInput] = useState("");
+
   const modalRef = useRef();
 
   const toggleModal = (show) => {
@@ -14,7 +16,7 @@ function App() {
   };
   const saveMeal = async () => {
     try {
-      const data = {
+      const request = {
         name: "Breakfast",
         targetKcal: 700,
         targetCarb: 115,
@@ -23,10 +25,13 @@ function App() {
         mealItems: list,
       };
 
-      const response = await addMeal(data);
+      const response = await addMeal(request);
       console.log(response.data);
 
       toggleModal(false);
+      setData({});
+      setList([]);
+      setInput("");
     } catch (error) {
       console.error(error);
     }
@@ -41,7 +46,7 @@ function App() {
       </button>
       <dialog ref={modalRef} className="w-3/4 h-4/5 bg-slate-800">
         <div className="flex justify-between">
-          <SearchBar setData={setData} />
+          <SearchBar input={input} setInput={setInput} setData={setData} />
           <button
             className="bg-blue-200 p-3"
             onClick={() => toggleModal(false)}

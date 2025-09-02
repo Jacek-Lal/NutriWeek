@@ -2,10 +2,12 @@ import React from "react";
 
 const Product = ({ product, list, setList }) => {
   const addProduct = () => {
-    const el = list.find((p) => p.fdcId === product.fdcId);
+    const el = list.find((item) => item.product.fdcId === product.fdcId);
 
     if (!el)
       setList((prevList) => [...prevList, { product: product, amount: 100 }]);
+
+    console.log(list);
   };
 
   return (
