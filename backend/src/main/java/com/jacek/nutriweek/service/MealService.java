@@ -1,7 +1,9 @@
 package com.jacek.nutriweek.service;
 
 import com.jacek.nutriweek.dto.MealDTO;
+import com.jacek.nutriweek.dto.ProductDTO;
 import com.jacek.nutriweek.mapper.MealMapper;
+import com.jacek.nutriweek.mapper.ProductMapper;
 import com.jacek.nutriweek.model.*;
 import com.jacek.nutriweek.repository.MealRepository;
 import com.jacek.nutriweek.repository.NutrientRepository;
@@ -10,7 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,22 +25,17 @@ public class MealService {
     private final MealRepository mealRepository;
     private final ProductRepository productRepository;
     private final NutrientRepository nutrientRepository;
+
     private final MealMapper mealMapper;
+    private final ProductMapper productMapper;
 
     public Meal addMeal(MealDTO mealDto) {
         Meal meal = mealMapper.toEntity(mealDto);
 
-        // Collect all keys from meal for identifying product and nutrient
         Set<Integer> fdcIds = meal.getMealItems().stream()
                 .map(mi -> mi.getProduct().getFdcId())
                 .collect(Collectors.toSet());
 
-        Set<String> nutrientKeys = meal.getMealItems().stream()
-                .flatMap(mi -> mi.getProduct().getNutrients().stream())
-                .map(pn -> pn.getNutrient().getKey())
-                .collect(Collectors.toSet());
-
-        // Fetch all items matching given keys from database
         Map<Integer, Product> existingProducts = productRepository.findAllByFdcIdIn(fdcIds)
                 .stream()
                 .collect(Collectors.toMap(Product::getFdcId, p -> p));
@@ -67,4 +66,7 @@ public class MealService {
         return mealRepository.save(meal);
     }
 
+    public List<ProductDTO> getRecentProducts(int limit) {
+        return productMapper.toDtoList(mealRepository.findRecentProducts(limit));
+    }
 }
