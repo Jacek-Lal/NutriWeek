@@ -2,17 +2,21 @@ import { useRef, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import ProductGrid from "./components/ProductGrid";
 import ProductList from "./components/ProductList";
-import { addMeal } from "./api/MealService.js";
+import { addMeal, getRecentProducts } from "./api/MealService.js";
 
 function App() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [list, setList] = useState([]);
   const [input, setInput] = useState("");
+  const [recentMeals, setRecentMeals] = useState([]);
 
   const modalRef = useRef();
 
-  const toggleModal = (show) => {
+  const toggleModal = async (show) => {
     show ? modalRef.current.showModal() : modalRef.current.close();
+    const response = await getRecentProducts(6);
+    setRecentMeals(response.data);
+    console.log(response.data);
   };
   const saveMeal = async () => {
     try {
@@ -29,13 +33,14 @@ function App() {
       console.log(response.data);
 
       toggleModal(false);
-      setData({});
+      setData([]);
       setList([]);
       setInput("");
     } catch (error) {
       console.error(error);
     }
   };
+
   return (
     <>
       <button
@@ -54,7 +59,11 @@ function App() {
             <i className="bi bi-x"></i>
           </button>
         </div>
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 grid-rows-2">
+          <div className="bg-green-100 col-span-2">
+            <h1 className="font-medium text-lg p-4">Recent products</h1>
+            <ProductGrid data={recentMeals} list={list} setList={setList} />
+          </div>
           <ProductGrid data={data} list={list} setList={setList} />
           <ProductList list={list} setList={setList} saveMeal={saveMeal} />
         </div>

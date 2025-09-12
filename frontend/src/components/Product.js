@@ -22,7 +22,7 @@ const Product = ({ product, list, setList }) => {
       </div>
       <div className="space-y-1 text-sm text-gray-600">
         {product.nutrients.slice(1, 5).map((n) => (
-          <p key={n.id} className="flex justify-between">
+          <p key={`${n.name}|${n.unit}`} className="flex justify-between">
             <span>{n.name}</span>
             <span className="font-medium">
               {n.value} {n.unit}

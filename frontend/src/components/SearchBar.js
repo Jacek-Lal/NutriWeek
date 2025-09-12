@@ -6,7 +6,7 @@ const SearchBar = ({ input, setInput, setData }) => {
     try {
       const { data } = await searchProducts(query, page, size);
 
-      setData(data);
+      setData(data?.foods);
       console.log(data);
     } catch (error) {
       console.error(error);

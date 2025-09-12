@@ -4,7 +4,7 @@ import { addMeal } from "../api/MealService.js";
 
 const ProductList = ({ list, setList, saveMeal }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col row-span-full col-start-3">
       <ul className="bg-gray-700 flex flex-col gap-6 p-6">
         {list.length > 0 &&
           list.map((mealItem) => (
