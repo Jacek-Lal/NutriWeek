@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class Product {
     private int fdcId;
     private String name;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JsonManagedReference
     private List<ProductNutrient> nutrients;
+
 }

@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,9 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
-
 public class Nutrient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +21,8 @@ public class Nutrient {
     private String name;
     private String unit;
 
-    @OneToMany(mappedBy = "nutrient")
+    @OneToMany(mappedBy = "nutrient", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<ProductNutrient> products;
 
     public Nutrient(String name, String unit){

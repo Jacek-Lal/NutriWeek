@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +19,11 @@ public class ProductNutrient {
     private double amount;
 
     @ManyToOne
+    @JsonBackReference
     private Product product;
 
     @ManyToOne
+    @JsonBackReference
     private Nutrient nutrient;
 
     public ProductNutrient(double amount, Product product, Nutrient nutrient) {
