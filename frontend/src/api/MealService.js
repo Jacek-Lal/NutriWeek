@@ -6,6 +6,6 @@ export async function addMeal(meal) {
   return await axios.post(API_URL, meal);
 }
 
-export async function getRecentProducts(limit) {
+export async function getRecentProducts(limit = 5) {
   return await axios.get(`${API_URL}/recent`, { params: { limit: limit } });
 }
