@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import MenuList from "./pages/MenuList.js";
-import MenuDetail from "./pages/MenuDetail";
+import MenuDetails from "./pages/MenuDetails.js";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         </nav>
         <Routes>
           <Route path="/menus" element={<MenuList />} />
-          <Route path="/menus/:id" element={<MenuDetail />} />
+          <Route path="/menus/:id" element={<MenuDetails />} />
         </Routes>
       </div>
     </BrowserRouter>

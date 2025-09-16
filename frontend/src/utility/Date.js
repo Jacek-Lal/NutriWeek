@@ -1,6 +1,6 @@
 function addDays(startDate, days) {
   const newDate = new Date(startDate);
-  newDate.setDate(startDate.getDate() + days);
+  newDate.setDate(newDate.getDate() + days);
   return newDate;
 }
 

@@ -41,7 +41,6 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     const payload = { ...rest, days: days };
 
     const response = await addMenu(payload);
-    console.log(response);
 
     navigate(`/menus/${response.data?.id}`);
   };
