@@ -1,16 +1,20 @@
 import React from "react";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { InputField, MacroField, DaysOrRange } from "./Inputs";
+import { addDays, daysBetween, formatDate } from "../utility/Date";
+import { addMenu } from "../api/MenuService";
 
-const NewMenuDialog = ({ modalRef, toggleModal }) => {
+const NewMenuDialog = ({ modalRef, closeModal }) => {
+  const navigate = useNavigate();
   const [menuData, setMenuData] = useState({
     name: "Meal Plan",
     days: 7,
     meals: 3,
     calories: 2000,
-    startDate: "",
-    endDate: "",
+    startDate: formatDate(new Date()),
+    endDate: formatDate(addDays(new Date(), 7)),
     targetFat: 25,
     targetProtein: 25,
     targetCarb: 50,
@@ -26,11 +30,20 @@ const NewMenuDialog = ({ modalRef, toggleModal }) => {
     else setMenuData({ ...menuData, [event.target.name]: event.target.value });
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
-    console.log(menuData);
 
-    toggleModal(false);
+    let days = menuData.days;
+    if (menuData.rangeType == "dates")
+      days = daysBetween(menuData.startDate, menuData.endDate);
+
+    let { rangeType, endDate, ...rest } = menuData;
+    const payload = { ...rest, days: days };
+
+    const response = await addMenu(payload);
+    console.log(response);
+
+    navigate(`/menus/${response.data?.id}`);
   };
 
   const macros = [
@@ -54,10 +67,10 @@ const NewMenuDialog = ({ modalRef, toggleModal }) => {
           Create Menu
         </h2>
         <button
-          className="bg-blue-200 text-slate-800 pl-4 pr-4 rounded-full hover:bg-blue-300 transition"
-          onClick={() => toggleModal(false)}
+          className="bg-blue-600 text-slate-800 pl-4 pr-4 rounded-full hover:bg-blue-700 transition"
+          onClick={() => closeModal()}
         >
-          <i className="bi bi-x text-3xl"></i>
+          <i className="bi bi-x text-3xl text-white"></i>
         </button>
       </div>
 

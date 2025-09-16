@@ -1,22 +1,22 @@
-import { useRef, useState } from "react";
-import NewMenuDialog from "./components/NewMenuDialog";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import MenuList from "./pages/MenuList.js";
+import MenuDetail from "./pages/MenuDetail";
 
 function App() {
-  const modalRef = useRef();
-
-  const toggleModal = async (show) => {
-    show ? modalRef.current.showModal() : modalRef.current.close();
-  };
   return (
-    <>
-      <button
-        className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white shadow-md hover:bg-blue-700 active:scale-95 transition whitespace-nowrap"
-        onClick={() => toggleModal(true)}
-      >
-        <i className="bi bi-plus-circle"></i> New Menu
-      </button>
-      <NewMenuDialog modalRef={modalRef} toggleModal={toggleModal} />
-    </>
+    <BrowserRouter>
+      <div className="p-6">
+        <nav className="flex gap-4 mb-6">
+          <Link to="/menus" className="text-blue-600 hover:underline">
+            Menus
+          </Link>
+        </nav>
+        <Routes>
+          <Route path="/menus" element={<MenuList />} />
+          <Route path="/menus/:id" element={<MenuDetail />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 export default App;
