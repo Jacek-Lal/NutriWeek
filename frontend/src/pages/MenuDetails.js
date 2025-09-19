@@ -31,7 +31,6 @@ function MenuDetails() {
         return (
           <Day
             key={i}
-            menuId={id}
             meals={meals}
             targetMacros={macros}
             targetKcal={menuData.calories}

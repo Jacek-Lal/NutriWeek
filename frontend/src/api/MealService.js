@@ -9,3 +9,7 @@ export async function addMeal(meal) {
 export async function getRecentProducts(limit = 5) {
   return await axios.get(`${API_URL}/recent`, { params: { limit: limit } });
 }
+
+export async function addMealItems(mealId, mealItems) {
+  return await axios.put(`${API_URL}/${mealId}/items`, mealItems);
+}

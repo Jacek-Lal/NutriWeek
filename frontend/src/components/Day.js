@@ -22,7 +22,7 @@ const Day = ({ meals, menuId, targetMacros, targetKcal, date }) => {
         return (
           <Meal
             key={meal.id}
-            menuId={menuId}
+            mealId={meal.id}
             name={meal.name}
             calories={meal.caloriesPercent * targetKcal}
             mealItems={meal.mealItems}
