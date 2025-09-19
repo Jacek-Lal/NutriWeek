@@ -3,7 +3,7 @@ package com.jacek.nutriweek.dto;
 import java.util.List;
 
 public record MealDTO (String name,
-                       float targetKcal,
+                       Long menuId,
                        float targetCarb,
                        float targetFat,
                        float targetProtein,

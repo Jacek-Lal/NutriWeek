@@ -6,6 +6,7 @@ import com.jacek.nutriweek.mapper.MealMapper;
 import com.jacek.nutriweek.mapper.ProductMapper;
 import com.jacek.nutriweek.model.*;
 import com.jacek.nutriweek.repository.MealRepository;
+import com.jacek.nutriweek.repository.MenuRepository;
 import com.jacek.nutriweek.repository.NutrientRepository;
 import com.jacek.nutriweek.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -25,12 +26,15 @@ public class MealService {
     private final MealRepository mealRepository;
     private final ProductRepository productRepository;
     private final NutrientRepository nutrientRepository;
+    private final MenuRepository menuRepository;
 
     private final MealMapper mealMapper;
     private final ProductMapper productMapper;
 
+
     public Meal addMeal(MealDTO mealDto) {
         Meal meal = mealMapper.toEntity(mealDto);
+        Menu menu = menuRepository.findById(mealDto.menuId()).orElseThrow(RuntimeException::new);
 
         Set<Integer> fdcIds = meal.getMealItems().stream()
                 .map(mi -> mi.getProduct().getFdcId())
@@ -63,6 +67,7 @@ public class MealService {
 
             mealItem.setProduct(product);
         }
+        meal.setMenu(menu);
         return mealRepository.save(meal);
     }
 

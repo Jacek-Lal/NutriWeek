@@ -1,5 +1,7 @@
 package com.jacek.nutriweek.controller;
 
+import com.jacek.nutriweek.dto.MenuDTO;
+import com.jacek.nutriweek.dto.MenuSummaryDTO;
 import com.jacek.nutriweek.model.Menu;
 import com.jacek.nutriweek.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +17,12 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Menu> addMenu(@RequestBody Menu menu){
+    public ResponseEntity<Menu> addMenu(@RequestBody MenuDTO menu){
         return ResponseEntity.ok().body(menuService.addMenu(menu));
     }
 
     @GetMapping
-    public ResponseEntity<List<Menu>> getMenus(){
+    public ResponseEntity<List<MenuSummaryDTO>> getMenus(){
         return ResponseEntity.ok().body(menuService.getMenus());
     }
 
