@@ -18,6 +18,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     targetFat: 25,
     targetProtein: 25,
     targetCarb: 50,
+    caloriesPerMeal: [30, 40, 30],
     rangeType: "days",
   });
 
@@ -53,6 +54,10 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
 
   const totalMacro = macros.reduce(
     (sum, m) => sum + parseInt(menuData[m.name] || 0),
+    0
+  );
+  const totalMealCalories = menuData.caloriesPerMeal.reduce(
+    (sum, m) => sum + parseInt(m || 0),
     0
   );
 
@@ -124,6 +129,37 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           <p className="pt-4 text-end font-semibold">Total: {totalMacro}%</p>
         </div>
 
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold">Calories Distribution (%)</p>
+          <div className="pt-4 grid grid-cols-3 gap-4">
+            {[...Array(menuData.meals)].map((_, i) => (
+              <div key={i} className="flex flex-col text-center gap-2">
+                <p className="font-semibold">Meal {i + 1}</p>
+                <p>
+                  {(menuData.caloriesPerMeal[i] * menuData.calories) / 100} kcal
+                </p>
+                <input
+                  type="number"
+                  className="rounded-md p-2 text-slate-800"
+                  value={menuData.caloriesPerMeal[i] ?? 0}
+                  onChange={(e) => {
+                    const newMealCalories = [...menuData.caloriesPerMeal];
+                    if (Number(e.target.value) < 0) e.target.value = "";
+
+                    newMealCalories[i] = e.target.value;
+                    setMenuData({
+                      ...menuData,
+                      caloriesPerMeal: newMealCalories,
+                    });
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <p className="pt-4 text-end font-semibold">
+            Total: {totalMealCalories ?? 0}%
+          </p>
+        </div>
         <button
           type="submit"
           className="mt-6 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg shadow-md text-white font-semibold transition"

@@ -9,3 +9,7 @@ export async function addMenu(menu) {
 export async function getMenu(id) {
   return await axios.get(`${API_URL}/${id}`);
 }
+
+export async function getMenus() {
+  return await axios.get(API_URL);
+}

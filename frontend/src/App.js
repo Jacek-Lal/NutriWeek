@@ -5,16 +5,18 @@ import MenuDetails from "./pages/MenuDetails.js";
 function App() {
   return (
     <BrowserRouter>
-      <div className="p-6">
-        <nav className="flex gap-4 mb-6">
+      <div>
+        <nav className="bg-slate-800 flex gap-4 mb-6 p-6">
           <Link to="/menus" className="text-blue-600 hover:underline">
             Menus
           </Link>
         </nav>
-        <Routes>
-          <Route path="/menus" element={<MenuList />} />
-          <Route path="/menus/:id" element={<MenuDetails />} />
-        </Routes>
+        <div className="p-6">
+          <Routes>
+            <Route path="/menus" element={<MenuList />} />
+            <Route path="/menus/:id" element={<MenuDetails />} />
+          </Routes>
+        </div>
       </div>
     </BrowserRouter>
   );

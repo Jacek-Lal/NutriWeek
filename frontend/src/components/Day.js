@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import Meal from "./Meal.js";
 
-const Day = ({ meals, targetMacros, date }) => {
+const Day = ({ meals, menuId, targetMacros, targetKcal, date }) => {
   const [macros, setMacros] = useState({
     protein: 0,
     fat: 0,
     carbs: 0,
   });
-
   const mealNames = ["Breakfast", "Lunch", "Dinner"];
-
+  console.log(meals);
   const calcCalories = () => {
     return macros.protein * 4 + macros.fat * 9 + macros.carbs * 4;
   };
@@ -19,9 +18,15 @@ const Day = ({ meals, targetMacros, date }) => {
       <p className="text-gray-300 text-center">
         {calcCalories()} / {targetMacros.calories}
       </p>
-      {[...Array(meals)].map((_, i) => {
+      {meals.map((meal) => {
         return (
-          <Meal key={i} name={mealNames[i] ? mealNames[i] : `Snack ${i - 2}`} />
+          <Meal
+            key={meal.id}
+            menuId={menuId}
+            name={meal.name}
+            calories={meal.caloriesPercent * targetKcal}
+            mealItems={meal.mealItems}
+          />
         );
       })}
     </div>

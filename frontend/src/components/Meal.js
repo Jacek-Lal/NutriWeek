@@ -5,9 +5,9 @@ import ProductGrid from "./ProductGrid";
 import ProductList from "./ProductList";
 import { addMeal, getRecentProducts } from "../api/MealService.js";
 
-const Meal = ({ name }) => {
+const Meal = ({ name, calories, mealItems, menuId }) => {
   const [data, setData] = useState([]);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(mealItems);
   const [input, setInput] = useState("");
   const [recentMeals, setRecentMeals] = useState([]);
 
@@ -26,19 +26,14 @@ const Meal = ({ name }) => {
   const saveMeal = async () => {
     try {
       const request = {
-        name: "Breakfast",
-        targetKcal: 700,
-        targetCarb: 115,
-        targetFat: 20,
-        targetProtein: 35,
+        menuId: menuId,
         mealItems: list,
       };
 
-      //   const response = await addMeal(request);
-      //   console.log(response.data);
+      const response = await addMeal(request);
+      console.log(response.data);
 
-      //   setData([]);
-      //   setList([]);
+      setData([]);
       setInput("");
       toggleModal(false);
     } catch (error) {
@@ -49,6 +44,7 @@ const Meal = ({ name }) => {
     <>
       <div className="bg-slate-50 flex flex-col max-w-60 rounded-xl p-3 shadow gap-6">
         <p className="text-center font-semibold">{name}</p>
+        <p className="text-center">0 / {calories}</p>
         <ul className="flex flex-col gap-3">
           {list?.length > 0 &&
             list.map((item) => (
