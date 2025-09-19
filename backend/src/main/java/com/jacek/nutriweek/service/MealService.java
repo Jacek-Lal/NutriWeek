@@ -1,6 +1,8 @@
 package com.jacek.nutriweek.service;
 
 import com.jacek.nutriweek.dto.MealDTO;
+import com.jacek.nutriweek.dto.MealItemDTO;
+import com.jacek.nutriweek.dto.NutrientDTO;
 import com.jacek.nutriweek.dto.ProductDTO;
 import com.jacek.nutriweek.mapper.MealMapper;
 import com.jacek.nutriweek.mapper.ProductMapper;
@@ -13,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +34,65 @@ public class MealService {
     private final MealMapper mealMapper;
     private final ProductMapper productMapper;
 
+    public Meal updateMealItems(Long mealId, List<MealItemDTO> items) {
+        Meal meal =  mealRepository.findById(mealId).orElseThrow();
+        meal.getMealItems().clear();
+
+        Set<Integer> fdcIds = items.stream()
+                .map(mi -> mi.product().fdcId())
+                .collect(Collectors.toSet());
+
+        Map<Integer, Product> existingProducts = productRepository.findAllByFdcIdIn(fdcIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getFdcId, p -> p));
+
+        Map<String, Nutrient> existingNutrients = nutrientRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(Nutrient::getKey, n -> n));
+
+
+        List<MealItem> mealItems = new ArrayList<>(items.size());
+        for (MealItemDTO reqItem : items){
+            ProductDTO reqProduct = reqItem.product();
+            Product product = existingProducts.get(reqProduct.fdcId());
+
+            if(product == null){
+                Product newProduct = new Product();
+                newProduct.setName(reqProduct.name());
+                newProduct.setFdcId(reqProduct.fdcId());
+
+                List<ProductNutrient> pns = new ArrayList<>();
+                for(NutrientDTO reqNut : reqProduct.nutrients()){
+                    Nutrient newNut = new Nutrient(reqNut.name(), reqNut.unit());
+                    String key = newNut.getKey();
+
+                    Nutrient managedNut = existingNutrients.get(key);
+                    if(managedNut == null){
+                        managedNut = nutrientRepository.save(newNut);
+                        existingNutrients.put(key, managedNut);
+                    }
+
+                    ProductNutrient pn = new ProductNutrient();
+                    pn.setAmount(reqNut.value());
+                    pn.setNutrient(managedNut);
+                    pn.setProduct(newProduct);
+                    pns.add(pn);
+                }
+                newProduct.setNutrients(pns);
+                product = productRepository.save(newProduct);
+                existingProducts.put(product.getFdcId(), product);
+            }
+            MealItem mi = new MealItem();
+            mi.setAmount(reqItem.amount());
+            mi.setProduct(product);
+            mi.setMeal(meal);
+            mealItems.add(mi);
+        }
+        meal.getMealItems().clear();
+        meal.getMealItems().addAll(mealItems);
+
+        return mealRepository.save(meal);
+    }
 
     public Meal addMeal(MealDTO mealDto) {
         Meal meal = mealMapper.toEntity(mealDto);
@@ -64,8 +126,8 @@ public class MealService {
                 pn.setNutrient(nutrient);
                 pn.setProduct(product);
             }
-
             mealItem.setProduct(product);
+
         }
         meal.setMenu(menu);
         return mealRepository.save(meal);
@@ -74,4 +136,6 @@ public class MealService {
     public List<ProductDTO> getRecentProducts(int limit) {
         return productMapper.toDtoList(mealRepository.findRecentProducts(limit));
     }
+
+
 }

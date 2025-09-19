@@ -21,7 +21,7 @@ public class Nutrient {
     private String unit;
 
     @OneToMany(mappedBy = "nutrient", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JsonManagedReference
+    @JsonManagedReference("nutrient-products")
     private List<ProductNutrient> products;
 
     public Nutrient(String name, String unit){

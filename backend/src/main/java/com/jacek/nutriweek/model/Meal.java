@@ -1,6 +1,7 @@
 package com.jacek.nutriweek.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,8 @@ public class Meal {
     @JsonBackReference
     private Menu menu;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "meal_id")
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("meal-items")
     private List<MealItem> mealItems;
 
     public Meal(String name, float caloriesPercent, Menu menu){

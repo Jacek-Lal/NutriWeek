@@ -22,7 +22,7 @@ public class Product {
     private String name;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JsonManagedReference
+    @JsonManagedReference("product-nutrients")
     private List<ProductNutrient> nutrients;
 
 }

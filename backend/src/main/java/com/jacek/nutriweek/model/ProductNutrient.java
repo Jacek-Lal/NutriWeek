@@ -18,12 +18,12 @@ public class ProductNutrient {
     private Long id;
     private double amount;
 
-    @ManyToOne
-    @JsonBackReference
+    @ManyToOne(optional = false)
+    @JsonBackReference("product-nutrients")
     private Product product;
 
-    @ManyToOne
-    @JsonBackReference
+    @ManyToOne(optional = false)
+    @JsonBackReference("nutrient-products")
     private Nutrient nutrient;
 
     public ProductNutrient(double amount, Product product, Nutrient nutrient) {
@@ -31,5 +31,4 @@ public class ProductNutrient {
         this.product = product;
         this.nutrient = nutrient;
     }
-
 }

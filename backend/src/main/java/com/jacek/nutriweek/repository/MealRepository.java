@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MealRepository extends JpaRepository<Meal, Integer> {
+public interface MealRepository extends JpaRepository<Meal, Long> {
     @Query("""
             SELECT p FROM MealItem mi
             JOIN mi.product p
