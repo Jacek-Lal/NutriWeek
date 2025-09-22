@@ -1,13 +1,11 @@
 package com.jacek.nutriweek.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.jacek.nutriweek.dto.MenuDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,16 +28,4 @@ public class Menu {
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonManagedReference
     private List<Meal> mealList;
-
-    public Menu(MenuDTO menuDTO){
-        this.name = menuDTO.name();
-        this.days = menuDTO.days();
-        this.meals = menuDTO.meals();
-        this.calories = menuDTO.calories();
-        this.startDate = menuDTO.startDate();
-        this.targetProtein = menuDTO.targetProtein();
-        this.targetFat = menuDTO.targetFat();
-        this.targetCarb = menuDTO.targetCarb();
-        this.mealList = new ArrayList<>();
-    }
 }
