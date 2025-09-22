@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Meal from "./Meal.js";
 
-const Day = ({ meals, menuId, targetMacros, targetKcal, date }) => {
-  const [macros, setMacros] = useState({
-    protein: 0,
-    fat: 0,
-    carbs: 0,
-  });
-  const mealNames = ["Breakfast", "Lunch", "Dinner"];
-  console.log(meals);
-  const calcCalories = () => {
-    return macros.protein * 4 + macros.fat * 9 + macros.carbs * 4;
+const Day = ({ initialMeals, targetKcal, date }) => {
+  const [meals, setMeals] = useState(initialMeals ?? []);
+
+  useEffect(() => {
+    setMeals(initialMeals ?? []);
+  }, [initialMeals]);
+
+  const updateMealItems = (mealId, newItems) => {
+    setMeals((prev) =>
+      prev.map((m) => (m.id === mealId ? { ...m, mealItems: newItems } : m))
+    );
   };
+
+  const calories = meals.reduce(
+    (acc, m) =>
+      acc +
+      m.mealItems.reduce(
+        (acc2, mi) => acc2 + (mi.product.nutrients[1].value * mi.amount) / 100,
+        0
+      ),
+    0
+  );
+
   return (
     <div className="min-w-60 min-h-100 flex flex-col gap-6 ml-10 mt-10">
       <p className="text-white text-center">{date}</p>
       <p className="text-gray-300 text-center">
-        {calcCalories()} / {targetMacros.calories}
+        {calories} / {targetKcal} kcal
       </p>
       {meals.map((meal) => {
         return (
@@ -24,8 +36,9 @@ const Day = ({ meals, menuId, targetMacros, targetKcal, date }) => {
             key={meal.id}
             mealId={meal.id}
             name={meal.name}
-            calories={meal.caloriesPercent * targetKcal}
+            targetKcal={meal.caloriesPercent * targetKcal}
             mealItems={meal.mealItems}
+            onUpdateItems={updateMealItems}
           />
         );
       })}

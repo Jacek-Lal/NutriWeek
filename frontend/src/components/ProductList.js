@@ -7,7 +7,7 @@ const ProductList = ({ list, setList, saveMeal }) => {
     <div className="flex flex-col row-span-full col-start-3">
       <ul className="bg-slate-700 flex flex-col gap-6 p-6">
         {list.length > 0 &&
-          list.map((mealItem) => (
+          list.map((mealItem, idx) => (
             <ProductOnList
               mealItem={mealItem}
               setList={setList}

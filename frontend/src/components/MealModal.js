@@ -8,16 +8,19 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId }) => {
   const [input, setInput] = useState("");
   const [data, setData] = useState([]);
   const [recentMeals, setRecentMeals] = useState([]);
+  const [modalList, setModalList] = useState(list);
 
   useEffect(() => {
     if (isOpen) {
       getRecentProducts(6).then((res) => setRecentMeals(res.data));
+      setModalList(list);
     }
   }, [isOpen]);
 
   const saveMeal = async () => {
-    await addMealItems(mealId, list);
-    console.log(list);
+    if (modalList.length > 0) await addMealItems(mealId, modalList);
+
+    setList(modalList);
     onClose();
   };
   return (
@@ -38,19 +41,27 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId }) => {
             <h1 className="font-medium text-lg mb-2 text-white">
               Recent products
             </h1>
-            <ProductGrid data={recentMeals} list={list} setList={setList} />
+            <ProductGrid
+              data={recentMeals}
+              list={modalList}
+              setList={setModalList}
+            />
           </div>
 
           <div className="rounded p-4">
             <h1 className="font-medium text-lg mb-2 text-white">
               Search results
             </h1>
-            <ProductGrid data={data} list={list} setList={setList} />
+            <ProductGrid data={data} list={modalList} setList={setModalList} />
           </div>
         </div>
 
         <div className="rounded p-4 overflow-y-auto">
-          <ProductList list={list} setList={setList} saveMeal={saveMeal} />
+          <ProductList
+            list={modalList}
+            setList={setModalList}
+            saveMeal={saveMeal}
+          />
         </div>
       </div>
     </dialog>

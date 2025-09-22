@@ -6,8 +6,6 @@ const Product = ({ product, list, setList }) => {
 
     if (!el)
       setList((prevList) => [...prevList, { product: product, amount: 100 }]);
-
-    console.log(list);
   };
 
   return (

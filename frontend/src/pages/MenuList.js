@@ -15,7 +15,6 @@ function MenuList() {
     (async function () {
       const response = await getMenus();
       if (response.data) setMenuList(response.data);
-      console.log(response.data);
     })();
   }, []);
 
@@ -43,8 +42,8 @@ function MenuList() {
               key={menu.id}
               className="bg-slate-800 p-6 hover:bg-slate-700 transition"
             >
-              <div className="flex text-white justify-between">
-                <p className="text-lg ">
+              <div className="grid grid-flow-col text-white justify-between">
+                <p className="text-lg">
                   <span className="text-gray-400">#{menu.id}</span> {menu.name}
                 </p>
                 <p>Start date: {menu.startDate}</p>

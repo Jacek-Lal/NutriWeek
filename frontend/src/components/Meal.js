@@ -1,18 +1,32 @@
 import { useState } from "react";
 import MealModal from "./MealModal.js";
 
-const Meal = ({ name, calories, mealItems = [], mealId }) => {
-  const [list, setList] = useState(mealItems);
+const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
+  const [productList, setProductList] = useState(mealItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleListChange = (newList) => {
+    setProductList(newList);
+    onUpdateItems(mealId, newList);
+  };
+
+  const calories = productList.reduce((acc2, mi) => {
+    const energy = mi.product.nutrients.find(
+      (n) => n.name === "Energy" && n.unit === "KCAL"
+    );
+    return acc2 + (energy.value * mi.amount) / 100;
+  }, 0);
 
   return (
     <>
       <div className="bg-slate-50 flex flex-col max-w-60 rounded-xl p-3 shadow gap-6">
         <p className="text-center font-semibold">{name}</p>
-        <p className="text-center">0 / {calories} kcal</p>
+        <p className="text-center">
+          {calories} / {targetKcal} kcal
+        </p>
         <ul className="flex flex-col gap-3">
-          {list.map((item) => (
-            <li key={item.product.fdcId}>
+          {productList.map((item, idx) => (
+            <li key={idx}>
               <div className="flex gap-6 items-center">
                 <p className="w-40 truncate">{item.product.name}</p>
                 <span className="whitespace-nowrap">{item.amount} g</span>
@@ -31,8 +45,8 @@ const Meal = ({ name, calories, mealItems = [], mealId }) => {
       <MealModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        list={list}
-        setList={setList}
+        list={productList}
+        setList={handleListChange}
         mealId={mealId}
       />
     </>

@@ -11,28 +11,21 @@ function MenuDetails() {
     (async function () {
       const response = await getMenu(id);
       if (response.data) setMenuData(response.data);
-      console.log(response.data);
     })();
   }, [id]);
 
   return (
     <div className="flex">
       {[...Array(menuData?.days)].map((__, i) => {
-        const macros = {
-          calories: menuData.calories,
-          protein: (menuData.protein * menuData.calories) / 100,
-          fat: (menuData.fat * menuData.calories) / 100,
-          carbs: (menuData.carbs * menuData.calories) / 100,
-        };
         const meals = (menuData?.mealList ?? []).slice(
           i * menuData.meals,
           (i + 1) * menuData.meals
         );
+
         return (
           <Day
             key={i}
-            meals={meals}
-            targetMacros={macros}
+            initialMeals={meals}
             targetKcal={menuData.calories}
             date={addDays(new Date(menuData.startDate), i).toDateString()}
           />
