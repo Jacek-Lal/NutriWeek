@@ -1,6 +1,6 @@
 package com.jacek.nutriweek.service;
 
-import com.jacek.nutriweek.dto.MenuDTO;
+import com.jacek.nutriweek.dto.MenuRequestDTO;
 import com.jacek.nutriweek.dto.MenuResponseDTO;
 import com.jacek.nutriweek.dto.MenuSummaryDTO;
 import com.jacek.nutriweek.mapper.MenuMapper;
@@ -9,6 +9,8 @@ import com.jacek.nutriweek.model.Menu;
 import com.jacek.nutriweek.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +22,12 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuMapper menuMapper;
 
-    public Menu addMenu(MenuDTO menuDTO) {
-        Menu menu = menuMapper.toEntity(menuDTO);
+    public Menu addMenu(MenuRequestDTO menuRequestDTO) {
+        Menu menu = menuMapper.toEntity(menuRequestDTO);
 
         for(int i=0; i < menu.getDays(); i++){
             for(int j=0; j < menu.getMeals(); j++){
-                Meal meal = new Meal("Meal " + (j+1), menuDTO.caloriesPerMeal().get(j)/100f, menu);
+                Meal meal = new Meal("Meal " + (j+1), menuRequestDTO.caloriesPerMeal().get(j)/100f, menu);
                 menu.getMealList().add(meal);
             }
         }
@@ -33,15 +35,8 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public List<MenuSummaryDTO> getMenus() {
-        return menuRepository.findAll()
-                .stream()
-                .map(menu -> new MenuSummaryDTO(menu.getId(),
-                        menu.getName(),
-                        menu.getCalories(),
-                        menu.getDays(),
-                        menu.getStartDate()))
-                .toList();
+    public Page<MenuSummaryDTO> getMenus(int page, int size) {
+        return menuRepository.findAllSummaries(PageRequest.of(page, size));
     }
 
     public MenuResponseDTO getMenu(long id) {

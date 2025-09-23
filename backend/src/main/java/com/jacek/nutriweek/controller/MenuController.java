@@ -1,15 +1,14 @@
 package com.jacek.nutriweek.controller;
 
-import com.jacek.nutriweek.dto.MenuDTO;
+import com.jacek.nutriweek.dto.MenuRequestDTO;
 import com.jacek.nutriweek.dto.MenuResponseDTO;
 import com.jacek.nutriweek.dto.MenuSummaryDTO;
 import com.jacek.nutriweek.model.Menu;
 import com.jacek.nutriweek.service.MenuService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,13 +17,14 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Menu> addMenu(@RequestBody MenuDTO menu){
+    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequestDTO menu){
         return ResponseEntity.ok().body(menuService.addMenu(menu));
     }
 
     @GetMapping
-    public ResponseEntity<List<MenuSummaryDTO>> getMenus(){
-        return ResponseEntity.ok().body(menuService.getMenus());
+    public ResponseEntity<Page<MenuSummaryDTO>> getMenus(@RequestParam int page,
+                                                         @RequestParam int size){
+        return ResponseEntity.ok().body(menuService.getMenus(page, size));
     }
 
     @GetMapping("/{id}")

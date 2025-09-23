@@ -2,7 +2,7 @@ package com.jacek.nutriweek.mapper;
 
 import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.dto.MealItemDTO;
-import com.jacek.nutriweek.dto.MenuDTO;
+import com.jacek.nutriweek.dto.MenuRequestDTO;
 import com.jacek.nutriweek.dto.MenuResponseDTO;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.model.MealItem;
@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {ProductMapper.class})
 public interface MenuMapper {
 
-    Menu toEntity(MenuDTO menu);
+    Menu toEntity(MenuRequestDTO menu);
     MenuResponseDTO toDto(Menu menu);
 
     @Mapping(target="id", source="id")
