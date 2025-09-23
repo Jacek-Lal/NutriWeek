@@ -13,3 +13,6 @@ export async function getMenu(id) {
 export async function getMenus() {
   return await axios.get(API_URL);
 }
+export async function deleteMenu(id) {
+  return await axios.delete(`${API_URL}/${id}`);
+}

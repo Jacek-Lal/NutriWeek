@@ -11,6 +11,7 @@ function MenuDetails() {
     (async function () {
       const response = await getMenu(id);
       if (response.data) setMenuData(response.data);
+      console.log(response.data);
     })();
   }, [id]);
 

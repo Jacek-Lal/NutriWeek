@@ -13,8 +13,8 @@ const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
   const calories = productList.reduce((acc2, mi) => {
     const energy = mi.product.nutrients.find(
       (n) => n.name === "Energy" && n.unit === "KCAL"
-    );
-    return acc2 + (energy.value * mi.amount) / 100;
+    ).value;
+    return acc2 + (energy * mi.amount) / 100;
   }, 0);
 
   return (

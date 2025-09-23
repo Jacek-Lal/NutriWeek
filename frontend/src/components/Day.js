@@ -17,10 +17,12 @@ const Day = ({ initialMeals, targetKcal, date }) => {
   const calories = meals.reduce(
     (acc, m) =>
       acc +
-      m.mealItems.reduce(
-        (acc2, mi) => acc2 + (mi.product.nutrients[1].value * mi.amount) / 100,
-        0
-      ),
+      m.mealItems.reduce((acc2, mi) => {
+        const energy = mi.product.nutrients.find(
+          (n) => n.name === "Energy" && n.unit === "KCAL"
+        ).value;
+        return acc2 + (energy * mi.amount) / 100;
+      }, 0),
     0
   );
 
