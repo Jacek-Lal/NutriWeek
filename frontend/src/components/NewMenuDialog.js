@@ -23,12 +23,32 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
   });
 
   const onChange = (event) => {
-    if (typeof menuData[event.target.name] === "number")
+    let value = event.target.value;
+    const name = event.target.name;
+
+    if (typeof menuData[name] === "number") value = parseInt(value) || 0;
+
+    if (name === "meals") {
+      const newLength = value;
+      let newCaloriesPerMeal = [...menuData.caloriesPerMeal];
+
+      if (newLength > newCaloriesPerMeal.length) {
+        newCaloriesPerMeal = [
+          ...newCaloriesPerMeal,
+          ...Array(newLength - newCaloriesPerMeal.length).fill(0),
+        ];
+      } else if (newLength < newCaloriesPerMeal.length)
+        newCaloriesPerMeal = newCaloriesPerMeal.slice(0, newLength);
+
       setMenuData({
         ...menuData,
-        [event.target.name]: parseInt(event.target.value),
+        [name]: value,
+        caloriesPerMeal: newCaloriesPerMeal,
       });
-    else setMenuData({ ...menuData, [event.target.name]: event.target.value });
+      return;
+    }
+
+    setMenuData({ ...menuData, [name]: value });
   };
 
   const onSubmit = async (event) => {

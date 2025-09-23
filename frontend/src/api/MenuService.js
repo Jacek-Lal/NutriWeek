@@ -10,9 +10,10 @@ export async function getMenu(id) {
   return await axios.get(`${API_URL}/${id}`);
 }
 
-export async function getMenus() {
-  return await axios.get(API_URL);
+export async function getMenus(page, size) {
+  return await axios.get(`${API_URL}?page=${page}&size=${size}`);
 }
+
 export async function deleteMenu(id) {
   return await axios.delete(`${API_URL}/${id}`);
 }

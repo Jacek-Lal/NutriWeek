@@ -7,7 +7,9 @@ function addDays(startDate, days) {
 function daysBetween(startDate, endDate) {
   const ms = 24 * 60 * 60 * 1000;
 
-  return Math.round(Math.abs((new Date(startDate) - new Date(endDate)) / ms));
+  return (
+    Math.round(Math.abs((new Date(startDate) - new Date(endDate)) / ms)) + 1
+  );
 }
 
 function formatDate(date) {

@@ -9,9 +9,9 @@ function MenuDetails() {
 
   useEffect(() => {
     (async function () {
-      const response = await getMenu(id);
-      if (response.data) setMenuData(response.data);
-      console.log(response.data);
+      const { data } = await getMenu(id);
+      setMenuData(data);
+      console.log(data);
     })();
   }, [id]);
 

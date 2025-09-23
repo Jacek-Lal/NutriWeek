@@ -6,8 +6,9 @@ import { getMenus, deleteMenu } from "../api/MenuService.js";
 import ConfirmDialog from "../components/ConfirmDialog.js";
 
 function MenuList() {
-  const [menuList, setMenuList] = useState([]);
+  const [menusPage, setMenusPage] = useState({});
   const [menuToDelete, setMenuToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
   const menuModalRef = useRef();
   const confirmModalRef = useRef();
 
@@ -22,18 +23,30 @@ function MenuList() {
 
   const confirmDelete = async () => {
     if (menuToDelete) {
-      await deleteMenu(menuToDelete.id); // your API call
-      setMenuList((prev) => prev.filter((m) => m.id !== menuToDelete.id));
+      await deleteMenu(menuToDelete.id);
+      setMenusPage((prev) =>
+        prev.content.filter((m) => m.id !== menuToDelete.id)
+      );
       setMenuToDelete(null);
     }
     confirmModalRef.current.close();
   };
 
+  const getAllMenus = async (page = 0, size = 5) => {
+    try {
+      setCurrentPage(page);
+
+      const { data } = await getMenus(page, size);
+
+      setMenusPage(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    (async function () {
-      const response = await getMenus();
-      if (response.data) setMenuList(response.data);
-    })();
+    getAllMenus();
   }, []);
 
   return (
@@ -53,36 +66,73 @@ function MenuList() {
       />
 
       <div className="p-6 flex flex-col gap-4">
-        {menuList.map((menu) => {
+        {menusPage.content?.map((menu) => {
           return (
-            <>
-              <div className="flex bg-slate-800 p-6 hover:bg-slate-700 transition">
-                <Link
-                  to={`/menus/${menu.id}`}
-                  key={menu.id}
-                  className="flex-1 block mr-4 p-1"
-                >
-                  <div className="flex justify-between text-white">
-                    <p className="text-lg">
-                      <span className="text-gray-400">#{menu.id}</span>{" "}
-                      {menu.name}
-                    </p>
-                    <p>Start date: {menu.startDate}</p>
-                    <p>Days: {menu.days}</p>
-                    <p>Calories: {menu.calories}</p>
-                  </div>
-                </Link>
-                <button
-                  className="p-1 rounded opacity-80 hover:bg-red-300 transition"
-                  onClick={() => handleDeleteClick(menu)}
-                >
-                  <i className="bi bi-trash text-red-700"></i>
-                </button>
-              </div>
-            </>
+            <div
+              key={menu.id}
+              className="flex bg-slate-800 p-6 hover:bg-slate-700 transition"
+            >
+              <Link to={`/menus/${menu.id}`} className="flex-1 block mr-4 p-1">
+                <div className="flex justify-between text-white">
+                  <p className="text-lg">
+                    <span className="text-gray-400">#{menu.id}</span>{" "}
+                    {menu.name}
+                  </p>
+                  <p>Start date: {menu.startDate}</p>
+                  <p>Days: {menu.days}</p>
+                  <p>Calories: {menu.calories}</p>
+                </div>
+              </Link>
+              <button
+                className="p-1 rounded opacity-80 hover:bg-red-300 transition"
+                onClick={() => handleDeleteClick(menu)}
+              >
+                <i className="bi bi-trash text-red-700"></i>
+              </button>
+            </div>
           );
         })}
       </div>
+      {menusPage.content?.length > 0 && menusPage?.totalPages > 1 && (
+        <div className="flex justify-center gap-4 text-white">
+          <a
+            onClick={() => getAllMenus(currentPage - 1)}
+            className={`bg-slate-500 p-2 rounded cursor-pointer ${
+              currentPage === 0 ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            &laquo;
+          </a>
+
+          {menusPage &&
+            [...Array(menusPage.totalPages).keys()].map((page, index) => (
+              <a
+                onClick={() => getAllMenus(page)}
+                className={`p-2 rounded cursor-pointer
+                  ${
+                    currentPage === page
+                      ? "bg-blue-600 pointer-events-none"
+                      : "bg-slate-500"
+                  }`}
+                key={page}
+              >
+                {page + 1}
+              </a>
+            ))}
+
+          <a
+            onClick={() => getAllMenus(currentPage + 1)}
+            className={`bg-slate-500 p-2 rounded cursor-pointer ${
+              currentPage === menusPage.totalPages - 1
+                ? "pointer-events-none opacity-60"
+                : ""
+            }
+            `}
+          >
+            &raquo;
+          </a>
+        </div>
+      )}
       <ConfirmDialog
         dialogRef={confirmModalRef}
         message={`Are you sure you want to delete "${menuToDelete?.name}"?`}
