@@ -10,19 +10,37 @@ const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
     onUpdateItems(mealId, newList);
   };
 
-  const calories = productList.reduce((acc2, mi) => {
-    const energy = mi.product.nutrients.find(
-      (n) => n.name === "Energy" && n.unit === "KCAL"
-    ).value;
-    return acc2 + (energy * mi.amount) / 100;
-  }, 0);
-
+  const macros = productList.reduce(
+    (acc, mi) => {
+      const get = (n, u = "G") =>
+        mi.product.nutrients.find((x) => x.name === n && x.unit === u)?.value ??
+        0;
+      acc.kcal += (get("Energy", "KCAL") * mi.amount) / 100;
+      acc.protein += (get("Protein") * mi.amount) / 100;
+      acc.fat += (get("Total lipid (fat)") * mi.amount) / 100;
+      acc.carbs += (get("Carbohydrate, by difference") * mi.amount) / 100;
+      return acc;
+    },
+    { kcal: 0, protein: 0, fat: 0, carbs: 0 }
+  );
   return (
     <>
       <div className="bg-slate-50 flex flex-col max-w-60 rounded-xl p-3 shadow gap-6">
         <p className="text-center font-semibold">{name}</p>
         <p className="text-center">
-          {calories} / {targetKcal} kcal
+          <span
+            className={`${
+              macros.kcal > targetKcal * 1.1
+                ? "text-red-600" // above 110%
+                : macros.kcal >= targetKcal * 0.9 &&
+                  macros.kcal <= targetKcal * 1.1
+                ? "text-green-600" // within 90–110%
+                : "text-black" // below 90%
+            }`}
+          >
+            {macros.kcal}
+          </span>{" "}
+          / {targetKcal} kcal
         </p>
         <ul className="flex flex-col gap-3">
           {productList.map((item, idx) => (
@@ -34,6 +52,20 @@ const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
             </li>
           ))}
         </ul>
+        <div>
+          <div className="pl-2 pr-2 pt-5 flex flex-row justify-between">
+            <p>Protein</p>
+            <p>Fat</p>
+            <p>Carbs</p>
+          </div>
+          <div className="pl-2 pr-2 flex justify-between">
+            <p>
+              {macros.protein.toFixed(2)} <span className="text-s">g</span>
+            </p>
+            <p>{macros.fat.toFixed(2)} g</p>
+            <p>{macros.carbs.toFixed(2)} g</p>
+          </div>
+        </div>
         <button
           className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white shadow-md hover:bg-blue-700 active:scale-95 transition whitespace-nowrap"
           onClick={() => setIsModalOpen(true)}
@@ -48,6 +80,7 @@ const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
         list={productList}
         setList={handleListChange}
         mealId={mealId}
+        targetKcal={targetKcal}
       />
     </>
   );

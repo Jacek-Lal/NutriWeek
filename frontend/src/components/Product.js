@@ -7,7 +7,15 @@ const Product = ({ product, list, setList }) => {
     if (!el)
       setList((prevList) => [...prevList, { product: product, amount: 100 }]);
   };
+  const getNutrient = (n) =>
+    product.nutrients.find((x) => x.name === n) ?? null;
 
+  const nutKeys = [
+    "Energy",
+    "Protein",
+    "Total lipid (fat)",
+    "Carbohydrate, by difference",
+  ];
   return (
     <li className="self-start rounded-2xl border border-gray-200 bg-white p-5 shadow hover:shadow-lg transition">
       <div className="flex stretch space-x-4">
@@ -19,14 +27,18 @@ const Product = ({ product, list, setList }) => {
         </button>
       </div>
       <div className="space-y-1 text-sm text-gray-600">
-        {product.nutrients.slice(1, 5).map((n) => (
-          <p key={`${n.name}|${n.unit}`} className="flex justify-between">
-            <span>{n.name}</span>
-            <span className="font-medium">
-              {n.value} {n.unit}
-            </span>
-          </p>
-        ))}
+        {nutKeys.map((key) => {
+          const n = getNutrient(key);
+          if (n === null) return;
+          return (
+            <p key={`${n.name}|${n.unit}`} className="flex justify-between">
+              <span>{n.name}</span>
+              <span className="font-medium">
+                {n.value} {n.unit}
+              </span>
+            </p>
+          );
+        })}
       </div>
     </li>
   );
