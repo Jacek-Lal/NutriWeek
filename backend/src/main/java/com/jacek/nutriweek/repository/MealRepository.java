@@ -9,11 +9,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
-    @Query("""
-            SELECT p FROM MealItem mi
-            JOIN mi.product p
-            ORDER BY mi.id DESC
+    @Query(value = """
+            SELECT DISTINCT ON (p.id) p.*
+            FROM meal_item mi
+            JOIN product p ON mi.product_id = p.id
+            ORDER BY p.id, mi.id DESC
             LIMIT :limit
-            """)
+            """, nativeQuery = true)
     List<Product> findRecentProducts(@Param("limit") int limit);
+
 }

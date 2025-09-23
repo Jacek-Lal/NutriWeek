@@ -20,13 +20,13 @@ public class Meal {
     private String name;
     private float caloriesPercent;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "menu_id")
-    @JsonBackReference
     private Menu menu;
 
-    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("meal-items")
+    @OneToMany(mappedBy = "meal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealItem> mealItems;
 
     public Meal(String name, float caloriesPercent, Menu menu){

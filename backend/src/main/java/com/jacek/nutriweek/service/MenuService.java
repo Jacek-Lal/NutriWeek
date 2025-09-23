@@ -48,4 +48,8 @@ public class MenuService {
         Menu menu = menuRepository.findById(id).orElseThrow(RuntimeException::new);
         return menuMapper.toDto(menu);
     }
+
+    public void deleteMenu(long id) {
+        menuRepository.deleteById(id);
+    }
 }
