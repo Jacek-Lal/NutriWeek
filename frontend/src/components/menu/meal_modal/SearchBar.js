@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { searchProducts } from "../api/ProductService";
+import React from "react";
+import { searchProducts } from "api";
 
 const SearchBar = ({ input, setInput, setData }) => {
   const getProducts = async (query, page = 0, size = 50) => {

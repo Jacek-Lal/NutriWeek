@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import { addMealItems, getRecentProducts } from "api";
 import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import ProductList from "./ProductList";
-import { addMealItems, getRecentProducts } from "../api/MealService.js";
 
 const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
   const [input, setInput] = useState("");

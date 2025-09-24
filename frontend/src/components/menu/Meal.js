@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MealModal from "./MealModal.js";
+import MealModal from "./meal_modal/MealModal.js";
 
 const Meal = ({ name, targetKcal, mealItems = [], mealId, onUpdateItems }) => {
   const [productList, setProductList] = useState(mealItems);

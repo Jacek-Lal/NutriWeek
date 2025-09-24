@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ProductOnList from "./ProductOnList";
 
 const ProductList = ({ list, setList, saveMeal, targetKcal }) => {

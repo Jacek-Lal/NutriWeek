@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getMenus, deleteMenu } from "api";
 
-import NewMenuDialog from "../components/NewMenuDialog.js";
-import { getMenus, deleteMenu } from "../api/MenuService.js";
-import ConfirmDialog from "../components/ConfirmDialog.js";
+import NewMenuDialog from "../components/menu/NewMenuDialog.js";
+import ConfirmDialog from "../components/common/ConfirmDialog.js";
 
 function MenuList() {
   const [menusPage, setMenusPage] = useState({});

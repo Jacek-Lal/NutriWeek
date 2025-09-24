@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getMenu } from "../api/MenuService";
-import Day from "../components/Day.js";
+import { getMenu, getMenuMeals } from "api";
 import { addDays } from "../utility/Date.js";
-import { getMenuMeals } from "../api/MenuService";
+import Day from "../components/menu/Day.js";
 
 function MenuDetails() {
   const { id } = useParams();

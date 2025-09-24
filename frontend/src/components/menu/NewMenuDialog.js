@@ -2,9 +2,9 @@ import React from "react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { InputField, MacroField, DaysOrRange } from "./Inputs";
-import { addDays, daysBetween, formatDate } from "../utility/Date";
-import { addMenu } from "../api/MenuService";
+import { InputField, MacroField, DaysOrRange } from "../common/Inputs";
+import { addDays, daysBetween, formatDate } from "../../utility/Date";
+import { addMenu } from "api";
 
 const NewMenuDialog = ({ modalRef, closeModal }) => {
   const navigate = useNavigate();
