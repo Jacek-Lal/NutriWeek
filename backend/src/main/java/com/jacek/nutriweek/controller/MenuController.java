@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.controller;
 
+import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.dto.MenuRequestDTO;
 import com.jacek.nutriweek.dto.MenuResponseDTO;
 import com.jacek.nutriweek.dto.MenuSummaryDTO;
@@ -32,6 +33,12 @@ public class MenuController {
         return ResponseEntity.ok().body(menuService.getMenu(id));
     }
 
+    @GetMapping("/{id}/meals")
+    public ResponseEntity<Page<MealDTO>> getMenuMeals(@PathVariable long id,
+                                                      @RequestParam int page,
+                                                      @RequestParam int size){
+        return ResponseEntity.ok().body(menuService.getMenuMeals(id, page, size));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable long id){
         menuService.deleteMenu(id);

@@ -1,11 +1,13 @@
 package com.jacek.nutriweek.service;
 
+import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.dto.MenuRequestDTO;
 import com.jacek.nutriweek.dto.MenuResponseDTO;
 import com.jacek.nutriweek.dto.MenuSummaryDTO;
 import com.jacek.nutriweek.mapper.MenuMapper;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.model.Menu;
+import com.jacek.nutriweek.repository.MealRepository;
 import com.jacek.nutriweek.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
+    private final MealRepository mealRepository;
     private final MenuMapper menuMapper;
 
     public Menu addMenu(MenuRequestDTO menuRequestDTO) {
@@ -44,7 +47,13 @@ public class MenuService {
         return menuMapper.toDto(menu);
     }
 
+    public Page<MealDTO> getMenuMeals(long id, int page, int size) {
+        Page<Meal> mealsPage = mealRepository.findByMenuId(id, PageRequest.of(page, size));
+        return mealsPage.map(menuMapper::toDto);
+    }
+
     public void deleteMenu(long id) {
         menuRepository.deleteById(id);
     }
+
 }

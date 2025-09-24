@@ -1,8 +1,10 @@
 package com.jacek.nutriweek.repository;
 
+import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.dto.MenuSummaryDTO;
 import com.jacek.nutriweek.model.Menu;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +30,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             FROM Menu m
             """)
     Page<MenuSummaryDTO> findAllSummaries(Pageable pageable);
+
 }

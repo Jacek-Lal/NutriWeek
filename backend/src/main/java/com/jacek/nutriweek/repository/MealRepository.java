@@ -1,7 +1,10 @@
 package com.jacek.nutriweek.repository;
 
+import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +21,5 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
             """, nativeQuery = true)
     List<Product> findRecentProducts(@Param("limit") int limit);
 
+    Page<Meal> findByMenuId(long id, PageRequest of);
 }
