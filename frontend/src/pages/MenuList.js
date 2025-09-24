@@ -93,7 +93,7 @@ function MenuList() {
           );
         })}
       </div>
-      {menusPage.content?.length > 0 && menusPage?.totalPages > 1 && (
+      {menusPage.content?.length > 0 && menusPage.page.totalPages > 1 && (
         <div className="flex justify-center gap-4 text-white">
           <a
             onClick={() => getAllMenus(currentPage - 1)}
@@ -105,7 +105,7 @@ function MenuList() {
           </a>
 
           {menusPage &&
-            [...Array(menusPage.totalPages).keys()].map((page, index) => (
+            [...Array(menusPage.page.totalPages).keys()].map((page, index) => (
               <a
                 onClick={() => getAllMenus(page)}
                 className={`p-2 rounded cursor-pointer

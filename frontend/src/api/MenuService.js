@@ -17,3 +17,7 @@ export async function getMenus(page, size) {
 export async function deleteMenu(id) {
   return await axios.delete(`${API_URL}/${id}`);
 }
+
+export async function getMenuMeals(id, page, size) {
+  return await axios.get(`${API_URL}/${id}/meals?page=${page}&size=${size}`);
+}
