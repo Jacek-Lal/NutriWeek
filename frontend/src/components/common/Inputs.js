@@ -100,4 +100,22 @@ const DaysOrRange = ({ menuData, onChange }) => {
   );
 };
 
-export { DaysOrRange, MacroField, InputField };
+const FormInput = ({ id, label, type, register, rules, error }) => {
+  return (
+    <div>
+      <label className="mb-4 text-white" htmlFor={id}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        className="mb-4 py-2 px-4 rounded"
+        onInput={(e) => (e.target.value = e.target.value.replace(/\s/g, ""))}
+        {...register(id, rules)}
+      />
+      {error && <p className="mb-2 text-red-500">{error.message}</p>}
+    </div>
+  );
+};
+
+export { DaysOrRange, MacroField, InputField, FormInput };
