@@ -16,6 +16,24 @@ spring:
       hibernate:
         format_sql: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
+    protocol: smtp
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+app:
+  mail:
+    from: no-reply@nutriweek.local
+  urls:
+    verify: http://localhost:8080/auth/verify  # backend endpoint clicked from email
+    frontendVerified: http://localhost:3000/verified
+    frontendFailed:   http://localhost:3000/verify-failed
+
 logging:
   level:
     root: INFO
