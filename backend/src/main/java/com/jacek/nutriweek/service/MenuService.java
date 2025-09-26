@@ -1,9 +1,9 @@
 package com.jacek.nutriweek.service;
 
-import com.jacek.nutriweek.dto.MealDTO;
-import com.jacek.nutriweek.dto.MenuRequestDTO;
-import com.jacek.nutriweek.dto.MenuResponseDTO;
-import com.jacek.nutriweek.dto.MenuSummaryDTO;
+import com.jacek.nutriweek.dto.menu.MealDTO;
+import com.jacek.nutriweek.dto.menu.MenuRequest;
+import com.jacek.nutriweek.dto.menu.MenuResponse;
+import com.jacek.nutriweek.dto.menu.MenuSummary;
 import com.jacek.nutriweek.mapper.MenuMapper;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.model.Menu;
@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
@@ -25,12 +23,12 @@ public class MenuService {
     private final MealRepository mealRepository;
     private final MenuMapper menuMapper;
 
-    public Menu addMenu(MenuRequestDTO menuRequestDTO) {
-        Menu menu = menuMapper.toEntity(menuRequestDTO);
+    public Menu addMenu(MenuRequest menuRequest) {
+        Menu menu = menuMapper.toEntity(menuRequest);
 
         for(int i=0; i < menu.getDays(); i++){
             for(int j=0; j < menu.getMeals(); j++){
-                Meal meal = new Meal("Meal " + (j+1), menuRequestDTO.caloriesPerMeal().get(j)/100f, menu);
+                Meal meal = new Meal("Meal " + (j+1), menuRequest.caloriesPerMeal().get(j)/100f, menu);
                 menu.getMealList().add(meal);
             }
         }
@@ -38,11 +36,11 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public Page<MenuSummaryDTO> getMenus(int page, int size) {
+    public Page<MenuSummary> getMenus(int page, int size) {
         return menuRepository.findAllSummaries(PageRequest.of(page, size));
     }
 
-    public MenuResponseDTO getMenu(long id) {
+    public MenuResponse getMenu(long id) {
         Menu menu = menuRepository.findById(id).orElseThrow(RuntimeException::new);
         return menuMapper.toDto(menu);
     }

@@ -1,4 +1,4 @@
-package com.jacek.nutriweek.dto;
+package com.jacek.nutriweek.dto.menu;
 
 public record NutrientDTO(String name,
                           String unit,

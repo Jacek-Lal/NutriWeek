@@ -1,9 +1,9 @@
 package com.jacek.nutriweek.controller;
 
-import com.jacek.nutriweek.dto.MealDTO;
-import com.jacek.nutriweek.dto.MenuRequestDTO;
-import com.jacek.nutriweek.dto.MenuResponseDTO;
-import com.jacek.nutriweek.dto.MenuSummaryDTO;
+import com.jacek.nutriweek.dto.menu.MealDTO;
+import com.jacek.nutriweek.dto.menu.MenuRequest;
+import com.jacek.nutriweek.dto.menu.MenuResponse;
+import com.jacek.nutriweek.dto.menu.MenuSummary;
 import com.jacek.nutriweek.model.Menu;
 import com.jacek.nutriweek.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +18,18 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequestDTO menu){
+    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequest menu){
         return ResponseEntity.ok().body(menuService.addMenu(menu));
     }
 
     @GetMapping
-    public ResponseEntity<Page<MenuSummaryDTO>> getMenus(@RequestParam int page,
-                                                         @RequestParam int size){
+    public ResponseEntity<Page<MenuSummary>> getMenus(@RequestParam int page,
+                                                      @RequestParam int size){
         return ResponseEntity.ok().body(menuService.getMenus(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuResponseDTO> getMenu(@PathVariable long id){
+    public ResponseEntity<MenuResponse> getMenu(@PathVariable long id){
         return ResponseEntity.ok().body(menuService.getMenu(id));
     }
 

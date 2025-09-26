@@ -1,6 +1,5 @@
 package com.jacek.nutriweek.repository;
 
-import com.jacek.nutriweek.dto.MealDTO;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.model.Product;
 import org.springframework.data.domain.Page;

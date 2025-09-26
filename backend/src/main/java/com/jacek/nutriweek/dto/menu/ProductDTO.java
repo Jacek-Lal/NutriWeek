@@ -1,4 +1,4 @@
-package com.jacek.nutriweek.dto;
+package com.jacek.nutriweek.dto.menu;
 
 import java.util.List;
 

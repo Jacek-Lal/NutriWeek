@@ -1,9 +1,9 @@
 package com.jacek.nutriweek.service;
 
-import com.jacek.nutriweek.dto.MealDTO;
-import com.jacek.nutriweek.dto.MealItemDTO;
-import com.jacek.nutriweek.dto.NutrientDTO;
-import com.jacek.nutriweek.dto.ProductDTO;
+import com.jacek.nutriweek.dto.menu.MealDTO;
+import com.jacek.nutriweek.dto.menu.MealItemDTO;
+import com.jacek.nutriweek.dto.menu.NutrientDTO;
+import com.jacek.nutriweek.dto.menu.ProductDTO;
 import com.jacek.nutriweek.mapper.MealMapper;
 import com.jacek.nutriweek.mapper.ProductMapper;
 import com.jacek.nutriweek.model.*;

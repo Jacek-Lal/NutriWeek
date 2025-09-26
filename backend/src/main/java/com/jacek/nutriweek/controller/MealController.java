@@ -1,8 +1,8 @@
 package com.jacek.nutriweek.controller;
 
-import com.jacek.nutriweek.dto.MealDTO;
-import com.jacek.nutriweek.dto.MealItemDTO;
-import com.jacek.nutriweek.dto.ProductDTO;
+import com.jacek.nutriweek.dto.menu.MealDTO;
+import com.jacek.nutriweek.dto.menu.MealItemDTO;
+import com.jacek.nutriweek.dto.menu.ProductDTO;
 import com.jacek.nutriweek.model.Meal;
 import com.jacek.nutriweek.service.MealService;
 import lombok.RequiredArgsConstructor;
