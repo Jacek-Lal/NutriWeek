@@ -6,6 +6,7 @@ import RegisterForm from "pages/SignupPage.js";
 import LandingPage from "pages/LandingPage";
 import { useContext } from "react";
 import { AuthContext } from "context/AuthContext";
+import { ProtectedRoute } from "components/common/ProtectedRoute";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -23,12 +24,13 @@ function App() {
               </Link>
 
               <span className="ml-auto text-white">Hi {user.username}</span>
-              <button
+              <Link
+                to="/"
                 onClick={logout}
                 className="text-blue-600 hover:underline"
               >
                 Logout
-              </button>
+              </Link>
             </>
           ) : (
             <>
@@ -47,8 +49,22 @@ function App() {
         <div className="p-6">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/menus" element={<MenuList />} />
-            <Route path="/menus/:id" element={<MenuDetails />} />
+            <Route
+              path="/menus"
+              element={
+                <ProtectedRoute>
+                  <MenuList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/menus/:id"
+              element={
+                <ProtectedRoute>
+                  <MenuDetails />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
           </Routes>

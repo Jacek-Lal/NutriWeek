@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/menus";
+axios.defaults.withCredentials = true;
 
 export async function addMenu(menu) {
   return await axios.post(API_URL, menu);
