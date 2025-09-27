@@ -31,7 +31,7 @@ app:
     from: no-reply@nutriweek.local
   urls:
     verify: http://localhost:8080/auth/verify  # backend endpoint clicked from email
-    frontendVerified: http://localhost:3000/verified
+    frontendVerified: http://localhost:3000/login
     frontendFailed:   http://localhost:3000/verify-failed
 
 logging:
@@ -40,4 +40,5 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
 

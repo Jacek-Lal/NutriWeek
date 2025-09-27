@@ -6,9 +6,11 @@ import com.jacek.nutriweek.auth.repository.TokenRepository;
 import com.jacek.nutriweek.common.exception.UserAlreadyExistsException;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +20,11 @@ import java.util.UUID;
 @Service
 @Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-
-
 
     public void register(RegisterRequest req) {
         if (userRepository.existsByUsername(req.login())) {
@@ -49,7 +49,7 @@ public class AuthService {
         emailService.sendVerificationEmail(user.getEmail(), token);
     }
 
-    public boolean verify(String token, HttpServletResponse response) {
+    public boolean verify(String token) {
         VerificationToken vt = tokenRepository.findByToken(token).orElse(null);
 
         if (vt ==  null || vt.getExpirationDate().isBefore(Instant.now()))
@@ -62,5 +62,21 @@ public class AuthService {
         tokenRepository.delete(vt);
 
         return true;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException(username));
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getRoles().toArray(new String[0]))
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(!user.isEnabled())
+                .build();
     }
 }
