@@ -1,6 +1,7 @@
 package com.jacek.nutriweek.menu.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jacek.nutriweek.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,9 @@ public class Menu {
     private float targetProtein;
     private float targetFat;
     private float targetCarb;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User owner;
 
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference

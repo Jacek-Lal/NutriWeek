@@ -9,6 +9,8 @@ import com.jacek.nutriweek.menu.entity.Menu;
 import com.jacek.nutriweek.menu.mapper.MenuMapper;
 import com.jacek.nutriweek.menu.repository.MealRepository;
 import com.jacek.nutriweek.menu.repository.MenuRepository;
+import com.jacek.nutriweek.user.entity.User;
+import com.jacek.nutriweek.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,10 +23,13 @@ import org.springframework.stereotype.Service;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MealRepository mealRepository;
+    private final UserRepository userRepository;
     private final MenuMapper menuMapper;
 
-    public Menu addMenu(MenuRequest menuRequest) {
+    public Menu addMenu(String username, MenuRequest menuRequest) {
+        User user = userRepository.findByUsername(username).orElseThrow();
         Menu menu = menuMapper.toEntity(menuRequest);
+        menu.setOwner(user);
 
         for(int i=0; i < menu.getDays(); i++){
             for(int j=0; j < menu.getMeals(); j++){
@@ -36,8 +41,8 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public Page<MenuSummary> getMenus(int page, int size) {
-        return menuRepository.findAllSummaries(PageRequest.of(page, size));
+    public Page<MenuSummary> getMenus(String username, int page, int size) {
+        return menuRepository.findAllSummaries(username, PageRequest.of(page, size));
     }
 
     public MenuResponse getMenu(long id) {

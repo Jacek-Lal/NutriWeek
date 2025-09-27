@@ -9,6 +9,7 @@ import com.jacek.nutriweek.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +19,17 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequest menu){
-        return ResponseEntity.ok().body(menuService.addMenu(menu));
+    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequest menu, Authentication auth){
+        String username = auth.getName();
+        return ResponseEntity.ok().body(menuService.addMenu(username, menu));
     }
 
     @GetMapping
     public ResponseEntity<Page<MenuSummary>> getMenus(@RequestParam int page,
-                                                      @RequestParam int size){
-        return ResponseEntity.ok().body(menuService.getMenus(page, size));
+                                                      @RequestParam int size,
+                                                      Authentication auth){
+        String username = auth.getName();
+        return ResponseEntity.ok().body(menuService.getMenus(username, page, size));
     }
 
     @GetMapping("/{id}")

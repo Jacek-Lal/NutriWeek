@@ -25,7 +25,9 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("""
             SELECT m.id, m.name, m.calories, m.days, m.startDate
             FROM Menu m
+            JOIN m.owner o
+            WHERE o.username = :username
             """)
-    Page<MenuSummary> findAllSummaries(Pageable pageable);
+    Page<MenuSummary> findAllSummaries(String username, Pageable pageable);
 
 }

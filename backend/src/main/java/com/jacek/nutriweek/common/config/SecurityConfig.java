@@ -23,9 +23,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/menus/**").permitAll()
-                        .requestMatchers("/meals/**").permitAll()
-                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/menus/**", "/meals/**", "/products/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm
