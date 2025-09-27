@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
 import { registerUser } from "api";
@@ -10,6 +10,8 @@ const SignupForm = () => {
     watch,
     formState: { errors },
   } = useForm();
+
+  const [serverError, setServerError] = useState("");
 
   const rules = {
     login: {
@@ -43,9 +45,10 @@ const SignupForm = () => {
     try {
       const { confirmPassword, ...payload } = data;
       const response = await registerUser(payload);
-      console.log("User registered:", response.data);
+      setServerError("");
     } catch (error) {
-      console.error("Registration failed:", err);
+      if (error.response.status === 409)
+        setServerError(error.response.data.message);
     }
   };
 
@@ -89,9 +92,13 @@ const SignupForm = () => {
         rules={rules.confirmPassword}
         error={errors.confirmPassword}
       />
+      {serverError && (
+        <p className="mb-4 text-center text-red-500">{serverError}</p>
+      )}
       <input
         className="mt-6 py-2 px-6 text-white bg-blue-600 rounded-full cursor-pointer"
         type="submit"
+        value="Sign up"
       />
     </form>
   );

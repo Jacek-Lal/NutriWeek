@@ -5,6 +5,21 @@ const API_URL = "http://localhost:8080/auth";
 export async function registerUser(payload) {
   return await axios.post(`${API_URL}/register`, payload);
 }
+
 export async function loginUser(payload) {
-  return await axios.post(`${API_URL}/login`, payload);
+  return await axios.post(`${API_URL}/login`, payload, {
+    withCredentials: true,
+  });
+}
+
+export async function logoutUser() {
+  await axios.post(
+    `http://localhost:8080//logout`,
+    {},
+    { withCredentials: true }
+  );
+}
+
+export async function getUser() {
+  return axios.get(`${API_URL}/me`, { withCredentials: true });
 }

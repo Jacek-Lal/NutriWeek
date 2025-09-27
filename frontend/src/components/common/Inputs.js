@@ -109,7 +109,9 @@ const FormInput = ({ id, label, type, register, rules, error }) => {
       <input
         id={id}
         type={type}
-        className="mb-4 py-2 px-4 rounded"
+        className={`mb-4 py-2 px-4 rounded-lg border ${
+          error ? "border-red-500" : ""
+        }`}
         onInput={(e) => (e.target.value = e.target.value.replace(/\s/g, ""))}
         {...register(id, rules)}
       />
