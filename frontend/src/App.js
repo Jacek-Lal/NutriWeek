@@ -22,7 +22,9 @@ function App() {
                 Menus
               </Link>
 
-              <span className="ml-auto text-white">Hi {user.username}</span>
+              <span className="ml-auto py-2 px-4 text-white">
+                Hi {user.username}
+              </span>
               <Link
                 to="/"
                 onClick={logout}
