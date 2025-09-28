@@ -16,10 +16,8 @@ function MenuDetails() {
         const days = menu.days < 7 ? menu.days : 7;
         size = menu.meals * days;
       }
-
       const { data } = await getMenuMeals(menu.id, page, size);
       setMealsPage(data);
-      console.log(data);
     } catch (e) {
       console.error(e);
     }
@@ -31,8 +29,6 @@ function MenuDetails() {
         const { data: menuData } = await getMenu(id);
         setMenu(menuData);
         getMealsPage(menuData);
-
-        console.log(menuData);
       } catch (e) {
         console.error(e);
       }

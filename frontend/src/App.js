@@ -4,22 +4,21 @@ import MenuDetails from "pages/MenuDetails.js";
 import LoginForm from "pages/LoginPage.js";
 import RegisterForm from "pages/SignupPage.js";
 import LandingPage from "pages/LandingPage";
-import { useContext } from "react";
-import { AuthContext } from "context/AuthContext";
 import { ProtectedRoute } from "components/common/ProtectedRoute";
+import { useAuth } from "hooks/useAuth";
 
 function App() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
   return (
     <BrowserRouter>
       <div>
-        <nav className="bg-slate-800 flex gap-4 mb-6 p-6">
-          <Link to="/" className="text-blue-600 hover:underline">
+        <nav className="bg-secondary-dark60 flex gap-4 p-6 text-primary">
+          <Link to="/" className=" hover:underline">
             Home
           </Link>
           {user ? (
             <>
-              <Link to="/menus" className="text-blue-600 hover:underline">
+              <Link to="/menus" className="hover:underline">
                 Menus
               </Link>
 
@@ -27,7 +26,7 @@ function App() {
               <Link
                 to="/"
                 onClick={logout}
-                className="text-blue-600 hover:underline"
+                className="py-2 px-4 hover:underline"
               >
                 Logout
               </Link>
@@ -36,17 +35,20 @@ function App() {
             <>
               <Link
                 to="/login"
-                className="ml-auto text-blue-600 hover:underline"
+                className="py-2 px-4 bg-primary text-tertiary rounded-lg ml-auto hover:underline"
               >
                 Log in
               </Link>
-              <Link to="/register" className="text-blue-600 hover:underline">
+              <Link
+                to="/register"
+                className="py-2 px-4 bg-tertiary hover:underline rounded-lg"
+              >
                 Sign up
               </Link>
             </>
           )}
         </nav>
-        <div className="p-6">
+        <div className="">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route

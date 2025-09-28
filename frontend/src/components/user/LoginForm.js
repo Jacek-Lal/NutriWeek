@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "context/AuthContext";
+import { useAuth } from "hooks/useAuth";
 const LoginForm = () => {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
