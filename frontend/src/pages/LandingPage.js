@@ -1,32 +1,54 @@
+import { useAuth } from "hooks/useAuth";
 import React from "react";
 import { Link } from "react-router-dom";
 
 const LandingPage = () => {
+  const { user, isLoggedIn } = useAuth();
+
   return (
     <div className="bg-primary text-secondary-dark30 min-h-screen flex flex-col">
       {/* Hero section */}
       <section className="flex flex-col items-center justify-center text-center flex-1 px-6 py-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Welcome to <span className="text-tertiary">NutriWeek</span>
+          {!isLoggedIn ? (
+            <>
+              Welcome to <span className="text-tertiary">NutriWeek</span>
+            </>
+          ) : (
+            <>
+              Hello <span className="text-tertiary">{user.username}</span>
+            </>
+          )}
         </h1>
         <p className="max-w-2xl text-lg mb-8">
           Plan, track and optimise your meals with ease. Create weekly menus,
           calculate macros and keep your nutrition on track.
         </p>
-        <div className="flex gap-4">
-          <Link
-            to="/register"
-            className="bg-tertiary hover:bg-tertiary/80 px-6 py-3 rounded-lg shadow font-semibold text-white transition"
-          >
-            Get Started
-          </Link>
-          <Link
-            to="/login"
-            className="border border-tertiary hover:bg-tertiary hover:text-white px-6 py-3 rounded-lg shadow font-semibold transition"
-          >
-            Log In
-          </Link>
-        </div>
+        {!isLoggedIn ? (
+          <div className="flex gap-4">
+            <Link
+              to="/register"
+              className="bg-tertiary hover:bg-tertiary/80 px-6 py-3 rounded-lg shadow font-semibold text-white transition"
+            >
+              Get Started
+            </Link>
+            <Link
+              to="/login"
+              className="border border-tertiary hover:bg-tertiary hover:text-white px-6 py-3 rounded-lg shadow font-semibold transition"
+            >
+              Log In
+            </Link>
+          </div>
+        ) : (
+          <div className="flex gap-4">
+            <Link
+              to="/menus"
+              className="bg-tertiary hover:bg-tertiary/80 px-6 py-3 rounded-lg shadow font-semibold text-white transition"
+            >
+              Menus
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* Features section */}
