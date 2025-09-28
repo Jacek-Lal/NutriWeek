@@ -16,7 +16,6 @@ public interface MenuMapper {
     Menu toEntity(MenuRequest menu);
     MenuResponse toDto(Menu menu);
 
-    @Mapping(target="id", source="id")
     MealDTO toDto(Meal meal);
     MealItemDTO toDto(MealItem mealItem);
 }

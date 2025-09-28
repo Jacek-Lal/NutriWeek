@@ -30,7 +30,7 @@ app:
   mail:
     from: no-reply@nutriweek.local
   urls:
-    verify: http://localhost:8080/auth/verify  # backend endpoint clicked from email
+    verify: http://localhost:8080/auth/verify
     frontendVerified: http://localhost:3000/login
     frontendFailed:   http://localhost:3000/verify-failed
 

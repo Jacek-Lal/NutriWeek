@@ -1,6 +1,7 @@
 package com.jacek.nutriweek.menu.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jacek.nutriweek.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +14,20 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Nutrient {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Nutrient extends BaseEntity {
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String unit;
 
-    @OneToMany(mappedBy = "nutrient", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(
+            mappedBy = "nutrient",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true
+    )
     @JsonManagedReference("nutrient-products")
     private List<ProductNutrient> products;
 

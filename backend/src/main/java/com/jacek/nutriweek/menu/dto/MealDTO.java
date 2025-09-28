@@ -2,7 +2,7 @@ package com.jacek.nutriweek.menu.dto;
 
 import java.util.List;
 
-public record MealDTO (String name,
-                       Long id,
+public record MealDTO (Long id,
+                       String name,
                        float caloriesPercent,
                        List<MealItemDTO> mealItems){}
