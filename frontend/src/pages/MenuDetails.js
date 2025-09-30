@@ -7,17 +7,14 @@ import Day from "../components/menu/Day.js";
 function MenuDetails() {
   const { id } = useParams();
   const [menu, setMenu] = useState({});
-  const [mealsPage, setMealsPage] = useState({});
+  const [daysPage, setDaysPage] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
-  const getMealsPage = async (menu, page = 0, size = 21) => {
+  const getMealsPage = async (menu, page = 0, size = 7) => {
     try {
       setCurrentPage(page);
-      if (menu) {
-        const days = menu.days < 7 ? menu.days : 7;
-        size = menu.meals * days;
-      }
+
       const { data } = await getMenuMeals(menu.id, page, size);
-      setMealsPage(data);
+      setDaysPage(data);
       console.log(data);
     } catch (e) {
       console.error(e);
@@ -30,6 +27,7 @@ function MenuDetails() {
         const { data: menuData } = await getMenu(id);
         setMenu(menuData);
         getMealsPage(menuData);
+        console.log(menuData);
       } catch (e) {
         console.error(e);
       }
@@ -38,7 +36,7 @@ function MenuDetails() {
 
   return (
     <div>
-      {mealsPage.content?.length > 0 && mealsPage.page.totalPages > 1 && (
+      {daysPage.content?.length > 0 && daysPage.page.totalPages > 1 && (
         <div className="flex justify-center gap-4 text-white">
           <a
             onClick={() => getMealsPage(menu, 0)}
@@ -57,26 +55,18 @@ function MenuDetails() {
             <i className="bi bi-chevron-left text-xs"></i>
           </a>
 
-          <div className="my-auto">
-            <span className="text-blue-500">
-              {addDays(
-                new Date(menu.startDate),
-                currentPage * 7
-              ).toDateString()}
-            </span>
+          <div className="my-auto flex items-center gap-4">
+            <span className="text-blue-500">{daysPage.content.at(0).date}</span>
             <i className="bi bi-dash"></i>
             <span className="text-blue-500">
-              {addDays(
-                new Date(menu.startDate),
-                currentPage * 7 + mealsPage.content.length / menu.meals - 1
-              ).toDateString()}
+              {daysPage.content.at(-1).date}
             </span>
           </div>
 
           <a
             onClick={() => getMealsPage(menu, currentPage + 1)}
             className={`bg-slate-500 p-2 rounded cursor-pointer ${
-              currentPage === mealsPage.page.totalPages - 1
+              currentPage === daysPage.page.totalPages - 1
                 ? "pointer-events-none opacity-60"
                 : ""
             }
@@ -85,9 +75,9 @@ function MenuDetails() {
             <i className="bi bi-chevron-right text-xs"></i>
           </a>
           <a
-            onClick={() => getMealsPage(menu, mealsPage.page.totalPages - 1)}
+            onClick={() => getMealsPage(menu, daysPage.page.totalPages - 1)}
             className={`bg-slate-500 p-2 rounded cursor-pointer ${
-              currentPage === mealsPage.page.totalPages - 1
+              currentPage === daysPage.page.totalPages - 1
                 ? "pointer-events-none opacity-60"
                 : ""
             }
@@ -98,12 +88,12 @@ function MenuDetails() {
         </div>
       )}
       <div className="flex gap-3 flex-wrap place-content-center">
-        {mealsPage?.content?.map((day, i) => {
+        {daysPage?.content?.map((day, i) => {
           return (
             <Day
               key={`${currentPage}-${i}`}
+              menuId={menu.id}
               initialMeals={day.meals}
-              targetKcal={menu.calories}
               date={day.date}
             />
           );

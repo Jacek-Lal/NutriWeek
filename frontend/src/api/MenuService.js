@@ -22,3 +22,7 @@ export async function deleteMenu(id) {
 export async function getMenuMeals(id, page, size) {
   return await axios.get(`${API_URL}/${id}/meals?page=${page}&size=${size}`);
 }
+
+export async function addMenuMeal(id, payload) {
+  return await axios.post(`${API_URL}/${id}/meals`, payload);
+}

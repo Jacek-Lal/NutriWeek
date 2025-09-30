@@ -60,21 +60,35 @@ public class MenuService {
     }
 
     public Page<MealsByDate> getMenuMeals(long id, int page, int size) {
-        Page<Meal> mealsPage = mealRepository.findByMenuId(id, PageRequest.of(page, size));
+        Page<LocalDate> datesPage = mealRepository.findDistinctDatesByMenuId(id, PageRequest.of(page, size));
 
-        List<MealsByDate> mealsByDate = mealsPage.stream()
-                .map(menuMapper::toDto)
-                .collect(Collectors.groupingBy(MealDTO::date))
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(e -> new MealsByDate(e.getKey(), e.getValue()))
+        List<MealsByDate> content = datesPage.getContent().stream()
+                .map(date -> {
+                    List<MealDTO> meals = mealRepository.findByMenuIdAndDate(id, date).stream()
+                            .map(menuMapper::toDto)
+                            .toList();
+                    return new MealsByDate(date, meals);
+                })
                 .toList();
 
-        return new PageImpl<>(mealsByDate, mealsPage.getPageable(), mealsPage.getTotalElements());
+        return new PageImpl<>(content, datesPage.getPageable(), datesPage.getTotalElements());
+    }
+
+    public MealDTO addMenuMeal(long id, MealRequest mealReq) {
+        Menu menu = menuRepository.findById(id).orElseThrow(RuntimeException::new);
+        Meal meal = new Meal(mealReq.name(),
+                mealReq.targetKcal(),
+                mealReq.date(),
+                menu);
+
+        mealRepository.save(meal);
+
+        return menuMapper.toDto(meal);
     }
 
     public void deleteMenu(long id) {
         menuRepository.deleteById(id);
     }
+
 
 }

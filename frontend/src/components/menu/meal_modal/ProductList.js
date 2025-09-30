@@ -29,7 +29,7 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
   );
 
   return (
-    <div className="bg-slate-700 flex flex-col row-span-full col-start-3">
+    <div className="bg-slate-700 flex flex-col row-span-full col-start-3 min-w-72">
       <div className="p-2 text-center text-white">
         <p>Kcal</p>
         <p>

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Meal from "./Meal.js";
 import { deleteMeal } from "api/MealService.js";
-const Day = ({ initialMeals, date }) => {
+import { addMenuMeal } from "api/MenuService.js";
+import { toast } from "react-toastify";
+import NewMealDialog from "./NewMealDialog.js";
+const Day = ({ menuId, initialMeals, date }) => {
   const [meals, setMeals] = useState(initialMeals ?? []);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     setMeals(initialMeals ?? []);
@@ -15,8 +19,21 @@ const Day = ({ initialMeals, date }) => {
   };
 
   const onDeleteMeal = async (id) => {
-    await deleteMeal(id);
-    setMeals((prev) => prev.filter((m) => m.id !== id));
+    if (meals.length > 1) {
+      await deleteMeal(id);
+      setMeals((prev) => prev.filter((m) => m.id !== id));
+    } else toast.error("You need at least 1 meal per day");
+  };
+
+  const onAddMeal = async (data) => {
+    const payload = {
+      ...data,
+      targetKcal: parseInt(data.targetKcal),
+      date: date,
+    };
+    const { data: newMeal } = await addMenuMeal(menuId, payload);
+    setMeals([...meals, newMeal]);
+    setShowForm(false);
   };
 
   const macros = meals.reduce(
@@ -61,6 +78,15 @@ const Day = ({ initialMeals, date }) => {
           <p>{macros.carbs.toFixed(2)} g</p>
         </div>
       </div>
+      <p
+        className="text-center text-blue-600 hover:underline cursor-pointer"
+        onClick={() => setShowForm(!showForm)}
+      >
+        <i className={`bi bi-${showForm ? "dash" : "plus"}`}></i>{" "}
+        {!showForm ? "Add meal" : "Cancel"}
+      </p>
+      <NewMealDialog show={showForm} onSubmit={onAddMeal} />
+
       {meals.map((meal) => {
         return (
           <Meal

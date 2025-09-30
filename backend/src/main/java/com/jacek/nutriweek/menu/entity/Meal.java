@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -38,7 +39,7 @@ public class Meal extends BaseEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<MealItem> mealItems;
+    private List<MealItem> mealItems = new ArrayList<>();
 
     public Meal(String name, int targetKcal, LocalDate date, Menu menu){
         this.name = name;

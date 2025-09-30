@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
@@ -20,5 +21,7 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
             """, nativeQuery = true)
     List<Product> findRecentProducts(@Param("limit") int limit);
 
-    Page<Meal> findByMenuId(long id, PageRequest of);
+    Page<LocalDate> findDistinctDatesByMenuId(@Param("menuId") long menuId, PageRequest of);
+
+    List<Meal> findByMenuIdAndDate(long menuId, LocalDate date);
 }

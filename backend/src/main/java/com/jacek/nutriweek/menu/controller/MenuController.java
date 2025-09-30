@@ -3,6 +3,7 @@ package com.jacek.nutriweek.menu.controller;
 import com.jacek.nutriweek.menu.dto.*;
 import com.jacek.nutriweek.menu.entity.Menu;
 import com.jacek.nutriweek.menu.service.MenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,11 @@ public class MenuController {
                                                           @RequestParam int page,
                                                           @RequestParam int size){
         return ResponseEntity.ok().body(menuService.getMenuMeals(id, page, size));
+    }
+    @PostMapping("/{id}/meals")
+    public ResponseEntity<MealDTO> addMenuMeal(@PathVariable long id,
+                                               @Valid @RequestBody MealRequest meal){
+        return ResponseEntity.ok().body(menuService.addMenuMeal(id, meal));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable long id){
