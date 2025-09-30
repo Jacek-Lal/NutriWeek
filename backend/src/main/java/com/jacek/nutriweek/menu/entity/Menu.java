@@ -29,9 +29,6 @@ public class Menu extends BaseEntity {
     private int meals;
 
     @Column(nullable = false)
-    private int calories;
-
-    @Column(nullable = false)
     private LocalDate startDate;
 
     @Column(nullable = false)

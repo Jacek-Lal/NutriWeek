@@ -38,8 +38,9 @@ public class MenuService {
 
         for(int i=0; i < menu.getDays(); i++){
             for(int j=0; j < menu.getMeals(); j++){
+                int targetKcal = (int) ((menuRequest.caloriesPerMeal().get(j) / 100f) * menuRequest.calories());
                 Meal meal = new Meal("Meal " + (j+1),
-                        menuRequest.caloriesPerMeal().get(j)/100f,
+                        targetKcal,
                         menu.getStartDate().plusDays(i),
                         menu);
                 menu.getMealList().add(meal);

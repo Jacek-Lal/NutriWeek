@@ -22,7 +22,7 @@ public class Meal extends BaseEntity {
     private String name;
 
     @Column(nullable = false)
-    private float caloriesPercent;
+    private int targetKcal;
 
     private LocalDate date;
 
@@ -40,9 +40,9 @@ public class Meal extends BaseEntity {
     )
     private List<MealItem> mealItems;
 
-    public Meal(String name, float caloriesPercent, LocalDate date, Menu menu){
+    public Meal(String name, int targetKcal, LocalDate date, Menu menu){
         this.name = name;
-        this.caloriesPercent = caloriesPercent;
+        this.targetKcal = targetKcal;
         this.date = date;
         this.menu = menu;
     }

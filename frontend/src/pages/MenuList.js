@@ -22,12 +22,16 @@ function MenuList() {
   };
 
   const confirmDelete = async () => {
+    console.log(menuToDelete);
+    console.log(menusPage);
     if (menuToDelete) {
       await deleteMenu(menuToDelete.id);
-      setMenusPage((prev) =>
-        prev.content.filter((m) => m.id !== menuToDelete.id)
-      );
+      setMenusPage((prev) => ({
+        ...prev,
+        content: prev.content.filter((m) => m.id !== menuToDelete.id),
+      }));
       setMenuToDelete(null);
+      console.log(menusPage.content);
     }
     confirmModalRef.current.close();
   };
@@ -80,7 +84,6 @@ function MenuList() {
                   </p>
                   <p>Start date: {menu.startDate}</p>
                   <p>Days: {menu.days}</p>
-                  <p>Calories: {menu.calories}</p>
                 </div>
               </Link>
               <button

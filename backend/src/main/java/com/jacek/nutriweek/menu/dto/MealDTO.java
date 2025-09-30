@@ -5,6 +5,6 @@ import java.util.List;
 
 public record MealDTO (Long id,
                        String name,
-                       float caloriesPercent,
+                       int targetKcal,
                        LocalDate date,
                        List<MealItemDTO> mealItems){}

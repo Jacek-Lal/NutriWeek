@@ -31,5 +31,9 @@ public class MealController {
 
         return ResponseEntity.ok().body(mealService.updateMealItems(mealId, items));
     }
-
+    @DeleteMapping("/{mealId}")
+    public ResponseEntity<Void> deleteMeal(@PathVariable Long mealId){
+        mealService.deleteMeal(mealId);
+        return ResponseEntity.noContent().build();
+    }
 }

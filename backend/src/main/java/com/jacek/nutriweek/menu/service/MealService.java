@@ -133,5 +133,7 @@ public class MealService {
         return productMapper.toDtoList(mealRepository.findRecentProducts(limit));
     }
 
-
+    public void deleteMeal(Long mealId) {
+        mealRepository.deleteById(mealId);
+    }
 }

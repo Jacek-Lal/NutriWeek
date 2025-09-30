@@ -23,7 +23,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     Optional<Menu> findMenuWithAll(@Param("id") long id);
 
     @Query("""
-            SELECT m.id, m.name, m.calories, m.days, m.startDate
+            SELECT m.id, m.name, m.days, m.startDate
             FROM Menu m
             JOIN m.owner o
             WHERE o.username = :username

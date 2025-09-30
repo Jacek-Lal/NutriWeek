@@ -2,17 +2,13 @@ import { useState } from "react";
 import MealModal from "./meal_modal/MealModal.js";
 import DropdownMenu from "components/common/DropdownMenu.js";
 
-const Meal = ({ meal, targetKcal, onUpdateItems, onDelete }) => {
+const Meal = ({ meal, onUpdateItems, onDelete }) => {
   const [productList, setProductList] = useState(meal.mealItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleListChange = (newList) => {
     setProductList(newList);
     onUpdateItems(meal.id, newList);
-  };
-
-  const handleDelete = () => {
-    onDelete(meal);
   };
 
   const macros = productList.reduce(
@@ -32,7 +28,7 @@ const Meal = ({ meal, targetKcal, onUpdateItems, onDelete }) => {
   return (
     <>
       <div className="bg-slate-100 max-w-80 rounded-xl shadow">
-        <DropdownMenu deleteMeal={handleDelete} />
+        <DropdownMenu deleteMeal={() => onDelete(meal.id)} />
 
         <div className="flex flex-col gap-6 pb-4 px-4">
           <p className="text-center font-semibold">{meal.name}</p>
@@ -40,17 +36,17 @@ const Meal = ({ meal, targetKcal, onUpdateItems, onDelete }) => {
           <p className="text-center">
             <span
               className={`${
-                macros.kcal > targetKcal * 1.1
+                macros.kcal > meal.targetKcal * 1.1
                   ? "text-red-600" // above 110%
-                  : macros.kcal >= targetKcal * 0.9 &&
-                    macros.kcal <= targetKcal * 1.1
+                  : macros.kcal >= meal.targetKcal * 0.9 &&
+                    macros.kcal <= meal.targetKcal * 1.1
                   ? "text-green-600" // within 90–110%
                   : "text-black" // below 90%
               }`}
             >
               {macros.kcal}
             </span>{" "}
-            / {targetKcal} kcal
+            / {meal.targetKcal} kcal
           </p>
           <ul className="flex flex-col gap-3">
             {productList.map((item, idx) => (
@@ -91,7 +87,7 @@ const Meal = ({ meal, targetKcal, onUpdateItems, onDelete }) => {
         list={productList}
         setList={handleListChange}
         mealId={meal.id}
-        targetKcal={targetKcal}
+        targetKcal={meal.targetKcal}
       />
     </>
   );

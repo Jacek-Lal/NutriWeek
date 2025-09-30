@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Meal from "./Meal.js";
-
-const Day = ({ initialMeals, targetKcal, date }) => {
+import { deleteMeal } from "api/MealService.js";
+const Day = ({ initialMeals, date }) => {
   const [meals, setMeals] = useState(initialMeals ?? []);
 
   useEffect(() => {
@@ -14,10 +14,9 @@ const Day = ({ initialMeals, targetKcal, date }) => {
     );
   };
 
-  const deleteMeal = (meal) => {
-    const m = meals.find((x) => x.id === meal.id);
-    console.log(m);
-    setMeals((prev) => prev.filter((m) => m.id !== meal.id));
+  const onDeleteMeal = async (id) => {
+    await deleteMeal(id);
+    setMeals((prev) => prev.filter((m) => m.id !== id));
   };
 
   const macros = meals.reduce(
@@ -37,6 +36,10 @@ const Day = ({ initialMeals, targetKcal, date }) => {
     },
     { kcal: 0, protein: 0, fat: 0, carbs: 0 }
   );
+
+  const targetKcal = meals.reduce((acc, meal) => {
+    return acc + meal.targetKcal;
+  }, 0);
 
   return (
     <div className="min-w-64 min-h-100 flex flex-col gap-6 mt-10 p-6 rounded-xl bg-slate-200 text-black">
@@ -65,7 +68,7 @@ const Day = ({ initialMeals, targetKcal, date }) => {
             meal={meal}
             targetKcal={meal.caloriesPercent * targetKcal}
             onUpdateItems={updateMealItems}
-            onDelete={deleteMeal}
+            onDelete={onDeleteMeal}
           />
         );
       })}

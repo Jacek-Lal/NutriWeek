@@ -13,3 +13,7 @@ export async function getRecentProducts(limit = 5) {
 export async function addMealItems(mealId, mealItems) {
   return await axios.put(`${API_URL}/${mealId}/items`, mealItems);
 }
+
+export async function deleteMeal(mealId) {
+  return await axios.delete(`${API_URL}/${mealId}`);
+}
