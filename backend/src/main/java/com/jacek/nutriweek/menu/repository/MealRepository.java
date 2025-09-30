@@ -21,6 +21,12 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
             """, nativeQuery = true)
     List<Product> findRecentProducts(@Param("limit") int limit);
 
+    @Query("""
+    select distinct m.date
+    from Meal m
+    where m.menu.id = :menuId
+    order by m.date
+""")
     Page<LocalDate> findDistinctDatesByMenuId(@Param("menuId") long menuId, PageRequest of);
 
     List<Meal> findByMenuIdAndDate(long menuId, LocalDate date);
