@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -21,6 +23,8 @@ public class Meal extends BaseEntity {
 
     @Column(nullable = false)
     private float caloriesPercent;
+
+    private LocalDate date;
 
     @JsonBackReference
     @ManyToOne(optional = false)
@@ -36,9 +40,10 @@ public class Meal extends BaseEntity {
     )
     private List<MealItem> mealItems;
 
-    public Meal(String name, float caloriesPercent, Menu menu){
+    public Meal(String name, float caloriesPercent, LocalDate date, Menu menu){
         this.name = name;
         this.caloriesPercent = caloriesPercent;
+        this.date = date;
         this.menu = menu;
     }
 }
