@@ -18,6 +18,7 @@ function MenuDetails() {
       }
       const { data } = await getMenuMeals(menu.id, page, size);
       setMealsPage(data);
+      console.log(data);
     } catch (e) {
       console.error(e);
     }
@@ -96,26 +97,17 @@ function MenuDetails() {
           </a>
         </div>
       )}
-      <div className="flex">
-        {mealsPage.content &&
-          [...Array(mealsPage.content.length / menu.meals)].map((__, i) => {
-            const meals = (mealsPage?.content ?? []).slice(
-              i * menu.meals,
-              (i + 1) * menu.meals
-            );
-
-            return (
-              <Day
-                key={`${currentPage}-${i}`}
-                initialMeals={meals}
-                targetKcal={menu.calories}
-                date={addDays(
-                  new Date(menu.startDate),
-                  i + currentPage * 7
-                ).toDateString()}
-              />
-            );
-          })}
+      <div className="flex gap-3 flex-wrap place-content-center">
+        {mealsPage?.content?.map((day, i) => {
+          return (
+            <Day
+              key={`${currentPage}-${i}`}
+              initialMeals={day.meals}
+              targetKcal={menu.calories}
+              date={day.date}
+            />
+          );
+        })}
       </div>
     </div>
   );

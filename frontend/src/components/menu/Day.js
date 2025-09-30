@@ -14,6 +14,12 @@ const Day = ({ initialMeals, targetKcal, date }) => {
     );
   };
 
+  const deleteMeal = (meal) => {
+    const m = meals.find((x) => x.id === meal.id);
+    console.log(m);
+    setMeals((prev) => prev.filter((m) => m.id !== meal.id));
+  };
+
   const macros = meals.reduce(
     (acc, meal) => {
       meal.mealItems.forEach((mi) => {
@@ -33,12 +39,12 @@ const Day = ({ initialMeals, targetKcal, date }) => {
   );
 
   return (
-    <div className="min-w-60 min-h-100 flex flex-col gap-6 ml-10 mt-10">
-      <p className="text-white text-center">{date}</p>
-      <p className="text-gray-300 text-center">
+    <div className="min-w-64 min-h-100 flex flex-col gap-6 mt-10 p-6 rounded-xl bg-slate-200 text-black">
+      <p className=" text-center">{date}</p>
+      <p className="text-gray-700 text-center">
         {macros.kcal} / {targetKcal} kcal
       </p>
-      <div className="text-white">
+      <div className="">
         <div className="pl-2 pr-2 pt-5 flex flex-row justify-between">
           <p>Protein</p>
           <p>Fat</p>
@@ -56,11 +62,10 @@ const Day = ({ initialMeals, targetKcal, date }) => {
         return (
           <Meal
             key={meal.id}
-            mealId={meal.id}
-            name={meal.name}
+            meal={meal}
             targetKcal={meal.caloriesPercent * targetKcal}
-            mealItems={meal.mealItems}
             onUpdateItems={updateMealItems}
+            onDelete={deleteMeal}
           />
         );
       })}
