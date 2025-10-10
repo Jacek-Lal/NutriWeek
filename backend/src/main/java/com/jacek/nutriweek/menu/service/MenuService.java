@@ -13,13 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -31,7 +29,9 @@ public class MenuService {
     private final MenuMapper menuMapper;
 
     public Menu addMenu(String username, MenuRequest menuRequest) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("User with given username doesn't exist"));
+
         Menu menu = menuMapper.toEntity(menuRequest);
 
         menu.setOwner(user);

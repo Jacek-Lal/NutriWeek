@@ -41,7 +41,7 @@ public class Menu extends BaseEntity {
     private float targetCarb;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id", nullable = false) // generates owner_id column
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     @OneToMany(
