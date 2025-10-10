@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.menu.service;
 
+import com.jacek.nutriweek.common.exception.MenuNotFoundException;
 import com.jacek.nutriweek.menu.dto.*;
 import com.jacek.nutriweek.menu.entity.Meal;
 import com.jacek.nutriweek.menu.entity.Menu;
@@ -55,7 +56,8 @@ public class MenuService {
     }
 
     public MenuResponse getMenu(long id) {
-        Menu menu = menuRepository.findById(id).orElseThrow(RuntimeException::new);
+        Menu menu = menuRepository.findById(id).orElseThrow(() ->
+                new MenuNotFoundException("Menu with id " + id + " does not exist"));
         return menuMapper.toDto(menu);
     }
 

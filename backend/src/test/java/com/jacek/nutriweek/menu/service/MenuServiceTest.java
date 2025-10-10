@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.menu.service;
 
+import com.jacek.nutriweek.common.exception.MenuNotFoundException;
 import com.jacek.nutriweek.menu.dto.MenuRequest;
 import com.jacek.nutriweek.menu.entity.Menu;
 import com.jacek.nutriweek.menu.mapper.MenuMapper;
@@ -80,5 +81,26 @@ class MenuServiceTest {
 
         verify(menuMapper, never()).toEntity(req);
         verify(menuRepository, never()).save(any(Menu.class));
+    }
+
+    @Test
+    void shouldReturnMenuResponse_whenValidId(){
+        long id = 0;
+        Menu menu = new Menu();
+
+        when(menuRepository.findById(eq(id))).thenReturn(Optional.of(menu));
+
+        menuService.getMenu(id);
+
+        verify(menuMapper).toDto(menu);
+    }
+
+    @Test
+    void shouldThrow_whenInvalidId(){
+        when(menuRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(MenuNotFoundException.class, () -> menuService.getMenu(0));
+
+        verify(menuMapper, never()).toDto(any(Menu.class));
     }
 }
