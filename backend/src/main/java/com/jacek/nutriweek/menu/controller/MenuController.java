@@ -17,7 +17,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Menu> addMenu(@RequestBody MenuRequest menu, Authentication auth){
+    public ResponseEntity<Menu> addMenu(@Valid @RequestBody MenuRequest menu, Authentication auth){
         String username = auth.getName();
         return ResponseEntity.ok().body(menuService.addMenu(username, menu));
     }
