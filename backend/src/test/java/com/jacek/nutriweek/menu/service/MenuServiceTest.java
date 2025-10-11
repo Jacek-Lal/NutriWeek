@@ -2,6 +2,7 @@ package com.jacek.nutriweek.menu.service;
 
 import com.jacek.nutriweek.common.exception.MenuNotFoundException;
 import com.jacek.nutriweek.menu.dto.MealDTO;
+import com.jacek.nutriweek.menu.dto.MealRequest;
 import com.jacek.nutriweek.menu.dto.MealsByDate;
 import com.jacek.nutriweek.menu.dto.MenuRequest;
 import com.jacek.nutriweek.menu.entity.Meal;
@@ -208,4 +209,38 @@ class MenuServiceTest {
         verify(menuMapper, never()).toDto(any(Meal.class));
     }
 
+    @Test
+    void shouldAddMenuMeal_whenValidMenuId(){
+        long menuId = 1L;
+        MealRequest req = new MealRequest("Meal 1", 600, LocalDate.of(2025, 10, 10));
+        Menu menu = new Menu();
+
+        when(menuRepository.findById(eq(menuId))).thenReturn(Optional.of(menu));
+
+        menuService.addMenuMeal(menuId, req);
+
+        ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
+        verify(mealRepository).save(captor.capture());
+        verify(menuMapper).toDto(any(Meal.class));
+
+        Meal savedMeal = captor.getValue();
+        assertEquals(req.name(), savedMeal.getName());
+        assertEquals(req.targetKcal(), savedMeal.getTargetKcal());
+        assertEquals(req.date(), savedMeal.getDate());
+        assertSame(menu, savedMeal.getMenu());
+        assertTrue(savedMeal.getMealItems().isEmpty());
+    }
+
+    @Test
+    void shouldThrow_whenInvalidMenuId(){
+        long menuId = 1L;
+        MealRequest req = new MealRequest("Meal 1", 600, LocalDate.of(2025, 10, 10));
+
+        when(menuRepository.findById(eq(menuId))).thenReturn(Optional.empty());
+
+        assertThrows(MenuNotFoundException.class, () -> menuService.addMenuMeal(menuId, req));
+
+        verify(mealRepository, never()).save(any(Meal.class));
+        verify(menuMapper, never()).toDto(any(Meal.class));
+    }
 }

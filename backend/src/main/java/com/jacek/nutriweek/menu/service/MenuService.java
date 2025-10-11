@@ -77,7 +77,9 @@ public class MenuService {
     }
 
     public MealDTO addMenuMeal(long id, MealRequest mealReq) {
-        Menu menu = menuRepository.findById(id).orElseThrow(RuntimeException::new);
+        Menu menu = menuRepository.findById(id).orElseThrow(()->
+                new MenuNotFoundException("Menu with id " + id + " does not exist"));
+
         Meal meal = new Meal(mealReq.name(),
                 mealReq.targetKcal(),
                 mealReq.date(),
