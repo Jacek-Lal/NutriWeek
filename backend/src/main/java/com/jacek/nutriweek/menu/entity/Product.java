@@ -29,4 +29,8 @@ public class Product extends BaseEntity {
     @JsonManagedReference("product-nutrients")
     private List<ProductNutrient> nutrients;
 
+    public Product(String name, int fdcId) {
+        this.name = name;
+        this.fdcId = fdcId;
+    }
 }

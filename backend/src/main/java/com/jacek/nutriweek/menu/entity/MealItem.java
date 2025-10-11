@@ -24,4 +24,10 @@ public class MealItem extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Product product;
+
+    public MealItem(float amount, Meal meal, Product product) {
+        this.amount = amount;
+        this.meal = meal;
+        this.product = product;
+    }
 }

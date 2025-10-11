@@ -55,9 +55,7 @@ public class MealService {
             Product product = existingProducts.get(reqProduct.fdcId());
 
             if(product == null){
-                Product newProduct = new Product();
-                newProduct.setName(reqProduct.name());
-                newProduct.setFdcId(reqProduct.fdcId());
+                Product newProduct = new Product(reqProduct.name(), reqProduct.fdcId());
 
                 List<ProductNutrient> pns = new ArrayList<>();
                 for(NutrientDTO reqNut : reqProduct.nutrients()){
@@ -69,22 +67,13 @@ public class MealService {
                         managedNut = nutrientRepository.save(newNut);
                         existingNutrients.put(key, managedNut);
                     }
-
-                    ProductNutrient pn = new ProductNutrient();
-                    pn.setAmount(reqNut.value());
-                    pn.setNutrient(managedNut);
-                    pn.setProduct(newProduct);
-                    pns.add(pn);
+                    pns.add(new ProductNutrient(reqNut.value(), newProduct, managedNut));
                 }
                 newProduct.setNutrients(pns);
                 product = productRepository.save(newProduct);
                 existingProducts.put(product.getFdcId(), product);
             }
-            MealItem mi = new MealItem();
-            mi.setAmount(reqItem.amount());
-            mi.setProduct(product);
-            mi.setMeal(meal);
-            mealItems.add(mi);
+            mealItems.add(new MealItem(reqItem.amount(), meal, product));
         }
         meal.getMealItems().clear();
         meal.getMealItems().addAll(mealItems);
