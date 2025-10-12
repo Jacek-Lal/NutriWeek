@@ -22,8 +22,14 @@ public class GlobalExceptionHandler {
             MenuNotFoundException.class,
             MealNotFoundException.class
     })
-    public ResponseEntity<CustomErrorResponse> handleUsernameNotFound(Exception e){
+    public ResponseEntity<CustomErrorResponse> handleResourceNotFound(Exception e){
         HttpStatus status = HttpStatus.NOT_FOUND;
+        return createResponse(status, e);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<CustomErrorResponse> handleInternalError(Exception e){
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return createResponse(status, e);
     }
 
