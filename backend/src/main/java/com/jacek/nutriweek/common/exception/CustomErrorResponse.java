@@ -1,4 +1,6 @@
 package com.jacek.nutriweek.common.exception;
 
-public record CustomErrorResponse(int status, String message) {
+import java.time.Instant;
+
+public record CustomErrorResponse(int status, String message, Instant timestamp) {
 }

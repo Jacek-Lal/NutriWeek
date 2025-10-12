@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.Instant;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -15,16 +17,18 @@ public class GlobalExceptionHandler {
         return createResponse(status, e);
     }
 
-    @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity<CustomErrorResponse> handleUsernameNotFound(UsernameNotFoundException e){
+    @ExceptionHandler(value = {
+            UsernameNotFoundException.class,
+            MenuNotFoundException.class,
+            MealNotFoundException.class
+    })
+    public ResponseEntity<CustomErrorResponse> handleUsernameNotFound(Exception e){
         HttpStatus status = HttpStatus.NOT_FOUND;
         return createResponse(status, e);
     }
 
     private ResponseEntity<CustomErrorResponse> createResponse(HttpStatus status, Exception e){
-        CustomErrorResponse response = new CustomErrorResponse(status.value(), e.getMessage());
-        return ResponseEntity
-                .status(status)
-                .body(response);
+        CustomErrorResponse response = new CustomErrorResponse(status.value(), e.getMessage(), Instant.now());
+        return ResponseEntity.status(status).body(response);
     }
 }

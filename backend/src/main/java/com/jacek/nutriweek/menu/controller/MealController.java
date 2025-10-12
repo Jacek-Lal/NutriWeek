@@ -6,6 +6,7 @@ import com.jacek.nutriweek.menu.dto.ProductDTO;
 import com.jacek.nutriweek.menu.entity.Meal;
 import com.jacek.nutriweek.menu.service.MealService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public class MealController {
     public ResponseEntity<Meal> updateMealItems(@PathVariable Long mealId,
                                                 @RequestBody List<MealItemDTO> items){
 
-        return ResponseEntity.ok().body(mealService.updateMealItems(mealId, items));
+        mealService.updateMealItems(mealId, items);
+        return ResponseEntity.ok().build();
     }
     @DeleteMapping("/{mealId}")
     public ResponseEntity<Void> deleteMeal(@PathVariable Long mealId){

@@ -12,7 +12,6 @@ import com.jacek.nutriweek.menu.repository.MealRepository;
 import com.jacek.nutriweek.menu.repository.MenuRepository;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,14 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
