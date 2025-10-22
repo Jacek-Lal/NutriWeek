@@ -1,4 +1,4 @@
-package com.jacek.nutriweek.menu.service;
+package com.jacek.nutriweek.unit.menu.service;
 
 import com.jacek.nutriweek.common.exception.MealNotFoundException;
 import com.jacek.nutriweek.menu.dto.MealItemDTO;
@@ -10,6 +10,7 @@ import com.jacek.nutriweek.menu.entity.Product;
 import com.jacek.nutriweek.menu.repository.MealRepository;
 import com.jacek.nutriweek.menu.repository.NutrientRepository;
 import com.jacek.nutriweek.menu.repository.ProductRepository;
+import com.jacek.nutriweek.menu.service.MealService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

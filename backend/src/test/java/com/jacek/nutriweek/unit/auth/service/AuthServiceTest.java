@@ -1,8 +1,10 @@
-package com.jacek.nutriweek.auth.service;
+package com.jacek.nutriweek.unit.auth.service;
 
 import com.jacek.nutriweek.auth.dto.RegisterRequest;
 import com.jacek.nutriweek.auth.entity.VerificationToken;
 import com.jacek.nutriweek.auth.repository.TokenRepository;
+import com.jacek.nutriweek.auth.service.AuthService;
+import com.jacek.nutriweek.auth.service.EmailService;
 import com.jacek.nutriweek.common.exception.UserAlreadyExistsException;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
@@ -30,7 +32,8 @@ class AuthServiceTest {
     @Mock EmailService emailService;
     @Mock PasswordEncoder passwordEncoder;
 
-    @InjectMocks AuthService authService;
+    @InjectMocks
+    AuthService authService;
 
     private static final String USERNAME = "john123";
     private static final String EMAIL = "john@example.com";

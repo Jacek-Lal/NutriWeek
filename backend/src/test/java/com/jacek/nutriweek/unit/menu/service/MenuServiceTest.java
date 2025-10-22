@@ -1,4 +1,4 @@
-package com.jacek.nutriweek.menu.service;
+package com.jacek.nutriweek.unit.menu.service;
 
 import com.jacek.nutriweek.common.exception.MenuNotFoundException;
 import com.jacek.nutriweek.menu.dto.MealDTO;
@@ -10,6 +10,7 @@ import com.jacek.nutriweek.menu.entity.Menu;
 import com.jacek.nutriweek.menu.mapper.MenuMapper;
 import com.jacek.nutriweek.menu.repository.MealRepository;
 import com.jacek.nutriweek.menu.repository.MenuRepository;
+import com.jacek.nutriweek.menu.service.MenuService;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,8 @@ class MenuServiceTest {
     @Mock UserRepository userRepository;
     @Mock MenuMapper menuMapper;
 
-    @InjectMocks MenuService menuService;
+    @InjectMocks
+    MenuService menuService;
 
     private final String USERNAME = "john";
 

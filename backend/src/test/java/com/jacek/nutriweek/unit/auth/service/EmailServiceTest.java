@@ -1,5 +1,6 @@
-package com.jacek.nutriweek.auth.service;
+package com.jacek.nutriweek.unit.auth.service;
 
+import com.jacek.nutriweek.auth.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
