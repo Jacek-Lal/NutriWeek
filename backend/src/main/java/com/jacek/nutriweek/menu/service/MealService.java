@@ -13,6 +13,7 @@ import com.jacek.nutriweek.menu.repository.NutrientRepository;
 import com.jacek.nutriweek.menu.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -129,8 +130,8 @@ public class MealService {
         return mealRepository.save(meal);
     }
 
-    public List<ProductDTO> getRecentProducts(int limit) {
-        return productMapper.toDtoList(mealRepository.findRecentProducts(limit));
+    public List<ProductDTO> getRecentProducts(String username, int limit) {
+        return productMapper.toDtoList(mealRepository.findRecentProductsByUsername(username, PageRequest.of(0, limit)));
     }
 
     public void deleteMeal(Long mealId) {
