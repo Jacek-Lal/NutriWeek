@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByFdcId(int fdcId);
     List<Product> findAllByFdcIdIn(Collection<Integer> fdcIds);
 }

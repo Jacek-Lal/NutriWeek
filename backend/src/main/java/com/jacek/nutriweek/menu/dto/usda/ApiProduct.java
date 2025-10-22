@@ -23,5 +23,4 @@ public class ApiProduct {
     @JsonAlias("foodNutrients")
     @JsonProperty("nutrients")
     private List<ApiNutrient> nutrients;
-
 }

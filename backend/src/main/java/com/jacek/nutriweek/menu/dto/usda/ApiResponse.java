@@ -7,14 +7,10 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApiResponse {
 
-    private int totalHits;
-    private int currentPage;
-    private int totalPages;
-    private List<ApiProduct> foods;
-}
+public record ApiResponse(int totalHits,
+                          int currentPage,
+                          int totalPages,
+                          List<ApiProduct> foods) {}
+
+

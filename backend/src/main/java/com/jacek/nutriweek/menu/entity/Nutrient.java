@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +35,7 @@ public class Nutrient extends BaseEntity {
     public Nutrient(String name, String unit){
         this.name = name;
         this.unit = unit;
+        this.products = new ArrayList<>();
     }
 
     public String getKey(){

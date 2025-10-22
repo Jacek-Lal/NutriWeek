@@ -8,6 +8,7 @@ import com.jacek.nutriweek.menu.service.MealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,9 @@ public class MealController {
         return ResponseEntity.ok().body(mealService.addMeal(mealDto));
     }
     @GetMapping("/recent")
-    public ResponseEntity<List<ProductDTO>> getRecentProducts(@RequestParam int limit){
-        return ResponseEntity.ok().body(mealService.getRecentProducts(limit));
+    public ResponseEntity<List<ProductDTO>> getRecentProducts(@RequestParam int limit, Authentication auth){
+        String username = auth.getName();
+        return ResponseEntity.ok().body(mealService.getRecentProducts(username, limit));
     }
     @PutMapping("/{mealId}/items")
     public ResponseEntity<Meal> updateMealItems(@PathVariable Long mealId,

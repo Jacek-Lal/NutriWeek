@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Collections;
 import java.util.Comparator;
 
 @Slf4j
@@ -52,15 +53,16 @@ public class ProductService {
                 );
             }
 
-            response
-                    .getFoods()
+            if(response != null)
+                response
+                    .foods()
                     .forEach(food -> food.getNutrients().sort(Comparator.comparingInt(ApiNutrient::getRank)));
 
             return response;
 
         } catch (Exception e){
             log.error(e.getMessage());
-            return new ApiResponse();
+            return new ApiResponse(0 ,0, 0, Collections.emptyList());
         }
     }
 }

@@ -27,6 +27,7 @@ public class MenuController {
                                                       @RequestParam int size,
                                                       Authentication auth){
         String username = auth.getName();
+
         return ResponseEntity.ok().body(menuService.getMenus(username, page, size));
     }
 
