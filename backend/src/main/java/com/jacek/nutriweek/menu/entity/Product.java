@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,11 +28,11 @@ public class Product extends BaseEntity {
             orphanRemoval = true
     )
     @JsonManagedReference("product-nutrients")
-    private List<ProductNutrient> nutrients;
+    private Set<ProductNutrient> nutrients;
 
     public Product(String name, int fdcId) {
         this.name = name;
         this.fdcId = fdcId;
-        this.nutrients = new ArrayList<>();
+        this.nutrients = new HashSet<>();
     }
 }

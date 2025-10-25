@@ -2,7 +2,10 @@ package com.jacek.nutriweek.menu.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jacek.nutriweek.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +17,7 @@ import lombok.Setter;
 public class MealItem extends BaseEntity {
 
     @Column(nullable = false)
-    private float amount;
+    private double amount;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "meal_id", nullable = false)
@@ -25,7 +28,7 @@ public class MealItem extends BaseEntity {
     @JoinColumn(nullable = false)
     private Product product;
 
-    public MealItem(float amount, Meal meal, Product product) {
+    public MealItem(double amount, Meal meal, Product product) {
         this.amount = amount;
         this.meal = meal;
         this.product = product;

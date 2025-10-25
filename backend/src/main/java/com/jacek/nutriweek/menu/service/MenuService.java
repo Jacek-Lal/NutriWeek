@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
@@ -61,20 +61,79 @@ public class MenuService {
         return menuMapper.toDto(menu);
     }
 
-    public Page<MealsByDate> getMenuMeals(long id, int page, int size) {
-        Page<LocalDate> datesPage = mealRepository.findDistinctDatesByMenuId(id, PageRequest.of(page, size));
+    public Page<MealsByDate> getMenuMeals(long menuId, int page, int size) {
+        Page<LocalDate> datesPage =
+                mealRepository.findDistinctDatesByMenuId(menuId, PageRequest.of(page, size));
 
-        List<MealsByDate> content = datesPage.getContent().stream()
-                .map(date -> {
-                    List<MealDTO> meals = mealRepository.findByMenuIdAndDate(id, date).stream()
-                            .map(menuMapper::toDto)
-                            .toList();
-                    return new MealsByDate(date, meals);
-                })
+        List<LocalDate> dates = datesPage.getContent();
+        if (dates.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), datesPage.getPageable(), 0);
+        }
+
+        List<MealFlatDTO> flatData = mealRepository.findMealData(menuId, dates);
+
+        Map<LocalDate, Map<Long, MealDTO>> mealsByDate = new TreeMap<>();
+
+        for (MealFlatDTO row : flatData) {
+            Map<Long, MealDTO> mealsOnDate =
+                    mealsByDate.computeIfAbsent(row.mealDate(), d -> new LinkedHashMap<>());
+
+            MealDTO meal = mealsOnDate.get(row.mealId());
+            List<MealItemDTO> mealItems;
+            if (meal == null) {
+                mealItems = new ArrayList<>();
+                meal = new MealDTO(row.mealId(), row.mealName(), row.targetKcal(),
+                        row.mealDate(), mealItems);
+                mealsOnDate.put(row.mealId(), meal);
+
+                if (row.isMealEmpty()) continue;
+            } else {
+                mealItems = new ArrayList<>(meal.mealItems());
+            }
+
+            MealItemDTO existingItem = mealItems.stream()
+                    .filter(mi -> mi.product().fdcId() == row.fdcId())
+                    .findFirst()
+                    .orElse(null);
+
+            ProductDTO product;
+            List<NutrientDTO> nutrients;
+
+            if (existingItem == null) {
+                nutrients = new ArrayList<>();
+                product = new ProductDTO(row.fdcId(), row.productName(), nutrients);
+                mealItems.add(new MealItemDTO(product, row.productAmount()));
+            } else {
+                product = existingItem.product();
+                nutrients = new ArrayList<>(product.nutrients());
+            }
+
+            NutrientDTO nutrient = new NutrientDTO(
+                    row.nutrientName(),
+                    row.nutrientUnit(),
+                    row.nutrientAmount()
+            );
+            nutrients.add(nutrient);
+
+            product = new ProductDTO(product.fdcId(), product.name(), nutrients);
+
+            ProductDTO finalProduct = product;
+            mealItems.removeIf(mi -> mi.product().fdcId() == finalProduct.fdcId());
+            mealItems.add(new MealItemDTO(product, row.productAmount()));
+
+            mealsOnDate.put(row.mealId(),
+                    new MealDTO(row.mealId(), row.mealName(), row.targetKcal(),
+                            row.mealDate(), mealItems));
+        }
+
+        List<MealsByDate> content = mealsByDate.entrySet().stream()
+                .map(entry -> new MealsByDate(entry.getKey(),
+                        new ArrayList<>(entry.getValue().values())))
                 .toList();
 
         return new PageImpl<>(content, datesPage.getPageable(), datesPage.getTotalElements());
     }
+
 
     public MealDTO addMenuMeal(long id, MealRequest mealReq) {
         Menu menu = menuRepository.findById(id).orElseThrow(()->
