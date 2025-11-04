@@ -24,7 +24,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/menus/**", "/meals/**", "/products/**").authenticated()
-                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

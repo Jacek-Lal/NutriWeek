@@ -35,7 +35,7 @@ public class Meal extends BaseEntity {
     @OneToMany(
             mappedBy = "meal",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<MealItem> mealItems = new ArrayList<>();

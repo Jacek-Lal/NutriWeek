@@ -86,7 +86,8 @@ public class MenuService {
                         row.mealDate(), mealItems);
                 mealsOnDate.put(row.mealId(), meal);
 
-                if (row.isMealEmpty()) continue;
+                if (!row.containProducts())
+                    continue;
             } else {
                 mealItems = new ArrayList<>(meal.mealItems());
             }
@@ -108,12 +109,14 @@ public class MenuService {
                 nutrients = new ArrayList<>(product.nutrients());
             }
 
-            NutrientDTO nutrient = new NutrientDTO(
-                    row.nutrientName(),
-                    row.nutrientUnit(),
-                    row.nutrientAmount()
-            );
-            nutrients.add(nutrient);
+            if (row.containNutrients()){
+                NutrientDTO nutrient = new NutrientDTO(
+                        row.nutrientName(),
+                        row.nutrientUnit(),
+                        row.nutrientAmount()
+                );
+                nutrients.add(nutrient);
+            }
 
             product = new ProductDTO(product.fdcId(), product.name(), nutrients);
 
