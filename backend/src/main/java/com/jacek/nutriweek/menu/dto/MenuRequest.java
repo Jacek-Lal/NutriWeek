@@ -1,10 +1,8 @@
 package com.jacek.nutriweek.menu.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
-
-import jakarta.validation.constraints.*;
 
 
 public record MenuRequest(

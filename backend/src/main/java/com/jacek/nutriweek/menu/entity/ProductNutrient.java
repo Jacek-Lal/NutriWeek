@@ -3,7 +3,6 @@ package com.jacek.nutriweek.menu.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jacek.nutriweek.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

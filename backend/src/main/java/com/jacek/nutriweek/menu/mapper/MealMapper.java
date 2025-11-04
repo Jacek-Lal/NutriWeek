@@ -11,6 +11,8 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public interface MealMapper {
     Meal toEntity(MealDTO dto);
@@ -29,7 +31,7 @@ public interface MealMapper {
                 .nutrients()
                 .stream()
                 .map(n -> toEntity(n, product))
-                .toList());
+                .collect(Collectors.toSet()));
     }
 
 }

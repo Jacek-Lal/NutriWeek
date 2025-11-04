@@ -6,7 +6,6 @@ import com.jacek.nutriweek.menu.dto.ProductDTO;
 import com.jacek.nutriweek.menu.entity.Meal;
 import com.jacek.nutriweek.menu.service.MealService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
