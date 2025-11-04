@@ -1,6 +1,6 @@
 package com.jacek.nutriweek.menu.service;
 
-import com.jacek.nutriweek.common.exception.MealNotFoundException;
+import com.jacek.nutriweek.common.exception.ResourceNotFoundException;
 import com.jacek.nutriweek.menu.dto.MealItemDTO;
 import com.jacek.nutriweek.menu.dto.NutrientDTO;
 import com.jacek.nutriweek.menu.dto.ProductDTO;
@@ -35,7 +35,7 @@ public class MealService {
 
     public void updateMealItems(String username, Long mealId, List<MealItemDTO> items) {
         Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
-                new MealNotFoundException("Meal with id " + mealId + " not found"));
+                new ResourceNotFoundException("Meal with id " + mealId + " not found"));
         meal.getMealItems().clear();
 
         if(items.isEmpty()) {
@@ -95,7 +95,7 @@ public class MealService {
 
     public void deleteMeal(String username, Long mealId) {
         Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
-                new MealNotFoundException("Meal with id " + mealId + " not found"));
+                new ResourceNotFoundException("Meal with id " + mealId + " not found"));
 
         mealRepository.delete(meal);
     }

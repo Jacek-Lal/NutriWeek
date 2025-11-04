@@ -1,6 +1,6 @@
 package com.jacek.nutriweek.menu.service;
 
-import com.jacek.nutriweek.common.exception.MenuNotFoundException;
+import com.jacek.nutriweek.common.exception.ResourceNotFoundException;
 import com.jacek.nutriweek.menu.dto.*;
 import com.jacek.nutriweek.menu.entity.Meal;
 import com.jacek.nutriweek.menu.entity.Menu;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +30,7 @@ public class MenuService {
 
     public Menu addMenu(String username, MenuRequest menuRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User with given username doesn't exist"));
+                new ResourceNotFoundException("User with given username doesn't exist"));
 
         Menu menu = menuMapper.toEntity(menuRequest);
 
@@ -57,7 +56,7 @@ public class MenuService {
 
     public MenuResponse getMenu(String username, long id) {
         Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(() ->
-                new MenuNotFoundException("Menu with id " + id + " does not exist"));
+                new ResourceNotFoundException("Menu with id " + id + " does not exist"));
         return menuMapper.toDto(menu);
     }
 
@@ -140,7 +139,7 @@ public class MenuService {
 
     public MealDTO addMenuMeal(String username, long id, MealRequest mealReq) {
         Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(()->
-                new MenuNotFoundException("Menu with id " + id + " does not exist"));
+                new ResourceNotFoundException("Menu with id " + id + " does not exist"));
 
         Meal meal = new Meal(mealReq.name(),
                 mealReq.targetKcal(),
@@ -154,7 +153,7 @@ public class MenuService {
 
     public void deleteMenu(String username, long id) {
         Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(()->
-                new MenuNotFoundException("Menu with id " + id + " does not exist"));
+                new ResourceNotFoundException("Menu with id " + id + " does not exist"));
 
         menuRepository.delete(menu);
     }

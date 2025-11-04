@@ -2,7 +2,6 @@ package com.jacek.nutriweek.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -17,11 +16,7 @@ public class GlobalExceptionHandler {
         return createResponse(status, e);
     }
 
-    @ExceptionHandler(value = {
-            UsernameNotFoundException.class,
-            MenuNotFoundException.class,
-            MealNotFoundException.class
-    })
+    @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<CustomErrorResponse> handleResourceNotFound(Exception e){
         HttpStatus status = HttpStatus.NOT_FOUND;
         return createResponse(status, e);
