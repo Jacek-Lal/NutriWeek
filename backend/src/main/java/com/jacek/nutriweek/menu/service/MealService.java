@@ -1,7 +1,6 @@
 package com.jacek.nutriweek.menu.service;
 
 import com.jacek.nutriweek.common.exception.MealNotFoundException;
-import com.jacek.nutriweek.menu.dto.MealDTO;
 import com.jacek.nutriweek.menu.dto.MealItemDTO;
 import com.jacek.nutriweek.menu.dto.NutrientDTO;
 import com.jacek.nutriweek.menu.dto.ProductDTO;
@@ -34,8 +33,8 @@ public class MealService {
     private final MealMapper mealMapper;
     private final ProductMapper productMapper;
 
-    public void updateMealItems(Long mealId, List<MealItemDTO> items) {
-        Meal meal =  mealRepository.findById(mealId).orElseThrow(()->
+    public void updateMealItems(String username, Long mealId, List<MealItemDTO> items) {
+        Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
                 new MealNotFoundException("Meal with id " + mealId + " not found"));
         meal.getMealItems().clear();
 
@@ -90,48 +89,14 @@ public class MealService {
         return productRepository.save(newProduct);
     }
 
-    public Meal addMeal(MealDTO mealDto) {
-        Meal meal = mealMapper.toEntity(mealDto);
-
-        Set<Integer> fdcIds = meal.getMealItems().stream()
-                .map(mi -> mi.getProduct().getFdcId())
-                .collect(Collectors.toSet());
-
-        Map<Integer, Product> existingProducts = productRepository.findAllByFdcIdIn(fdcIds)
-                .stream()
-                .collect(Collectors.toMap(Product::getFdcId, p -> p));
-
-        Map<String, Nutrient> existingNutrients = nutrientRepository.findAll()
-                .stream()
-                .collect(Collectors.toMap(Nutrient::getKey, n -> n));
-
-
-        for (MealItem mealItem : meal.getMealItems()){
-            Product product = existingProducts.get(mealItem.getProduct().getFdcId());
-
-            if(product == null)
-                product = productRepository.save(mealItem.getProduct());
-
-            for (ProductNutrient pn : product.getNutrients()){
-                Nutrient nutrient = existingNutrients.get(pn.getNutrient().getKey());
-                if(nutrient == null){
-                    nutrient = nutrientRepository.save(pn.getNutrient());
-                    existingNutrients.put(nutrient.getKey(), nutrient);
-                }
-                pn.setNutrient(nutrient);
-                pn.setProduct(product);
-            }
-            mealItem.setProduct(product);
-
-        }
-        return mealRepository.save(meal);
-    }
-
     public List<ProductDTO> getRecentProducts(String username, int limit) {
         return productMapper.toDtoList(mealRepository.findRecentProductsByUsername(username, PageRequest.of(0, limit)));
     }
 
-    public void deleteMeal(Long mealId) {
-        mealRepository.deleteById(mealId);
+    public void deleteMeal(String username, Long mealId) {
+        Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
+                new MealNotFoundException("Meal with id " + mealId + " not found"));
+
+        mealRepository.delete(meal);
     }
 }
