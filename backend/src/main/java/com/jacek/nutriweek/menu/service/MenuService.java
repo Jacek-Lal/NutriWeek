@@ -55,22 +55,22 @@ public class MenuService {
         return menuRepository.findAllSummaries(username, PageRequest.of(page, size));
     }
 
-    public MenuResponse getMenu(long id) {
-        Menu menu = menuRepository.findById(id).orElseThrow(() ->
+    public MenuResponse getMenu(String username, long id) {
+        Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(() ->
                 new MenuNotFoundException("Menu with id " + id + " does not exist"));
         return menuMapper.toDto(menu);
     }
 
-    public Page<MealsByDate> getMenuMeals(long menuId, int page, int size) {
+    public Page<MealsByDate> getMenuMeals(String username, long menuId, int page, int size) {
         Page<LocalDate> datesPage =
-                mealRepository.findDistinctDatesByMenuId(menuId, PageRequest.of(page, size));
+                mealRepository.findDistinctDatesByMenuId(username, menuId, PageRequest.of(page, size));
 
         List<LocalDate> dates = datesPage.getContent();
         if (dates.isEmpty()) {
             return new PageImpl<>(Collections.emptyList(), datesPage.getPageable(), 0);
         }
 
-        List<MealFlatDTO> flatData = mealRepository.findMealData(menuId, dates);
+        List<MealFlatDTO> flatData = mealRepository.findMealData(username, menuId, dates);
 
         Map<LocalDate, Map<Long, MealDTO>> mealsByDate = new TreeMap<>();
 
@@ -138,8 +138,8 @@ public class MenuService {
     }
 
 
-    public MealDTO addMenuMeal(long id, MealRequest mealReq) {
-        Menu menu = menuRepository.findById(id).orElseThrow(()->
+    public MealDTO addMenuMeal(String username, long id, MealRequest mealReq) {
+        Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(()->
                 new MenuNotFoundException("Menu with id " + id + " does not exist"));
 
         Meal meal = new Meal(mealReq.name(),
@@ -152,8 +152,11 @@ public class MenuService {
         return menuMapper.toDto(meal);
     }
 
-    public void deleteMenu(long id) {
-        menuRepository.deleteById(id);
+    public void deleteMenu(String username, long id) {
+        Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(()->
+                new MenuNotFoundException("Menu with id " + id + " does not exist"));
+
+        menuRepository.delete(menu);
     }
 
 

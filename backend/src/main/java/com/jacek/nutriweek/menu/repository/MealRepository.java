@@ -25,16 +25,20 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
         GROUP BY p
         ORDER BY MAX(mi.id) DESC
     """)
-    List<Product> findRecentProductsByUsername(@Param("username") String username, Pageable pageable);
+    List<Product> findRecentProductsByUsername(@Param("username") String username,
+                                               Pageable pageable);
 
 
     @Query("""
         SELECT DISTINCT m.date
         FROM Meal m
         WHERE m.menu.id = :menuId
+        AND m.menu.owner.username = :username
         ORDER BY m.date
     """)
-    Page<LocalDate> findDistinctDatesByMenuId(@Param("menuId") long menuId, Pageable pageable);
+    Page<LocalDate> findDistinctDatesByMenuId(@Param("username") String username,
+                                              @Param("menuId") long menuId,
+                                              Pageable pageable);
 
     List<Meal> findByMenuIdAndDate(long menuId, LocalDate date);
 
@@ -51,8 +55,10 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
         LEFT JOIN mi.product p
         LEFT JOIN p.nutrients pn
         LEFT JOIN pn.nutrient n
-        WHERE m.menu.id = :menuId AND m.date IN :dates
+        WHERE m.menu.owner.username = :username AND m.menu.id = :menuId AND m.date IN :dates
         ORDER BY m.date ASC, m.id ASC
     """)
-    List<MealFlatDTO> findMealData(long menuId, Collection<LocalDate> dates);
+    List<MealFlatDTO> findMealData(@Param("username") String username,
+                                   @Param("menuId") long menuId,
+                                   @Param("dates") Collection<LocalDate> dates);
 }

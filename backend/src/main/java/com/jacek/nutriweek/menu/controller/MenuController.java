@@ -18,38 +18,41 @@ public class MenuController {
 
     @PostMapping
     public ResponseEntity<Menu> addMenu(@Valid @RequestBody MenuRequest menu, Authentication auth){
-        String username = auth.getName();
-        return ResponseEntity.ok().body(menuService.addMenu(username, menu));
+        return ResponseEntity.ok().body(menuService.addMenu(auth.getName(), menu));
     }
 
     @GetMapping
     public ResponseEntity<Page<MenuSummary>> getMenus(@RequestParam int page,
                                                       @RequestParam int size,
                                                       Authentication auth){
-        String username = auth.getName();
 
-        return ResponseEntity.ok().body(menuService.getMenus(username, page, size));
+        return ResponseEntity.ok().body(menuService.getMenus(auth.getName(), page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuResponse> getMenu(@PathVariable long id){
-        return ResponseEntity.ok().body(menuService.getMenu(id));
+    public ResponseEntity<MenuResponse> getMenu(@PathVariable long id,
+                                                Authentication auth){
+
+        return ResponseEntity.ok().body(menuService.getMenu(auth.getName(), id));
     }
 
     @GetMapping("/{id}/meals")
     public ResponseEntity<Page<MealsByDate>> getMenuMeals(@PathVariable long id,
                                                           @RequestParam int page,
-                                                          @RequestParam int size){
-        return ResponseEntity.ok().body(menuService.getMenuMeals(id, page, size));
+                                                          @RequestParam int size,
+                                                          Authentication auth){
+        return ResponseEntity.ok().body(menuService.getMenuMeals(auth.getName(), id, page, size));
     }
     @PostMapping("/{id}/meals")
     public ResponseEntity<MealDTO> addMenuMeal(@PathVariable long id,
-                                               @Valid @RequestBody MealRequest meal){
-        return ResponseEntity.ok().body(menuService.addMenuMeal(id, meal));
+                                               @Valid @RequestBody MealRequest meal,
+                                               Authentication auth){
+        return ResponseEntity.ok().body(menuService.addMenuMeal(auth.getName(), id, meal));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable long id){
-        menuService.deleteMenu(id);
+    public ResponseEntity<Void> deleteMenu(@PathVariable long id,
+                                           Authentication auth){
+        menuService.deleteMenu(auth.getName(), id);
         return ResponseEntity.noContent().build();
     }
 }

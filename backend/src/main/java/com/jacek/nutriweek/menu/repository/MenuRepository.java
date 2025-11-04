@@ -12,22 +12,19 @@ import java.util.Optional;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("""
-      SELECT DISTINCT m FROM Menu m
-      LEFT JOIN FETCH m.mealList ml
-      LEFT JOIN FETCH ml.mealItems mi
-      LEFT JOIN FETCH mi.product p
-      LEFT JOIN FETCH p.nutrients pn
-      LEFT JOIN FETCH pn.nutrient n
-      WHERE m.id = :id
-    """)
-    Optional<Menu> findMenuWithAll(@Param("id") long id);
+      SELECT m 
+      FROM Menu m
+      JOIN m.owner o
+      WHERE o.username = :username AND m.id = :id 
+      """)
+    Optional<Menu> findByOwnerAndId(@Param("username") String username, @Param("id") long id);
 
     @Query("""
-            SELECT m.id, m.name, m.days, m.startDate
+            SELECT m.id, m.name, m.days, m.startDate, m.createdAt
             FROM Menu m
             JOIN m.owner o
             WHERE o.username = :username
+            ORDER BY m.createdAt DESC
             """)
-    Page<MenuSummary> findAllSummaries(String username, Pageable pageable);
-
+    Page<MenuSummary> findAllSummaries(@Param("username") String username, Pageable pageable);
 }

@@ -46,7 +46,7 @@ public class Menu extends BaseEntity {
     @OneToMany(
             mappedBy = "menu",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     @JsonManagedReference

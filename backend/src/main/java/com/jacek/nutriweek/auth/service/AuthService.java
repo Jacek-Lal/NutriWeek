@@ -27,14 +27,14 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public void register(RegisterRequest req) {
-        if (userRepository.existsByUsername(req.login())) {
+        if (userRepository.existsByUsername(req.username())) {
             throw new UserAlreadyExistsException("Username already taken");
         }
         if (userRepository.existsByEmail(req.email())) {
             throw new UserAlreadyExistsException("Email already registered");
         }
 
-        User newUser = new User(req.login(),
+        User newUser = new User(req.username(),
                 passwordEncoder.encode(req.password()),
                 req.email(),
                 false);
