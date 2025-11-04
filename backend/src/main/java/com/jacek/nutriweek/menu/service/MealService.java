@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,8 +56,6 @@ public class MealService {
                 .stream()
                 .collect(Collectors.toMap(Nutrient::getKey, n -> n));
 
-
-        List<MealItem> mealItems = new ArrayList<>(items.size());
         for (MealItemDTO reqItem : items){
             ProductDTO reqProduct = reqItem.product();
             Product product = existingProducts.get(reqProduct.fdcId());
@@ -66,10 +64,9 @@ public class MealService {
                 product = createProduct(reqProduct, existingNutrients);
                 existingProducts.put(product.getFdcId(), product);
             }
-            mealItems.add(new MealItem(reqItem.amount(), meal, product));
+            MealItem mi = new MealItem(reqItem.amount(), meal, product);
+            meal.getMealItems().add(mi);
         }
-
-        meal.getMealItems().addAll(mealItems);
 
         mealRepository.save(meal);
     }
@@ -77,7 +74,7 @@ public class MealService {
     protected Product createProduct(ProductDTO reqProduct, Map<String, Nutrient> existingNutrients){
         Product newProduct = new Product(reqProduct.name(), reqProduct.fdcId());
 
-        List<ProductNutrient> pns = new ArrayList<>();
+        Set<ProductNutrient> pns = new HashSet<>();
         for(NutrientDTO reqNut : reqProduct.nutrients()){
             Nutrient newNut = new Nutrient(reqNut.name(), reqNut.unit());
             String key = newNut.getKey();
