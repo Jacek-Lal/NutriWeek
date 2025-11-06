@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Meal from "./Meal.js";
 import { deleteMeal } from "api/MealService.js";
 import { addMenuMeal } from "api/MenuService.js";
@@ -59,36 +59,51 @@ const Day = ({ menuId, initialMeals, date }) => {
   }, 0);
 
   return (
-    <div className="min-w-64 min-h-100 flex flex-col gap-6 mt-10 p-6 rounded-xl bg-slate-200 text-black">
-      <p className=" text-center">{date}</p>
-      <p className="text-gray-700 text-center">
-        {macros.kcal} / {targetKcal} kcal
-      </p>
-      <div className="">
-        <div className="pl-2 pr-2 pt-5 flex flex-row justify-between">
+    <div className="min-w-64 flex flex-col gap-5 mt-6 p-6 rounded-2xl">
+      {/* Date + macros summary */}
+      <div className="flex flex-col items-center">
+        <p className="font-semibold text-gray-700">{date}</p>
+        <p className="text-sm text-gray-600">
+          <span className="text-green-600 font-semibold">{macros.kcal}</span> /{" "}
+          {targetKcal} kcal
+        </p>
+      </div>
+
+      {/* Macros breakdown */}
+      <div className="bg-gray-50 rounded-lg p-4 shadow-inner">
+        <div className="flex justify-between text-gray-700 font-medium border-b pb-1 mb-2 text-sm">
           <p>Protein</p>
           <p>Fat</p>
           <p>Carbs</p>
         </div>
-        <div className="pl-2 pr-2 flex justify-between">
+        <div className="flex justify-between text-gray-800 font-semibold text-sm">
           <p>
-            {macros.protein.toFixed(2)} <span className="text-s">g</span>
+            {macros.protein.toFixed(1)} <span className="text-gray-500">g</span>
           </p>
-          <p>{macros.fat.toFixed(2)} g</p>
-          <p>{macros.carbs.toFixed(2)} g</p>
+          <p>
+            {macros.fat.toFixed(1)} <span className="text-gray-500">g</span>
+          </p>
+          <p>
+            {macros.carbs.toFixed(1)} <span className="text-gray-500">g</span>
+          </p>
         </div>
       </div>
+
+      {/* Add meal toggle */}
       <p
-        className="text-center text-blue-600 hover:underline cursor-pointer"
+        className="text-center text-green-600 font-medium hover:underline cursor-pointer transition"
         onClick={() => setShowForm(!showForm)}
       >
         <i className={`bi bi-${showForm ? "dash" : "plus"}`}></i>{" "}
         {!showForm ? "Add meal" : "Cancel"}
       </p>
+
+      {/* Meal form */}
       <NewMealDialog show={showForm} onSubmit={onAddMeal} />
 
-      {meals.map((meal) => {
-        return (
+      {/* Meals list */}
+      <div className="flex flex-col gap-5">
+        {meals.map((meal) => (
           <Meal
             key={meal.id}
             meal={meal}
@@ -96,8 +111,8 @@ const Day = ({ menuId, initialMeals, date }) => {
             onUpdateItems={updateMealItems}
             onDelete={onDeleteMeal}
           />
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 };

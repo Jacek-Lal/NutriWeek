@@ -7,15 +7,19 @@ const InputField = ({
   placeholder,
   className,
 }) => (
-  <div className="flex flex-col gap-2">
-    {label && <label className="font-semibold">{label}</label>}
+  <div className="flex flex-col gap-2 w-full">
+    {label && (
+      <label className="font-semibold text-gray-700 text-sm">{label}</label>
+    )}
     <input
       type={type}
       name={name}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className={`rounded-md p-2 text-slate-800 ${className || ""}`}
+      className={`rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200 ${
+        className || ""
+      }`}
     />
   </div>
 );
@@ -25,17 +29,17 @@ const MacroField = ({ label, calories, percent, name, onChange, factor }) => {
   const kcal = ((calories * percent) / 100).toFixed(0);
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-center font-semibold">{label}</label>
-      <p className="text-center">{grams} g</p>
-      <p className="text-center">{kcal} kcal</p>
+    <div className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200">
+      <label className="font-semibold text-gray-700">{label}</label>
+      <p className="text-sm text-gray-600">{grams} g</p>
+      <p className="text-sm text-gray-600">{kcal} kcal</p>
       <input
         type="number"
         name={name}
         value={percent}
         onChange={onChange}
         placeholder={label}
-        className="rounded-md p-2 text-slate-800"
+        className="w-full rounded-lg border border-gray-300 bg-white text-gray-900 px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
       />
     </div>
   );
@@ -44,31 +48,33 @@ const MacroField = ({ label, calories, percent, name, onChange, factor }) => {
 const DaysOrRange = ({ menuData, onChange }) => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
-        <label className="flex items-center gap-2">
+      {/* Radio controls */}
+      <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-700">
+        <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
             name="rangeType"
             value="days"
             checked={menuData.rangeType === "days"}
             onChange={onChange}
-            className="accent-blue-500"
+            className="text-green-500 focus:ring-green-400"
           />
           Number of Days
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
             name="rangeType"
             value="dates"
             checked={menuData.rangeType === "dates"}
             onChange={onChange}
-            className="accent-blue-500"
+            className="text-green-500 focus:ring-green-400"
           />
           Date Range
         </label>
       </div>
 
+      {/* Conditional section */}
       {menuData.rangeType === "days" ? (
         <InputField
           type="number"
@@ -79,7 +85,7 @@ const DaysOrRange = ({ menuData, onChange }) => {
           className="w-32"
         />
       ) : (
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-3">
           <InputField
             type="date"
             name="startDate"
@@ -102,20 +108,20 @@ const DaysOrRange = ({ menuData, onChange }) => {
 
 const FormInput = ({ id, label, type, register, rules, error }) => {
   return (
-    <div>
-      <label className="mb-4 text-white" htmlFor={id}>
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-sm font-semibold text-gray-700">
         {label}
       </label>
       <input
         id={id}
         type={type}
-        className={`mb-4 py-2 px-4 rounded-lg border ${
-          error ? "border-red-500" : ""
+        className={`rounded-xl border bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200 ${
+          error ? "border-red-500 focus:ring-red-400" : "border-gray-300"
         }`}
         onInput={(e) => (e.target.value = e.target.value.replace(/\s/g, ""))}
         {...register(id, rules)}
       />
-      {error && <p className="mb-2 text-red-500">{error.message}</p>}
+      {error && <p className="text-sm text-red-500 mt-1">{error.message}</p>}
     </div>
   );
 };

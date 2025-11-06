@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
 import { getCsrf, registerUser } from "api";
 
-const SignupForm = () => {
+const SignupForm = ({ onSuccess }) => {
   const {
     register,
     handleSubmit,
@@ -47,6 +47,7 @@ const SignupForm = () => {
 
       const { confirmPassword, ...payload } = data;
       const response = await registerUser(payload);
+      onSuccess();
       setServerError("");
     } catch (error) {
       if (error.response.status === 409)
@@ -55,10 +56,8 @@ const SignupForm = () => {
   };
 
   return (
-    <form
-      className="p-8 bg-slate-700 flex flex-col w-min h-min m-auto rounded-2xl"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {/* Login */}
       <FormInput
         id="login"
         label="Login"
@@ -68,6 +67,7 @@ const SignupForm = () => {
         error={errors.login}
       />
 
+      {/* Email */}
       <FormInput
         id="email"
         label="Email"
@@ -77,6 +77,7 @@ const SignupForm = () => {
         error={errors.email}
       />
 
+      {/* Password */}
       <FormInput
         id="password"
         label="Password"
@@ -86,6 +87,7 @@ const SignupForm = () => {
         error={errors.password}
       />
 
+      {/* Confirm Password */}
       <FormInput
         id="confirmPassword"
         label="Confirm password"
@@ -94,14 +96,17 @@ const SignupForm = () => {
         rules={rules.confirmPassword}
         error={errors.confirmPassword}
       />
+
       {serverError && (
-        <p className="mb-4 text-center text-red-500">{serverError}</p>
+        <h1 className="text-center text-red-600">{serverError}</h1>
       )}
-      <input
-        className="mt-6 py-2 px-6 text-white bg-blue-600 rounded-full cursor-pointer"
+      {/* Submit Button */}
+      <button
         type="submit"
-        value="Sign up"
-      />
+        className="w-full bg-green-500 text-white font-semibold py-2.5 rounded-xl shadow-sm hover:bg-green-600 transition-all duration-200"
+      >
+        Sign Up
+      </button>
     </form>
   );
 };

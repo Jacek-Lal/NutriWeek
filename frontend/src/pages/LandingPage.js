@@ -1,92 +1,100 @@
-import { useAuth } from "hooks/useAuth";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
-const LandingPage = () => {
-  const { user, isLoggedIn } = useAuth();
+export default function LandingPage() {
+  const { isLoggedIn } = useAuth();
 
   return (
-    <div className="bg-primary text-secondary-dark30 min-h-screen flex flex-col">
-      {/* Hero section */}
-      <section className="flex flex-col items-center justify-center text-center flex-1 px-6 py-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          {!isLoggedIn ? (
-            <>
-              Welcome to <span className="text-tertiary">NutriWeek</span>
-            </>
-          ) : (
-            <>
-              Hello <span className="text-tertiary">{user.username}</span>
-            </>
-          )}
-        </h1>
-        <p className="max-w-2xl text-lg mb-8">
-          Plan, track and optimise your meals with ease. Create weekly menus,
-          calculate macros and keep your nutrition on track.
-        </p>
-        {!isLoggedIn ? (
-          <div className="flex gap-4">
-            <Link
-              to="/register"
-              className="bg-tertiary hover:bg-tertiary/80 px-6 py-3 rounded-lg shadow font-semibold text-white transition"
-            >
-              Get Started
-            </Link>
-            <Link
-              to="/login"
-              className="border border-tertiary hover:bg-tertiary hover:text-white px-6 py-3 rounded-lg shadow font-semibold transition"
-            >
-              Log In
-            </Link>
-          </div>
-        ) : (
-          <div className="flex gap-4">
-            <Link
-              to="/menus"
-              className="bg-tertiary hover:bg-tertiary/80 px-6 py-3 rounded-lg shadow font-semibold text-white transition"
-            >
-              Menus
-            </Link>
-          </div>
-        )}
-      </section>
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-gray-50 text-gray-800 flex flex-col">
+      {/* Hero Section */}
+      <section className="w-3/4 m-auto flex flex-col md:flex-row items-center justify-between flex-1 px-6 md:px-16 py-10 md:py-20 gap-10">
+        {/* Text content */}
+        <div className="flex-1 space-y-6 text-center md:text-left">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+            Plan your meals.
+            <br />
+            Eat smarter. Feel better.
+          </h1>
+          <p className="text-gray-600 text-lg max-w-md mx-auto md:mx-0">
+            NutriWeek helps you create balanced meal plans, track ingredients,
+            and reach your nutrition goals with ease — all in one place.
+          </p>
 
-      {/* Features section */}
-      <section className="bg-secondary-dark60 py-16 px-6 text-primary">
-        <h2 className="text-3xl font-bold text-center mb-12">Why NutriWeek?</h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto text-secondary-dark80">
-          <div className="bg-secondary-tint30 p-6 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-semibold mb-2">Plan Weekly Menus</h3>
-            <p>
-              Create and manage weekly menus tailored to your goals and track
-              your progress day by day.
-            </p>
-          </div>
-          <div className="bg-secondary-tint30 p-6 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-semibold mb-2">Track Macros</h3>
-            <p>
-              Automatically calculate calories, protein, fat and carbs based on
-              your meals and portion sizes.
-            </p>
-          </div>
-          <div className="bg-secondary-tint30 p-6 rounded-xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-semibold mb-2">
-              Personalised Experience
-            </h3>
-            <p>
-              Your data stays secure. Access your menus from any device after
-              logging in.
-            </p>
+          {!isLoggedIn ? (
+            <div className="flex justify-center md:justify-start gap-4">
+              <Link to="/register" className="btn-primary text-lg px-6 py-3">
+                Get Started
+              </Link>
+              <Link to="/login" className="btn-secondary text-lg px-6 py-3">
+                Explore Demo
+              </Link>
+            </div>
+          ) : (
+            <div className="flex justify-center md:justify-start gap-4">
+              <Link to="/menus" className="btn-primary text-lg px-6 py-3">
+                Go to Dashboard
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Hero Illustration */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-72 h-72 md:w-96 md:h-96">
+            <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-60"></div>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/706/706195.png"
+              alt="Healthy food illustration"
+              className="relative w-full h-full object-contain drop-shadow-md"
+            />
           </div>
         </div>
       </section>
 
+      {/* Feature Cards */}
+      <section className="px-6 md:px-16 py-10 grid md:grid-cols-3 gap-8">
+        <div className="card text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-2xl">
+              🥗
+            </div>
+          </div>
+          <h3 className="heading">Personalized Meal Plans</h3>
+          <p className="subheading">
+            Build weekly meal plans tailored to your goals and preferences.
+          </p>
+        </div>
+
+        <div className="card text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="w-12 h-12 bg-orange-100 text-orange-500 rounded-xl flex items-center justify-center text-2xl">
+              🍎
+            </div>
+          </div>
+          <h3 className="heading">Track Ingredients</h3>
+          <p className="subheading">
+            Add products to your meals and easily monitor nutritional values.
+          </p>
+        </div>
+
+        <div className="card text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-2xl">
+              ⏱️
+            </div>
+          </div>
+          <h3 className="heading">Save Time</h3>
+          <p className="subheading">
+            Stop guessing. Start planning smarter with intuitive tools.
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-secondary-dark80 py-6 text-center text-primary text-sm">
-        © {new Date().getFullYear()} NutriWeek. All rights reserved.
+      <footer className="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
+        © {new Date().getFullYear()} NutriWeek. Built with ❤️ for better living.
       </footer>
     </div>
   );
-};
-
-export default LandingPage;
+}

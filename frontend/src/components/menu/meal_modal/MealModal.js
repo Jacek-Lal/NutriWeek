@@ -25,41 +25,48 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
   return (
     <dialog
       open={isOpen}
-      className="w-3/4 h-4/5 bg-slate-800 p-4 overflow-hidden rounded-xl"
+      className="fixed inset-0 z-[9999] w-11/12 h-[90vh] bg-white text-gray-800 rounded-2xl shadow-2xl p-6 overflow-hidden border border-gray-200"
     >
-      <div className="flex justify-between mb-4">
-        <SearchBar input={input} setInput={setInput} setData={setProducts} />
-        <button className="bg-slate-500 p-5 rounded-full" onClick={onClose}>
-          <i className="bi bi-x "></i>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6 border-b pb-3">
+        <h2 className="text-2xl font-extrabold text-gray-800">
+          Modify <span className="text-green-600">Meal</span>
+        </h2>
+
+        <button
+          onClick={onClose}
+          className="bg-gray-100 hover:bg-gray-200 rounded-full p-3 transition"
+          title="Close"
+        >
+          <i className="bi bi-x text-2xl text-gray-700"></i>
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 h-[calc(100%-4rem)]">
-        <div className="col-span-2 flex flex-col gap-4 overflow-y-auto">
-          <div className="rounded p-4">
-            <h1 className="font-medium text-lg mb-2 text-white">
-              Recent products
-            </h1>
-            <ProductGrid
-              data={recentMeals}
-              list={modalList}
-              setList={setModalList}
-            />
-          </div>
+      {/* Main grid layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100%-5rem)]">
+        {/* Left side: Search + Product grids */}
+        <div className="lg:col-span-2 flex flex-col gap-6 overflow-y-auto pr-1">
+          {/* Search Bar */}
+          <SearchBar input={input} setInput={setInput} setData={setProducts} />
 
-          <div className="rounded p-4">
-            <h1 className="font-medium text-lg mb-2 text-white">
-              Search results
+          {/* Products */}
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm">
+            <h1 className="font-semibold text-gray-700 text-lg mb-3">
+              {products.length > 0 ? "Results" : "Recent products"}
             </h1>
             <ProductGrid
-              data={products}
+              data={products.length > 0 ? products : recentMeals}
               list={modalList}
               setList={setModalList}
             />
           </div>
         </div>
 
-        <div className="rounded p-4 overflow-y-auto">
+        {/* Right side: Selected products */}
+        <div className="h-min bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm overflow-y-auto">
+          <h1 className="font-semibold text-gray-700 text-lg mb-3">
+            Selected Products
+          </h1>
           <ProductList
             list={modalList}
             setList={setModalList}

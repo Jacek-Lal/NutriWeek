@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MealModal from "./meal_modal/MealModal.js";
 import DropdownMenu from "components/common/DropdownMenu.js";
 
 const Meal = ({ meal, onUpdateItems, onDelete }) => {
   const [productList, setProductList] = useState(meal.mealItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const handleListChange = (newList) => {
     setProductList(newList);
     onUpdateItems(meal.id, newList);
+    setIsUpdated(true);
   };
+
+  useEffect(() => {
+    if (isUpdated) {
+      const timer = setTimeout(() => setIsUpdated(false), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [isUpdated]);
 
   const macros = productList.reduce(
     (acc, mi) => {
@@ -27,60 +36,89 @@ const Meal = ({ meal, onUpdateItems, onDelete }) => {
 
   return (
     <>
-      <div className="bg-slate-100 max-w-80 rounded-xl shadow">
+      <div
+        className={`bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300 overflow-hidden 
+          ${
+            isUpdated
+              ? "ring-4 ring-green-300 ring-opacity-60 scale-[1.02]"
+              : ""
+          }`}
+      >
+        {/* Dropdown */}
         <DropdownMenu deleteMeal={() => onDelete(meal.id)} />
 
-        <div className="flex flex-col gap-6 pb-4 px-4">
-          <p className="text-center font-semibold">{meal.name}</p>
+        {/* Content */}
+        <div className="flex flex-col gap-5 p-5">
+          {/* Title */}
+          <p className="text-center font-semibold text-gray-800 text-lg">
+            {meal.name}
+          </p>
 
-          <p className="text-center">
+          {/* Kcal summary */}
+          <p className="text-center text-sm text-gray-700">
             <span
-              className={`${
+              className={`font-semibold ${
                 macros.kcal > meal.targetKcal * 1.1
-                  ? "text-red-600" // above 110%
+                  ? "text-red-600"
                   : macros.kcal >= meal.targetKcal * 0.9 &&
                     macros.kcal <= meal.targetKcal * 1.1
-                  ? "text-green-600" // within 90–110%
-                  : "text-black" // below 90%
+                  ? "text-green-600"
+                  : "text-gray-800"
               }`}
             >
               {macros.kcal}
             </span>{" "}
             / {meal.targetKcal} kcal
           </p>
-          <ul className="flex flex-col gap-3">
+
+          {/* Product list */}
+          <ul className="flex flex-col gap-2 text-sm text-gray-700">
             {productList.map((item, idx) => (
-              <li key={idx}>
-                <div className="flex gap-6 items-center">
-                  <p className="w-40 truncate">{item.product.name}</p>
-                  <span className="whitespace-nowrap">{item.amount} g</span>
-                </div>
+              <li
+                key={idx}
+                className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2 hover:bg-gray-100 transition"
+              >
+                <p className="truncate w-40">{item.product.name}</p>
+                <span className="whitespace-nowrap font-medium">
+                  {item.amount} g
+                </span>
               </li>
             ))}
           </ul>
-          <div>
-            <div className="pl-2 pr-2 pt-5 flex flex-row justify-between">
+
+          {/* Macros section */}
+          <div className="bg-gray-50 rounded-lg p-4 shadow-inner">
+            <div className="flex justify-between text-gray-700 font-medium border-b pb-1 mb-2 text-sm">
               <p>Protein</p>
               <p>Fat</p>
               <p>Carbs</p>
             </div>
-            <div className="pl-2 pr-2 flex justify-between">
+            <div className="flex justify-between text-gray-800 font-semibold text-sm">
               <p>
-                {macros.protein.toFixed(2)} <span className="text-s">g</span>
+                {macros.protein.toFixed(1)}{" "}
+                <span className="text-gray-500">g</span>
               </p>
-              <p>{macros.fat.toFixed(2)} g</p>
-              <p>{macros.carbs.toFixed(2)} g</p>
+              <p>
+                {macros.fat.toFixed(1)} <span className="text-gray-500">g</span>
+              </p>
+              <p>
+                {macros.carbs.toFixed(1)}{" "}
+                <span className="text-gray-500">g</span>
+              </p>
             </div>
           </div>
+
+          {/* Modify button */}
           <button
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white shadow-md hover:bg-blue-700 active:scale-95 transition whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-4 py-2 text-white shadow-sm hover:bg-green-600 active:scale-95 transition-all duration-150 font-medium w-full"
             onClick={() => setIsModalOpen(true)}
           >
-            <i className="bi bi-plus-circle"></i> Modify
+            <i className="bi bi-pencil-square"></i> Modify
           </button>
         </div>
       </div>
 
+      {/* Modal */}
       <MealModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

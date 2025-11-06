@@ -8,6 +8,7 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
   };
 
   const updateAmount = (fdcId, newAmount) => {
+    if (newAmount < 0 || newAmount > 9999) return;
     setList((prevList) =>
       prevList.map((item) =>
         item.product.fdcId === fdcId ? { ...item, amount: newAmount } : item
@@ -29,27 +30,40 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
   );
 
   return (
-    <div className="bg-slate-700 flex flex-col row-span-full col-start-3 min-w-72">
-      <div className="p-2 text-center text-white">
-        <p>Kcal</p>
-        <p>
-          {macros.kcal} / {targetKcal}
+    <div className="h-auto flex flex-col bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-w-72">
+      {/* Header: Calories & Macros Summary */}
+      <div className="bg-green-500 text-white text-center py-4 px-2 rounded-t-2xl">
+        <p className="font-semibold text-sm uppercase tracking-wide">
+          Calories
+        </p>
+        <p className="text-lg font-bold">
+          {macros.kcal} / {targetKcal} kcal
         </p>
       </div>
-      <div className="pl-2 pr-2 flex justify-between text-white">
-        <p>Protein</p>
-        <p>Fat</p>
-        <p>Carbs</p>
+
+      {/* Macros breakdown */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex justify-between text-sm font-medium text-gray-700">
+          <p>Protein</p>
+          <p>Fat</p>
+          <p>Carbs</p>
+        </div>
+        <div className="flex justify-between text-gray-800 font-semibold mt-1 text-sm">
+          <p>
+            {macros.protein.toFixed(1)} <span className="text-gray-500">g</span>
+          </p>
+          <p>
+            {macros.fat.toFixed(1)} <span className="text-gray-500">g</span>
+          </p>
+          <p>
+            {macros.carbs.toFixed(1)} <span className="text-gray-500">g</span>
+          </p>
+        </div>
       </div>
-      <div className="pl-2 pr-2 flex justify-between text-white">
-        <p>
-          {macros.protein.toFixed(2)} <span className="text-s">g</span>
-        </p>
-        <p>{macros.fat.toFixed(2)} g</p>
-        <p>{macros.carbs.toFixed(2)} g</p>
-      </div>
-      <ul className="flex flex-col gap-6 p-6">
-        {list.length > 0 &&
+
+      {/* Product list */}
+      <ul className="grid grid-cols-1 2xl:grid-cols-2 gap-4 p-4 overflow-y-auto flex-1 max-h-[50vh]">
+        {list.length > 0 ? (
           list.map((mealItem) => (
             <ProductOnList
               key={mealItem.product.fdcId}
@@ -57,10 +71,21 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
               removeProduct={removeProduct}
               updateAmount={updateAmount}
             />
-          ))}
+          ))
+        ) : (
+          <p className="text-center text-gray-500 text-sm py-8">
+            No products selected yet.
+          </p>
+        )}
       </ul>
-      <button className="bg-slate-200 p-2" onClick={() => saveMeal()}>
-        <i className="bi bi-floppy"></i> Save
+
+      {/* Save button */}
+      <button
+        onClick={() => saveMeal()}
+        className="mt-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 flex items-center justify-center gap-2 transition-all duration-200 rounded-b-2xl"
+      >
+        <i className="bi bi-floppy text-lg"></i>
+        Save
       </button>
     </div>
   );

@@ -26,7 +26,10 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     let value = event.target.value;
     const name = event.target.name;
 
-    if (typeof menuData[name] === "number") value = parseInt(value) || 0;
+    if (typeof menuData[name] === "number") {
+      value = parseInt(value) || 0;
+      value = value < 0 ? 0 : value;
+    }
 
     if (name === "meals") {
       const newLength = value;
@@ -83,25 +86,29 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
 
   return (
     <dialog
-      className="w-3/4 h-4/5 bg-slate-800 text-white rounded-xl p-6 shadow-xl"
       ref={modalRef}
+      className="w-11/12 md:w-3/4 lg:w-2/3 h-[90vh] bg-white text-gray-800 rounded-2xl shadow-2xl p-6 md:p-10 overflow-hidden border border-gray-200"
     >
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold mb-6 text-center flex-1">
-          Create Menu
+      {/* Header */}
+      <div className="flex justify-between items-center border-b pb-4">
+        <h2 className="text-2xl font-extrabold text-gray-800">
+          Create <span className="text-green-600">Menu</span>
         </h2>
         <button
-          className="bg-blue-600 text-slate-800 pl-4 pr-4 rounded-full hover:bg-blue-700 transition"
           onClick={() => closeModal()}
+          className="bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full p-2 transition"
+          title="Close"
         >
-          <i className="bi bi-x text-3xl text-white"></i>
+          <i className="bi bi-x text-2xl"></i>
         </button>
       </div>
 
+      {/* Menu Form */}
       <form
-        className="flex flex-col gap-6 overflow-y-auto pr-2 mt-6"
         onSubmit={onSubmit}
+        className="flex flex-col gap-8 overflow-y-auto pr-2 mt-6 h-[calc(90vh-100px)]"
       >
+        {/* Name */}
         <InputField
           label="Name"
           name="name"
@@ -109,12 +116,14 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           onChange={onChange}
         />
 
+        {/* Duration */}
         <div className="flex flex-col gap-2">
-          <label className="font-semibold">Duration</label>
+          <label className="font-semibold text-gray-700">Duration</label>
           <DaysOrRange menuData={menuData} onChange={onChange} />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        {/* Meals and Calories */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputField
             label="Meals per Day"
             type="number"
@@ -131,9 +140,10 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <p className="font-semibold">Macro Distribution (%)</p>
-          <div className="pt-4 grid grid-cols-3 gap-4">
+        {/* Macros */}
+        <div className="flex flex-col gap-3">
+          <p className="font-semibold text-gray-700">Macro Distribution (%)</p>
+          <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {macros.map((m) => (
               <MacroField
                 key={m.name}
@@ -146,26 +156,35 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
               />
             ))}
           </div>
-          <p className="pt-4 text-end font-semibold">Total: {totalMacro}%</p>
+          <p className="pt-2 text-end font-semibold text-gray-600">
+            Total: {totalMacro}%
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <p className="font-semibold">Calories Distribution (%)</p>
-          <div className="pt-4 grid grid-cols-3 gap-4">
+        {/* Calories per meal */}
+        <div className="flex flex-col gap-3">
+          <p className="font-semibold text-gray-700">
+            Calories Distribution (%)
+          </p>
+          <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[...Array(menuData.meals)].map((_, i) => (
-              <div key={i} className="flex flex-col text-center gap-2">
-                <p className="font-semibold">Meal {i + 1}</p>
-                <p>
+              <div
+                key={i}
+                className="flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition"
+              >
+                <p className="font-semibold text-green-600 mb-1">
+                  Meal {i + 1}
+                </p>
+                <p className="text-sm text-gray-600 mb-1">
                   {(menuData.caloriesPerMeal[i] * menuData.calories) / 100} kcal
                 </p>
                 <input
                   type="number"
-                  className="rounded-md p-2 text-slate-800"
+                  className="w-20 text-center rounded-lg border border-gray-300 p-2 text-gray-800 focus:ring-2 focus:ring-green-400 outline-none transition"
                   value={menuData.caloriesPerMeal[i] ?? 0}
                   onChange={(e) => {
                     const newMealCalories = [...menuData.caloriesPerMeal];
                     if (Number(e.target.value) < 0) e.target.value = "";
-
                     newMealCalories[i] = e.target.value;
                     setMenuData({
                       ...menuData,
@@ -176,15 +195,17 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
               </div>
             ))}
           </div>
-          <p className="pt-4 text-end font-semibold">
+          <p className="pt-2 text-end font-semibold text-gray-600">
             Total: {totalMealCalories ?? 0}%
           </p>
         </div>
+
+        {/* Submit */}
         <button
           type="submit"
-          className="mt-6 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg shadow-md text-white font-semibold transition"
+          className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200"
         >
-          Submit
+          Create Menu
         </button>
       </form>
     </dialog>

@@ -29,11 +29,12 @@ const NewMealDialog = ({ show, onSubmit }) => {
 
   return (
     <form
-      className={`p-4 bg-slate-400 shadow flex flex-col w-min h-min rounded-xl ${
+      onSubmit={handleSubmit(onSubmit)}
+      className={`p-6 bg-white border border-gray-200 shadow-md flex flex-col gap-4 rounded-2xl w-full sm:w-80 transition-all ${
         !show ? "collapse" : ""
       }`}
-      onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Name */}
       <FormInput
         id="name"
         label="Name"
@@ -43,6 +44,7 @@ const NewMealDialog = ({ show, onSubmit }) => {
         error={errors.name}
       />
 
+      {/* Calories */}
       <FormInput
         id="targetKcal"
         label="Calories"
@@ -52,10 +54,11 @@ const NewMealDialog = ({ show, onSubmit }) => {
         error={errors.email}
       />
 
+      {/* Submit */}
       <input
-        className="mt-6 py-2 px-6 text-white bg-blue-600 rounded-full cursor-pointer"
         type="submit"
         value="Add"
+        className="mt-4 py-2.5 px-6 font-semibold text-white bg-green-500 rounded-xl shadow-sm hover:bg-green-600 active:scale-95 cursor-pointer transition-all duration-200"
       />
     </form>
   );

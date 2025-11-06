@@ -1,38 +1,64 @@
 const ProductOnList = ({ mealItem, removeProduct, updateAmount }) => {
+  const getNutrient = (n) =>
+    mealItem.product.nutrients.find((x) => x.name === n) ?? null;
+
+  const nutKeys = {
+    Energy: "Energy",
+    Protein: "Protein",
+    "Total lipid (fat)": "Fat",
+    "Carbohydrate, by difference": "Carbohydrates",
+  };
+
   return (
-    <li className="flex  flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow hover:shadow-lg transition">
-      <div className="flex stretch space-x-4">
-        <h1 className="text-lg font-semibold text-gray-800">
+    <li className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200">
+      {/* Header: product name + delete button */}
+      <div className="flex justify-between items-start">
+        <h1 className="text-base sm:text-lg font-semibold text-gray-800 leading-tight">
           {mealItem.product.name}
         </h1>
         <button
-          className="p-3"
           onClick={() => removeProduct(mealItem.product.fdcId)}
+          className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-all duration-150 active:scale-95"
+          title="Remove product"
         >
-          <i className="bi bi-trash"></i>
+          <i className="bi bi-trash text-lg"></i>
         </button>
       </div>
-      <div>
-        <span>Amount: </span>
+
+      {/* Amount input */}
+      <div className="flex items-center gap-2 text-sm text-gray-700">
+        <span className="font-medium">Amount:</span>
         <input
-          className="w-20"
           type="number"
+          min={0}
+          max={9999}
           value={mealItem.amount}
           onChange={(e) =>
             updateAmount(mealItem.product.fdcId, Number(e.target.value))
           }
-        ></input>
+          className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200"
+        />
+        <span className="text-gray-500">g</span>
       </div>
 
-      <div className="space-y-1 text-sm text-gray-600">
-        {mealItem.product.nutrients.slice(1, 5).map((n) => (
-          <p key={`${n.name}|${n.unit}`} className="flex justify-between">
-            <span>{n.name}</span>
-            <span className="font-medium">
-              {n.value} {n.unit}
-            </span>
-          </p>
-        ))}
+      {/* Nutrients list */}
+      <div className="space-y-1.5 text-sm text-gray-700">
+        {Object.keys(nutKeys).map((key) => {
+          const n = getNutrient(key);
+          if (n === null) return null;
+
+          return (
+            <p
+              key={`${n.name}|${n.unit}`}
+              className="flex justify-between items-center border-b border-gray-100 pb-1 last:border-0"
+            >
+              <span className="truncate">{nutKeys[n.name]}</span>
+              <span className="font-medium text-gray-800">
+                {n.value} {n.unit}
+              </span>
+            </p>
+          );
+        })}
       </div>
     </li>
   );
