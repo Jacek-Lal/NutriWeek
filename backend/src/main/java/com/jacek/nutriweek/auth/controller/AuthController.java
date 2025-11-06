@@ -18,9 +18,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-
 import java.util.Map;
 
 @RestController
@@ -85,5 +85,8 @@ public class AuthController {
                         .toList()
         ));
     }
-
+    @GetMapping("/csrf")
+    public ResponseEntity<CsrfToken> csrf(CsrfToken token) {
+        return ResponseEntity.ok().body(token);
+    }
 }

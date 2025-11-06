@@ -14,26 +14,22 @@ import static org.springframework.http.HttpMethod.*;
 @Configuration
 public class CorsConfig {
 
-    private  static final String X_REQUESTED_WITH = "X-Requested-With";
+    private  static final String X_XSRF_TOKEN = "X-XSRF-TOKEN";
+    private  static final String XSRF_TOKEN = "XSRF-TOKEN";
     @Bean
     public CorsFilter corsFilter(){
-        var urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        var corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        CorsConfiguration config = new CorsConfiguration();
 
-        corsConfiguration.setAllowedHeaders(List.of(
-                ORIGIN, ACCESS_CONTROL_ALLOW_ORIGIN, CONTENT_TYPE, ACCEPT, AUTHORIZATION, X_REQUESTED_WITH, ACCESS_CONTROL_REQUEST_METHOD, ACCESS_CONTROL_REQUEST_HEADERS
-        ));
-        corsConfiguration.setExposedHeaders(List.of(
-                ORIGIN, ACCESS_CONTROL_ALLOW_ORIGIN, CONTENT_TYPE, ACCEPT, AUTHORIZATION, X_REQUESTED_WITH, ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_CREDENTIALS
-        ));
-        corsConfiguration.setAllowedMethods(List.of(
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+        config.setAllowedHeaders(List.of(ORIGIN, CONTENT_TYPE, ACCEPT, X_XSRF_TOKEN, XSRF_TOKEN));
+        config.setAllowedMethods(List.of(
                 GET.name(), POST.name(), PUT.name(), PATCH.name(), DELETE.name(), OPTIONS.name()
         ));
 
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
-        return new CorsFilter(urlBasedCorsConfigurationSource);
+        return new CorsFilter(source);
     }
 }
