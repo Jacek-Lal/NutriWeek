@@ -1,28 +1,16 @@
-import axios from "axios";
+import api, { ENDPOINTS } from "./api";
 
-const API_URL = "http://localhost:8080/menus";
-axios.defaults.withCredentials = true;
+const ENDPOINT = ENDPOINTS.MENUS;
 
-export async function addMenu(menu) {
-  return await axios.post(API_URL, menu);
-}
+export const addMenu = (menu) => api.post(`${ENDPOINT}`, menu);
+export const getMenu = (id) => api.get(`${ENDPOINT}/${id}`);
+export const deleteMenu = (id) => api.delete(`${ENDPOINT}/${id}`);
 
-export async function getMenu(id) {
-  return await axios.get(`${API_URL}/${id}`);
-}
+export const getMenus = (page, size) =>
+  api.get(`${ENDPOINT}?page=${page}&size=${size}`);
 
-export async function getMenus(page, size) {
-  return await axios.get(`${API_URL}?page=${page}&size=${size}`);
-}
+export const getMenuMeals = (id, page, size) =>
+  api.get(`${ENDPOINT}/${id}/meals?page=${page}&size=${size}`);
 
-export async function deleteMenu(id) {
-  return await axios.delete(`${API_URL}/${id}`);
-}
-
-export async function getMenuMeals(id, page, size) {
-  return await axios.get(`${API_URL}/${id}/meals?page=${page}&size=${size}`);
-}
-
-export async function addMenuMeal(id, payload) {
-  return await axios.post(`${API_URL}/${id}/meals`, payload);
-}
+export const addMenuMeal = (id, payload) =>
+  api.post(`${ENDPOINT}/${id}/meals`, payload);

@@ -1,23 +1,10 @@
-import axios from "axios";
+import api, { ENDPOINTS } from "./api";
 
-const API_URL = "http://localhost:8080/auth";
+const ENDPOINT = ENDPOINTS.AUTH;
 
-axios.defaults.withCredentials = true;
-
-export async function registerUser(payload) {
-  return await axios.post(`${API_URL}/register`, payload);
-}
-
-export async function loginUser(payload) {
-  return await axios.post(`${API_URL}/login`, payload, {
-    withCredentials: true,
-  });
-}
-
-export async function logoutUser() {
-  axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
-}
-
-export async function getUser() {
-  return axios.get(`${API_URL}/me`, { withCredentials: true });
-}
+export const getCsrf = () => api.get(`${ENDPOINT}/csrf`);
+export const registerUser = (payload) =>
+  api.post(`${ENDPOINT}/register`, payload);
+export const loginUser = (payload) => api.post(`${ENDPOINT}/login`, payload);
+export const logoutUser = () => api.post(`${ENDPOINT}/logout`, {});
+export const getUser = () => api.get(`${ENDPOINT}/me`);

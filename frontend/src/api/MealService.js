@@ -1,19 +1,11 @@
-import axios from "axios";
+import api, { ENDPOINTS } from "./api";
 
-const API_URL = "http://localhost:8080/meals";
+const ENDPOINT = ENDPOINTS.MEALS;
 
-export async function addMeal(meal) {
-  return await axios.post(API_URL, meal);
-}
+export const getRecentProducts = (limit = 5) =>
+  api.get(`${ENDPOINT}/recent`, { params: { limit: limit } });
 
-export async function getRecentProducts(limit = 5) {
-  return await axios.get(`${API_URL}/recent`, { params: { limit: limit } });
-}
+export const addMealItems = (mealId, mealItems) =>
+  api.put(`${ENDPOINT}/${mealId}/items`, mealItems);
 
-export async function addMealItems(mealId, mealItems) {
-  return await axios.put(`${API_URL}/${mealId}/items`, mealItems);
-}
-
-export async function deleteMeal(mealId) {
-  return await axios.delete(`${API_URL}/${mealId}`);
-}
+export const deleteMeal = (mealId) => api.delete(`${ENDPOINT}/${mealId}`);
