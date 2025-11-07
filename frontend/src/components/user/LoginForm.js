@@ -35,9 +35,6 @@ const LoginForm = () => {
     <form className="card mx-auto" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4">
         <div>
-          <label htmlFor="username" className="field-label">
-            Username
-          </label>
           <FormInput
             id="username"
             label="Username"
@@ -49,9 +46,6 @@ const LoginForm = () => {
         </div>
 
         <div>
-          <label htmlFor="password" className="field-label">
-            Password
-          </label>
           <FormInput
             id="password"
             label="Password"

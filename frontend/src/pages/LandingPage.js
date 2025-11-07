@@ -6,7 +6,7 @@ export default function LandingPage() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-gray-50 text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-orange-50 text-gray-800 flex flex-col">
       {/* Hero Section */}
       <section className="w-3/4 m-auto flex flex-col md:flex-row items-center justify-between flex-1 px-6 md:px-16 py-10 md:py-20 gap-10">
         {/* Text content */}

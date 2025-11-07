@@ -109,7 +109,7 @@ const DaysOrRange = ({ menuData, onChange }) => {
 const FormInput = ({ id, label, type, register, rules, error }) => {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-semibold text-gray-700">
+      <label htmlFor={id} className="field-label">
         {label}
       </label>
       <input
