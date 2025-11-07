@@ -10,6 +10,13 @@ import java.time.Instant;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<CustomErrorResponse> defaultHandler(){
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        Exception e = new Exception("Something went wrong");
+        return createResponse(status, e);
+    }
+
     @ExceptionHandler(value = UserAlreadyExistsException.class)
     public ResponseEntity<CustomErrorResponse> handleUserExistsException(UserAlreadyExistsException e){
         HttpStatus status = HttpStatus.CONFLICT;
@@ -22,7 +29,7 @@ public class GlobalExceptionHandler {
         return createResponse(status, e);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ExceptionHandler(value = {IllegalArgumentException.class, VerificationMailException.class})
     public ResponseEntity<CustomErrorResponse> handleInternalError(Exception e){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return createResponse(status, e);

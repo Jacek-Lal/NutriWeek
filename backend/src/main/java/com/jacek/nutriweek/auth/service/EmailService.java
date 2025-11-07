@@ -1,7 +1,10 @@
 package com.jacek.nutriweek.auth.service;
 
+import com.jacek.nutriweek.common.exception.VerificationMailException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -20,11 +24,15 @@ public class EmailService {
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
     public void sendVerificationEmail(String to, String token){
-        if(!isValidEmail(to))
+        if(!isValidEmail(to)){
+            log.error("Invalid email format: {}", to);
             throw new IllegalArgumentException("Email address invalid or empty");
+        }
 
-        if(!isValidUUID(token))
+        if(!isValidUUID(token)){
+            log.error("Invalid UUID token format: {}", token);
             throw new IllegalArgumentException("Token is not valid UUID or empty");
+        }
 
         String link = verifyUrl + "?token=" + token;
 
@@ -37,7 +45,13 @@ public class EmailService {
             Please verify your email by clicking the link below:
             %s
             """.formatted(link));
-        mailSender.send(msg);
+
+        try {
+            mailSender.send(msg);
+        } catch (MailException e){
+            log.error("Email send failed for {}: {}", to, e.getMessage());
+            throw new VerificationMailException("Verification mail send failed, please try again later.");
+        }
     }
 
     private boolean isValidEmail(String email){

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -68,6 +70,7 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("message", "Login successful", "redirect", "/menus"));
         }
         catch (AuthenticationException e) {
+            log.warn("Failed login for user {}", loginRequest.username());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", e.getMessage()));
         }

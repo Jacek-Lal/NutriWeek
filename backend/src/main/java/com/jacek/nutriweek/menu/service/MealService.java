@@ -12,6 +12,7 @@ import com.jacek.nutriweek.menu.repository.NutrientRepository;
 import com.jacek.nutriweek.menu.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
@@ -34,11 +36,16 @@ public class MealService {
     private final ProductMapper productMapper;
 
     public void updateMealItems(String username, Long mealId, List<MealItemDTO> items) {
-        Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
-                new ResourceNotFoundException("Meal with id " + mealId + " not found"));
+        Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->{
+            log.warn("Meal with id {} for user {} not found", mealId, username);
+            return new ResourceNotFoundException("Meal with id " + mealId + " not found");
+        });
         meal.getMealItems().clear();
 
+        log.info("Updating meal items for meal {} for user {}...", mealId, username);
+
         if(items.isEmpty()) {
+            log.info("Cleared all meal items for meal {} for user {}", mealId, username);
             mealRepository.save(meal);
             return;
         }
@@ -62,12 +69,14 @@ public class MealService {
             if(product == null){
                 product = createProduct(reqProduct, existingNutrients);
                 existingProducts.put(product.getFdcId(), product);
+                log.debug("Product {} (fdcId: {}) added to database", product.getName(), product.getFdcId());
             }
             MealItem mi = new MealItem(reqItem.amount(), meal, product);
             meal.getMealItems().add(mi);
         }
 
         mealRepository.save(meal);
+        log.info("Meal items updated successfully for meal {} for user {}", mealId, username);
     }
 
     protected Product createProduct(ProductDTO reqProduct, Map<String, Nutrient> existingNutrients){
@@ -82,6 +91,7 @@ public class MealService {
             if(managedNut == null){
                 managedNut = nutrientRepository.save(newNut);
                 existingNutrients.put(key, managedNut);
+                log.debug("Nutrient {} added to database", key);
             }
             pns.add(new ProductNutrient(reqNut.value(), newProduct, managedNut));
         }
@@ -94,9 +104,11 @@ public class MealService {
     }
 
     public void deleteMeal(String username, Long mealId) {
+        log.info("Deleting meal {} for user {}...", mealId, username);
         Meal meal =  mealRepository.findByOwnerAndId(username, mealId).orElseThrow(()->
                 new ResourceNotFoundException("Meal with id " + mealId + " not found"));
 
         mealRepository.delete(meal);
+        log.info("Meal {} successfully deleted for user {}", mealId, username);
     }
 }

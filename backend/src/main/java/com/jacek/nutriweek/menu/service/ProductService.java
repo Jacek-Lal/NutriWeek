@@ -15,7 +15,6 @@ import java.util.Comparator;
 @Slf4j
 @Service
 public class ProductService {
-    private final boolean useDummyData = false;
     @Value("${app.api.key}") String API_KEY;
     private final String API_URL = "https://api.nal.usda.gov/fdc/v1";
     private final WebClient webClient;
@@ -32,26 +31,18 @@ public class ProductService {
 
         try {
             ApiResponse response;
-            if(!useDummyData){
-                response = webClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                        .path("/foods/search")
-                        .queryParam("query", query)
-                        .queryParam("pageSize", size)
-                        .queryParam("pageNumber", page)
-                        .queryParam("api_key", API_KEY)
-                        .build())
-                    .retrieve()
-                    .bodyToMono(ApiResponse.class)
-                    .block();
-            } else {
-                ObjectMapper mapper = new ObjectMapper();
-                ClassPathResource resource = new ClassPathResource("dummy.json");
-                response = mapper.readValue(
-                        resource.getInputStream(),
-                        ApiResponse.class
-                );
-            }
+            response = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                    .path("/foods/search")
+                    .queryParam("query", query)
+                    .queryParam("pageSize", size)
+                    .queryParam("pageNumber", page)
+                    .queryParam("api_key", API_KEY)
+                    .build())
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .block();
+
 
             if(response != null)
                 response
@@ -61,7 +52,7 @@ public class ProductService {
             return response;
 
         } catch (Exception e){
-            log.error(e.getMessage());
+            log.error("Failed fetching USDA products: {}", e.getMessage());
             return new ApiResponse(0 ,0, 0, Collections.emptyList());
         }
     }

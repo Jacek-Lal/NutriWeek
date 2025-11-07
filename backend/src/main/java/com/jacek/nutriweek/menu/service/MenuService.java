@@ -11,6 +11,7 @@ import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
+@Slf4j
 @Service
 @Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
@@ -31,6 +33,8 @@ public class MenuService {
     public Menu addMenu(String username, MenuRequest menuRequest) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ResourceNotFoundException("User with given username doesn't exist"));
+
+        log.info("Creating new menu for user {}", username);
 
         Menu menu = menuMapper.toEntity(menuRequest);
 
@@ -47,6 +51,7 @@ public class MenuService {
             }
         }
 
+        log.info("New menu {} created for user {}", menu.getId(), username);
         return menuRepository.save(menu);
     }
 
@@ -148,14 +153,18 @@ public class MenuService {
 
         mealRepository.save(meal);
 
+        log.info("New meal in menu {} added for user {}", id, username);
+
         return menuMapper.toDto(meal);
     }
 
     public void deleteMenu(String username, long id) {
+        log.info("Deleting menu {} for user {}...", id, username);
         Menu menu = menuRepository.findByOwnerAndId(username, id).orElseThrow(()->
                 new ResourceNotFoundException("Menu with id " + id + " does not exist"));
 
         menuRepository.delete(menu);
+        log.info("Menu {} for user {} successfully deleted", id, username);
     }
 
 
