@@ -3,6 +3,7 @@ package com.jacek.nutriweek.auth.controller;
 import com.jacek.nutriweek.auth.dto.LoginRequest;
 import com.jacek.nutriweek.auth.dto.RegisterRequest;
 import com.jacek.nutriweek.auth.service.AuthService;
+import com.jacek.nutriweek.auth.service.VerificationResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,8 +35,7 @@ public class AuthController {
     private final AuthenticationManager authManager;
     private final SecurityContextRepository securityContextRepository;
 
-    @Value("${app.urls.frontendVerified}") String okRedirect;
-    @Value("${app.urls.frontendFailed}")   String failRedirect;
+    @Value("${app.urls.frontendVerified}") String verifyRedirect;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest req) {
@@ -45,8 +45,16 @@ public class AuthController {
 
     @GetMapping("/verify")
     public RedirectView verifyEmail(@RequestParam String token) {
-        boolean ok = authService.verify(token);
-        return new RedirectView(ok ? okRedirect : failRedirect);
+        VerificationResult result = authService.verify(token);
+
+        String status = switch (result) {
+            case SUCCESS -> "success";
+            case EXPIRED -> "expired";
+            case INVALID -> "invalid";
+            case ALREADY_VERIFIED -> "already";
+        };
+
+        return new RedirectView(verifyRedirect + "?status=" + status);
     }
 
     @PostMapping("/login")

@@ -30,8 +30,8 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public void register(RegisterRequest req) {
-        if (userRepository.existsByUsername(req.username())) {
-            log.warn("User with username {} already exists", req.username());
+        if (userRepository.existsByUsername(req.login())) {
+            log.warn("User with username {} already exists", req.login());
             throw new UserAlreadyExistsException("Username already taken");
         }
         if (userRepository.existsByEmail(req.email())) {
@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
             throw new UserAlreadyExistsException("Email already registered");
         }
 
-        User newUser = new User(req.username(),
+        User newUser = new User(req.login(),
                 passwordEncoder.encode(req.password()),
                 req.email(),
                 false);
@@ -58,26 +58,33 @@ public class AuthService implements UserDetailsService {
         log.info("Verification email sent to {}", user.getEmail());
     }
 
-    public boolean verify(String token) {
-        VerificationToken vt = tokenRepository.findByToken(token).orElseThrow(() -> {
-                log.warn("Token {} not found in database", token);
-                return new ResourceNotFoundException("No matching verification token found");
-        });
+    public VerificationResult verify(String token) {
+        VerificationToken vt = tokenRepository.findByToken(token).orElse(null);
 
-        if (vt.getExpirationDate().isBefore(Instant.now())){
-            log.warn("Token {} already expired", token);
-            return false;
+        if (vt == null) {
+            log.warn("Verification failed: token {} not found", token);
+            return VerificationResult.INVALID;
+        }
+
+        if (vt.getExpirationDate().isBefore(Instant.now())) {
+            log.warn("Verification failed: token {} expired", token);
+            return VerificationResult.EXPIRED;
         }
 
         User user = vt.getUser();
-        user.setEnabled(true);
+        if(user.isEnabled()){
+            log.info("User {} already verified", user.getUsername());
+            tokenRepository.delete(vt);
+            return VerificationResult.ALREADY_VERIFIED;
+        }
 
+        user.setEnabled(true);
         userRepository.save(user);
         tokenRepository.delete(vt);
 
         log.info("User {} verified successfully", user.getUsername());
 
-        return true;
+        return VerificationResult.SUCCESS;
     }
 
     @Override
