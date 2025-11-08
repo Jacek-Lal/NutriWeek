@@ -46,8 +46,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
                                               @Param("menuId") long menuId,
                                               Pageable pageable);
 
-    List<Meal> findByMenuIdAndDate(long menuId, LocalDate date);
-
     @Query("""
         SELECT new com.jacek.nutriweek.menu.dto.MealFlatDTO(
             m.id, m.date, m.name, m.targetKcal,

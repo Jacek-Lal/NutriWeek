@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
@@ -27,7 +28,7 @@ class ProductRepositoryTest {
         Nutrient fat = nutrientRepository.save(new Nutrient("Fat", "G"));
 
         Product product = new Product("Chicken", 123);
-        product.setNutrients(List.of(
+        product.setNutrients(Set.of(
                 new ProductNutrient(20.0, product, protein),
                 new ProductNutrient(5.0, product, fat)
         ));
@@ -52,7 +53,7 @@ class ProductRepositoryTest {
         Nutrient carb = nutrientRepository.save(new Nutrient("Carbohydrates", "G"));
         Product product = new Product("Rice", 321);
 
-        product.setNutrients(List.of(new ProductNutrient(70.0, product, carb)));
+        product.setNutrients(Set.of(new ProductNutrient(70.0, product, carb)));
         Product saved = productRepository.save(product);
         em.flush();
 

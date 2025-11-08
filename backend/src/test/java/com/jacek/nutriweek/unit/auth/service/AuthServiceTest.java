@@ -5,6 +5,7 @@ import com.jacek.nutriweek.auth.entity.VerificationToken;
 import com.jacek.nutriweek.auth.repository.TokenRepository;
 import com.jacek.nutriweek.auth.service.AuthService;
 import com.jacek.nutriweek.auth.service.EmailService;
+import com.jacek.nutriweek.auth.service.VerificationResult;
 import com.jacek.nutriweek.common.exception.UserAlreadyExistsException;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
@@ -153,9 +154,9 @@ class AuthServiceTest {
         VerificationToken vt = new VerificationToken(UUID.randomUUID().toString(), user);
         when(tokenRepository.findByToken(anyString())).thenReturn(Optional.of(vt));
 
-        boolean result = authService.verify(vt.getToken());
+        VerificationResult result = authService.verify(vt.getToken());
 
-        assertTrue(result);
+        assertEquals(VerificationResult.SUCCESS, result);
         assertTrue(user.isEnabled());
 
         verify(userRepository).save(argThat(u -> u.equals(user) && u.isEnabled()));
@@ -166,9 +167,9 @@ class AuthServiceTest {
     void shouldReturnFalse_whenInvalidToken(){
         when(tokenRepository.findByToken(anyString())).thenReturn(Optional.empty());
 
-        boolean result = authService.verify("non_existent");
+        VerificationResult result = authService.verify("non_existent");
 
-        assertFalse(result);
+        assertEquals(VerificationResult.INVALID, result);
         verify(userRepository, never()).save(any());
         verify(tokenRepository, never()).delete(any());
     }
@@ -181,9 +182,9 @@ class AuthServiceTest {
 
         when(tokenRepository.findByToken(anyString())).thenReturn(Optional.of(vt));
 
-        boolean result = authService.verify(vt.getToken());
+        VerificationResult result = authService.verify(vt.getToken());
 
-        assertFalse(result);
+        assertEquals(VerificationResult.EXPIRED, result);
         assertFalse(user.isEnabled());
 
         verify(userRepository, never()).save(any());

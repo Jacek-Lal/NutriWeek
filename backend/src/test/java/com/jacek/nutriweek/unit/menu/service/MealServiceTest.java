@@ -1,6 +1,6 @@
 package com.jacek.nutriweek.unit.menu.service;
 
-import com.jacek.nutriweek.common.exception.MealNotFoundException;
+import com.jacek.nutriweek.common.exception.ResourceNotFoundException;
 import com.jacek.nutriweek.menu.dto.MealItemDTO;
 import com.jacek.nutriweek.menu.dto.NutrientDTO;
 import com.jacek.nutriweek.menu.dto.ProductDTO;
@@ -35,6 +35,7 @@ class MealServiceTest {
     @InjectMocks MealService mealService;
 
     private final long MEAL_ID = 123L;
+    private final String USERNAME = "user123";
     @Test
     void shouldAddMealItemsForNewProductsAndNutrients(){
         Meal meal = createMeal();
@@ -49,11 +50,11 @@ class MealServiceTest {
                 new Nutrient("Carbohydrates", "G")
         );
 
-        mockCommonRepositories(MEAL_ID, meal, products, nutrients);
+        mockCommonRepositories(USERNAME, MEAL_ID, meal, products, nutrients);
         when(nutrientRepository.save(any(Nutrient.class))).thenAnswer(inv -> inv.getArgument(0));
         when(productRepository.save(any(Product.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        mealService.updateMealItems(MEAL_ID, reqItems);
+        mealService.updateMealItems(USERNAME, MEAL_ID, reqItems);
 
         ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(captor.capture());
@@ -86,10 +87,10 @@ class MealServiceTest {
                 new Nutrient("Energy", "kcal")
         );
 
-        mockCommonRepositories(MEAL_ID, meal, products, nutrients);
+        mockCommonRepositories(USERNAME, MEAL_ID, meal, products, nutrients);
         when(productRepository.save(any(Product.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        mealService.updateMealItems(MEAL_ID, reqItems);
+        mealService.updateMealItems(USERNAME, MEAL_ID, reqItems);
 
         ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(captor.capture());
@@ -123,9 +124,9 @@ class MealServiceTest {
                 new Nutrient("Energy", "kcal")
         );
 
-        mockCommonRepositories(MEAL_ID, meal, products, nutrients);
+        mockCommonRepositories(USERNAME, MEAL_ID, meal, products, nutrients);
 
-        mealService.updateMealItems(MEAL_ID, reqItems);
+        mealService.updateMealItems(USERNAME, MEAL_ID, reqItems);
 
         ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(captor.capture());
@@ -158,10 +159,10 @@ class MealServiceTest {
                 new Nutrient("Energy", "kcal")
         );
 
-        mockCommonRepositories(MEAL_ID, meal, products, nutrients);
+        mockCommonRepositories("user123", MEAL_ID, meal, products, nutrients);
         when(productRepository.save(any(Product.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        mealService.updateMealItems(MEAL_ID, reqItems);
+        mealService.updateMealItems("user123", MEAL_ID, reqItems);
 
         ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(captor.capture());
@@ -185,26 +186,26 @@ class MealServiceTest {
         Meal meal = createMeal();
         List<MealItemDTO> reqItems = Collections.emptyList();
 
-        when(mealRepository.findById(eq(MEAL_ID))).thenReturn(Optional.of(meal));
+        when(mealRepository.findByOwnerAndId(eq(USERNAME), eq(MEAL_ID))).thenReturn(Optional.of(meal));
 
-        mealService.updateMealItems(MEAL_ID, reqItems);
+        mealService.updateMealItems(USERNAME, MEAL_ID, reqItems);
 
         verify(mealRepository).save(argThat(m -> m.getMealItems().isEmpty()));
         verifyNoInteractions(nutrientRepository, productRepository);
 
     }
     @Test
-    void shouldThrow_whenInvalidMealId(){
+    void shouldThrow_whenInvalidMealIdOrUsername(){
 
-        when(mealRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(mealRepository.findByOwnerAndId(anyString(), anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(MealNotFoundException.class, () -> mealService.updateMealItems(MEAL_ID, Collections.emptyList()));
+        assertThrows(ResourceNotFoundException.class, () ->
+                mealService.updateMealItems(USERNAME, MEAL_ID, Collections.emptyList()));
 
-        verify(mealRepository).findById(MEAL_ID);
+        verify(mealRepository).findByOwnerAndId(USERNAME, MEAL_ID);
         verifyNoMoreInteractions(mealRepository);
         verifyNoInteractions(productRepository, nutrientRepository);
     }
-
 
     private Meal createMeal(){
         return new Meal("Meal 1", 600, LocalDate.now(), null);
@@ -218,7 +219,7 @@ class MealServiceTest {
                                 new NutrientDTO("Energy", "kcal", 150)
 
                         )),
-                        100),
+                        100.0),
                 new MealItemDTO(
                         new ProductDTO(245, "Potatoes", List.of(
                                 new NutrientDTO("Protein", "G", 9),
@@ -226,11 +227,12 @@ class MealServiceTest {
                                 new NutrientDTO("Energy", "kcal", 100)
 
                         )),
-                        150)
+                        150.0)
         );
     }
-    private void mockCommonRepositories(long mealId, Meal meal, List<Product> products, List<Nutrient> nutrients){
-        when(mealRepository.findById(eq(mealId))).thenReturn(Optional.of(meal));
+    private void mockCommonRepositories(String username, long mealId, Meal meal,
+                                        List<Product> products, List<Nutrient> nutrients){
+        when(mealRepository.findByOwnerAndId(eq(username),eq(mealId))).thenReturn(Optional.of(meal));
         when(productRepository.findAllByFdcIdIn(anySet())).thenReturn(products);
         when(nutrientRepository.findAll()).thenReturn(nutrients);
         when(mealRepository.save(any(Meal.class))).thenAnswer(inv -> inv.getArgument(0));

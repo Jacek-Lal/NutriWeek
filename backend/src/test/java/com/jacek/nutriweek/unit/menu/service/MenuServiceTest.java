@@ -1,10 +1,7 @@
 package com.jacek.nutriweek.unit.menu.service;
 
-import com.jacek.nutriweek.common.exception.MenuNotFoundException;
-import com.jacek.nutriweek.menu.dto.MealDTO;
-import com.jacek.nutriweek.menu.dto.MealRequest;
-import com.jacek.nutriweek.menu.dto.MealsByDate;
-import com.jacek.nutriweek.menu.dto.MenuRequest;
+import com.jacek.nutriweek.common.exception.ResourceNotFoundException;
+import com.jacek.nutriweek.menu.dto.*;
 import com.jacek.nutriweek.menu.entity.Meal;
 import com.jacek.nutriweek.menu.entity.Menu;
 import com.jacek.nutriweek.menu.mapper.MenuMapper;
@@ -85,7 +82,7 @@ class MenuServiceTest {
 
         when(userRepository.findByUsername(eq(USERNAME))).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> menuService.addMenu(USERNAME, req));
+        assertThrows(ResourceNotFoundException.class, () -> menuService.addMenu(USERNAME, req));
 
         verify(menuMapper, never()).toEntity(req);
         verify(menuRepository, never()).save(any(Menu.class));
@@ -96,18 +93,18 @@ class MenuServiceTest {
         long id = 0;
         Menu menu = new Menu();
 
-        when(menuRepository.findById(eq(id))).thenReturn(Optional.of(menu));
+        when(menuRepository.findByOwnerAndId(eq(USERNAME), eq(id))).thenReturn(Optional.of(menu));
 
-        menuService.getMenu(id);
+        menuService.getMenu(USERNAME, id);
 
         verify(menuMapper).toDto(menu);
     }
 
     @Test
-    void shouldThrow_whenInvalidId(){
-        when(menuRepository.findById(anyLong())).thenReturn(Optional.empty());
+    void shouldThrow_whenInvalidIdOrUsername(){
+        when(menuRepository.findByOwnerAndId(anyString(), anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(MenuNotFoundException.class, () -> menuService.getMenu(0));
+        assertThrows(ResourceNotFoundException.class, () -> menuService.getMenu(USERNAME, 0));
 
         verify(menuMapper, never()).toDto(any(Menu.class));
     }
@@ -121,90 +118,61 @@ class MenuServiceTest {
         LocalDate date2 = LocalDate.of(2025, 10, 2);
         Page<LocalDate> datesPage = new PageImpl<>(List.of(date1, date2), PageRequest.of(page, size), 2);
 
-        Meal meal1 = new Meal("Meal 1", 500, date1, null);
-        Meal meal2 = new Meal("Meal 2", 700, date2, null);
+        List<MealFlatDTO> flatData = List.of(
+                new MealFlatDTO(1L, date1, "Meal 1", 500, 100.0, "Chicken", 123,
+                        "Protein", "g", 25.0),
+                new MealFlatDTO(1L, date1, "Meal 1", 500, 100.0, "Chicken", 123,
+                        "Fat", "g", 10.0),
+                new MealFlatDTO(2L, date2, "Meal 2", 700, 150.0, "Rice", 234,
+                        "Carb", "g", 30.0)
+        );
 
-        MealDTO dto1 = new MealDTO(1L,"Meal 1", 500, date1, List.of());
-        MealDTO dto2 = new MealDTO(2L, "Meal 2", 700, date2, List.of());
-
-        when(mealRepository.findDistinctDatesByMenuId(eq(menuId), any(PageRequest.class)))
+        when(mealRepository.findDistinctDatesByMenuId(eq(USERNAME), eq(menuId), any(PageRequest.class)))
                 .thenReturn(datesPage);
-        when(mealRepository.findByMenuIdAndDate(menuId, date1))
-                .thenReturn(List.of(meal1));
-        when(mealRepository.findByMenuIdAndDate(menuId, date2))
-                .thenReturn(List.of(meal2));
+        when(mealRepository.findMealData(eq(USERNAME), eq(menuId), eq(List.of(date1, date2))))
+                .thenReturn(flatData);
 
-        when(menuMapper.toDto(meal1)).thenReturn(dto1);
-        when(menuMapper.toDto(meal2)).thenReturn(dto2);
-
-        Page<MealsByDate> result = menuService.getMenuMeals(menuId, page, size);
+        Page<MealsByDate> result = menuService.getMenuMeals(USERNAME, menuId, page, size);
 
         assertEquals(2, result.getContent().size());
-        assertEquals(date1, result.getContent().get(0).date());
-        assertEquals(date2, result.getContent().get(1).date());
+        MealsByDate first = result.getContent().get(0);
+        MealsByDate second = result.getContent().get(1);
 
-        assertEquals(List.of(dto1), result.getContent().get(0).meals());
-        assertEquals(List.of(dto2), result.getContent().get(1).meals());
+        assertEquals(date1, first.date());
+        assertEquals(date2, second.date());
+        assertEquals(1, first.meals().size());
+        assertEquals(1, second.meals().size());
 
-        assertEquals(datesPage.getTotalElements(), result.getTotalElements());
-        assertEquals(datesPage.getPageable(), result.getPageable());
+        MealDTO meal1 = first.meals().get(0);
+        MealDTO meal2 = second.meals().get(0);
 
-        verify(mealRepository).findDistinctDatesByMenuId(eq(menuId), any(PageRequest.class));
-        verify(mealRepository).findByMenuIdAndDate(menuId, date1);
-        verify(mealRepository).findByMenuIdAndDate(menuId, date2);
-        verify(menuMapper).toDto(meal1);
-        verify(menuMapper).toDto(meal2);
+        assertEquals("Meal 1", meal1.name());
+        assertEquals(500, meal1.targetKcal());
+        assertEquals(1, meal2.mealItems().size());
+        assertEquals("Rice", meal2.mealItems().get(0).product().name());
+
+        verify(mealRepository).findDistinctDatesByMenuId(eq(USERNAME), eq(menuId), any(PageRequest.class));
+        verify(mealRepository).findMealData(eq(USERNAME), eq(menuId), eq(List.of(date1, date2)));
     }
 
     @Test
-    void shouldReturnMealsByDateWithEmptyMealList_whenNoMealsFoundForDate(){
+    void shouldReturnEmptyPage_whenRepositoryReturnsNoDates() {
         long menuId = 1L;
         int page = 0, size = 2;
 
-        LocalDate date1 = LocalDate.of(2025, 10, 1);
-        LocalDate date2 = LocalDate.of(2025, 10, 2);
-        Page<LocalDate> datesPage = new PageImpl<>(List.of(date1, date2), PageRequest.of(page, size), 2);
+        Page<LocalDate> emptyDates = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
 
-        Meal meal1 = new Meal("Meal 1", 500, date1, null);
+        when(mealRepository.findDistinctDatesByMenuId(eq(USERNAME), eq(menuId), any(PageRequest.class)))
+                .thenReturn(emptyDates);
 
-        MealDTO dto1 = new MealDTO(1L,"Meal 1", 500, date1, List.of());
-
-        when(mealRepository.findDistinctDatesByMenuId(eq(menuId), any(PageRequest.class)))
-                .thenReturn(datesPage);
-        when(mealRepository.findByMenuIdAndDate(menuId, date1))
-                .thenReturn(List.of(meal1));
-
-        when(menuMapper.toDto(meal1)).thenReturn(dto1);
-
-        Page<MealsByDate> result = menuService.getMenuMeals(menuId, page, size);
-
-        assertEquals(2, result.getContent().size());
-        assertEquals(date1, result.getContent().get(0).date());
-        assertEquals(date2, result.getContent().get(1).date());
-
-        assertEquals(List.of(dto1), result.getContent().get(0).meals());
-        assertTrue(result.getContent().get(1).meals().isEmpty());
-    }
-
-    @Test
-    void shouldReturnEmptyPage_whenRepositoryReturnsNoDates(){
-        long menuId = 1L;
-        int page = 0, size = 2;
-
-        Page<LocalDate> datesPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
-
-        when(mealRepository.findDistinctDatesByMenuId(eq(menuId), any(PageRequest.class)))
-                .thenReturn(datesPage);
-
-        Page<MealsByDate> result = menuService.getMenuMeals(menuId, page, size);
+        Page<MealsByDate> result = menuService.getMenuMeals(USERNAME, menuId, page, size);
 
         assertTrue(result.isEmpty());
-        assertEquals(datesPage.getTotalElements(), result.getTotalElements());
-        assertEquals(datesPage.getPageable(), result.getPageable());
+        assertEquals(0, result.getTotalElements());
+        assertEquals(emptyDates.getPageable(), result.getPageable());
 
-        verify(mealRepository).findDistinctDatesByMenuId(eq(menuId), any(PageRequest.class));
-        verify(mealRepository, never()).findByMenuIdAndDate(eq(menuId), any(LocalDate.class));
-        verify(menuMapper, never()).toDto(any(Meal.class));
+        verify(mealRepository).findDistinctDatesByMenuId(eq(USERNAME), eq(menuId), any(PageRequest.class));
+        verify(mealRepository, never()).findMealData(anyString(), anyLong(), anyList());
     }
 
     @Test
@@ -213,9 +181,9 @@ class MenuServiceTest {
         MealRequest req = new MealRequest("Meal 1", 600, LocalDate.of(2025, 10, 10));
         Menu menu = new Menu();
 
-        when(menuRepository.findById(eq(menuId))).thenReturn(Optional.of(menu));
+        when(menuRepository.findByOwnerAndId(eq(USERNAME), eq(menuId))).thenReturn(Optional.of(menu));
 
-        menuService.addMenuMeal(menuId, req);
+        menuService.addMenuMeal(USERNAME, menuId, req);
 
         ArgumentCaptor<Meal> captor = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(captor.capture());
@@ -234,9 +202,9 @@ class MenuServiceTest {
         long menuId = 1L;
         MealRequest req = new MealRequest("Meal 1", 600, LocalDate.of(2025, 10, 10));
 
-        when(menuRepository.findById(eq(menuId))).thenReturn(Optional.empty());
+        when(menuRepository.findByOwnerAndId(eq(USERNAME), eq(menuId))).thenReturn(Optional.empty());
 
-        assertThrows(MenuNotFoundException.class, () -> menuService.addMenuMeal(menuId, req));
+        assertThrows(ResourceNotFoundException.class, () -> menuService.addMenuMeal(USERNAME, menuId, req));
 
         verify(mealRepository, never()).save(any(Meal.class));
         verify(menuMapper, never()).toDto(any(Meal.class));
