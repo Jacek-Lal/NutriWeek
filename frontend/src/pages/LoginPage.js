@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const location = useLocation();
-  const [verificationMsg, setVerificationMsg] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);

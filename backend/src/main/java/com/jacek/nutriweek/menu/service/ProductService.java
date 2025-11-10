@@ -16,13 +16,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class ProductService {
     private final String API_KEY;
     private final WebClient webClient;
-    private final TokenRateLimiter rateLimiter = new TokenRateLimiter(1000, 3600000);
+    private final TokenRateLimiter rateLimiter = new TokenRateLimiter(1000, TimeUnit.HOURS.toMillis(1));
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
@@ -47,6 +48,7 @@ public class ProductService {
 
         if(requestAvailable) {
             try {
+                log.info("Requesting USDA products for '{}'", query);
                 ApiResponse response = webClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/foods/search")
@@ -80,7 +82,7 @@ public class ProductService {
     }
 
     private Page<ProductDTO> getDatabaseProducts(String query, int page, int size){
-        String cleaned = query.replace("\"", "");
+        String cleaned = query.replace("\"", "").trim();
         log.info("Searching for term {}", cleaned);
         Page<Product> products = productRepository.findByQuery(cleaned, PageRequest.of(page, size));
         List<ProductDTO> mappedProducts = productMapper.toDtoList(products.getContent());

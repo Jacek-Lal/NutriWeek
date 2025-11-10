@@ -50,8 +50,7 @@ const SignupForm = ({ onSuccess }) => {
       onSuccess();
       setServerError("");
     } catch (error) {
-      if (error.response.status === 409)
-        setServerError(error.response.data.message);
+      setServerError(error?.response?.data?.message);
     }
   };
 

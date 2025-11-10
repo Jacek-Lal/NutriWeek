@@ -3,6 +3,7 @@ package com.jacek.nutriweek.auth.controller;
 import com.jacek.nutriweek.auth.dto.LoginRequest;
 import com.jacek.nutriweek.auth.dto.RegisterRequest;
 import com.jacek.nutriweek.auth.service.AuthService;
+import com.jacek.nutriweek.auth.service.LoginThrottleService;
 import com.jacek.nutriweek.auth.service.VerificationResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,8 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
@@ -34,6 +37,7 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authManager;
     private final SecurityContextRepository securityContextRepository;
+    private final LoginThrottleService loginThrottleService;
 
     @Value("${app.urls.frontendVerified}") String verifyRedirect;
 
@@ -61,6 +65,14 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
+
+        String key = loginRequest.username().toLowerCase(Locale.ROOT);
+
+        if(!loginThrottleService.allowLogin(key)){
+            log.info("Too many login requests for {}", key);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Too many login attempts. Try again later");
+        }
+
         try {
             Authentication auth = authManager
                     .authenticate(
@@ -75,12 +87,12 @@ public class AuthController {
 
             securityContextRepository.saveContext(context, request, response);
 
+            loginThrottleService.resetLimiter(key);
             return ResponseEntity.ok(Map.of("message", "Login successful", "redirect", "/menus"));
         }
         catch (AuthenticationException e) {
             log.warn("Failed login for user {}", loginRequest.username());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
 

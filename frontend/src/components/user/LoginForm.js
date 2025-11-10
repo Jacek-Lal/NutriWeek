@@ -23,11 +23,7 @@ const LoginForm = () => {
       const response = await login(data);
       navigate(response.data.redirect);
     } catch (error) {
-      if (error.response?.status === 401) {
-        setServerError("Invalid username or password");
-      } else {
-        setServerError("Something went wrong. Please try again.");
-      }
+      setServerError(error.response.data);
     }
   };
 
