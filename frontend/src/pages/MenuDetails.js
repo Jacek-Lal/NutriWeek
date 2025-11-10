@@ -26,7 +26,6 @@ function MenuDetails() {
         const { data: menuData } = await getMenu(id);
         setMenu(menuData);
         getMealsPage(menuData);
-        console.log(menuData);
       } catch (e) {
         console.error(e);
       }

@@ -73,7 +73,7 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
             />
           ))
         ) : (
-          <p className="text-center text-gray-500 text-sm py-8">
+          <p className="col-span-full text-center text-gray-500 text-sm py-8">
             No products selected yet.
           </p>
         )}

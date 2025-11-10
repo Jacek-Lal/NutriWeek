@@ -5,14 +5,14 @@ import ProductGrid from "./ProductGrid";
 import ProductList from "./ProductList";
 
 const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
-  const [input, setInput] = useState("");
   const [products, setProducts] = useState([]);
-  const [recentMeals, setRecentMeals] = useState([]);
+  const [recentProducts, setRecentProducts] = useState([]);
   const [modalList, setModalList] = useState(list);
+  const [recentVisible, setRecentVisible] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
-      getRecentProducts(6).then((res) => setRecentMeals(res.data));
+      getRecentProducts(10).then((res) => setRecentProducts(res.data));
       setModalList(list);
     }
   }, [isOpen]);
@@ -22,6 +22,7 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
     setList(modalList);
     onClose();
   };
+
   return (
     <dialog
       open={isOpen}
@@ -47,15 +48,44 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
         {/* Left side: Search + Product grids */}
         <div className="lg:col-span-2 flex flex-col gap-6 overflow-y-auto pr-1">
           {/* Search Bar */}
-          <SearchBar input={input} setInput={setInput} setData={setProducts} />
+          <SearchBar setProducts={setProducts} />
 
           {/* Products */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm">
-            <h1 className="font-semibold text-gray-700 text-lg mb-3">
-              {products.length > 0 ? "Results" : "Recent products"}
+            <div className="flex items-center gap-2 ">
+              <h1 className="font-semibold text-gray-700 text-lg p-2">
+                Recent products
+              </h1>
+
+              <button
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition"
+                onClick={() => setRecentVisible(!recentVisible)}
+              >
+                <i
+                  className={`bi bi-chevron-${
+                    recentVisible ? "up" : "down"
+                  } text-gray-700 text-lg`}
+                ></i>
+              </button>
+            </div>
+
+            <div
+              className={`overflow-hidden transition-[max-height] duration-500 ease-out ${
+                recentVisible ? "max-h-[1000px]" : "max-h-0"
+              }`}
+            >
+              <ProductGrid
+                data={recentProducts}
+                list={modalList}
+                setList={setModalList}
+              />
+            </div>
+
+            <h1 className="font-semibold text-gray-700 text-lg mb-3 p-2">
+              Results
             </h1>
             <ProductGrid
-              data={products.length > 0 ? products : recentMeals}
+              data={products}
               list={modalList}
               setList={setModalList}
             />
