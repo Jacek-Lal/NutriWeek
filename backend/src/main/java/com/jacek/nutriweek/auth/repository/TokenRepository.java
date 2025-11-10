@@ -1,6 +1,7 @@
 package com.jacek.nutriweek.auth.repository;
 
 import com.jacek.nutriweek.auth.entity.VerificationToken;
+import com.jacek.nutriweek.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface TokenRepository extends JpaRepository<VerificationToken, Long> 
             select vt.user from VerificationToken vt
             where vt.expirationDate < :now and vt.user.enabled = false
             """)
-    List<Long> findExpired(@Param("now") Instant now);
+    List<User> findExpired(@Param("now") Instant now);
 
     @Modifying
     @Query("delete from VerificationToken vt where vt.expirationDate < :now")
