@@ -32,7 +32,8 @@ app:
   urls:
     verify: http://localhost:8080/auth/verify
     frontendVerified: http://localhost:3000/login
-  api:
+  usda:
+    url: https://api.nal.usda.gov/fdc/v1
     key: ${USDA_API_KEY}
 
 logging:
