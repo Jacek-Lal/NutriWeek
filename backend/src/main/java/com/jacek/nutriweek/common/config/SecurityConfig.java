@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(csrfTokenRepository())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
                 .cors(Customizer.withDefaults())
@@ -55,4 +55,12 @@ public class SecurityConfig {
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
     }
+    @Bean
+    public CsrfTokenRepository csrfTokenRepository() {
+        CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repo.setCookiePath("/");
+        repo.setCookieSecure(true);
+        return repo;
+}
+
 }
