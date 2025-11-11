@@ -1,6 +1,7 @@
 package com.jacek.nutriweek.auth.service;
 
 import com.jacek.nutriweek.auth.repository.TokenRepository;
+import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,10 @@ public class TokenCleanupService {
     @Scheduled(cron = "0 0 * * * *")
     public void deleteExpiredTokens(){
         Instant now = Instant.now();
-        List<Long> expiredUserIds = tokenRepository.findExpired(now);
+        List<User> expiredUsers = tokenRepository.findExpired(now);
 
-        if (!expiredUserIds.isEmpty()) {
-            userRepository.deleteByIdIn(expiredUserIds);
+        if (!expiredUsers.isEmpty()) {
+            userRepository.deleteAll(expiredUsers);
             int expired = tokenRepository.deleteExpired(now);
             log.info("Scheduled cleanup: {} users and tokens removed", expired);
         }

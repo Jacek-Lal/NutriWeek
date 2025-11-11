@@ -1,20 +1,22 @@
 server:
   port: 8080
+  forward-headers-strategy: native
 
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+    url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
   mail:
     host: smtp.gmail.com
@@ -28,19 +30,19 @@ spring:
 
 app:
   mail:
-    from: no-reply@nutriweek.local
+    from: no-reply@nutriweek.com
   urls:
-    verify: http://localhost:8080/auth/verify
-    frontendVerified: http://localhost:3000/login
+    verify: ${USER_VERIFY_URL}
+    frontendVerified: ${FRONTEND_VERIFIED_URL}
   usda:
     url: https://api.nal.usda.gov/fdc/v1
     key: ${USDA_API_KEY}
+  cors:
+    allowed-origins: ${FRONTEND_URL}
 
 logging:
   level:
-    root: INFO
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.security: DEBUG
-
+    root: WARN
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.security: INFO
