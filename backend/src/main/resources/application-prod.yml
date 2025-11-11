@@ -42,7 +42,7 @@ app:
 
 logging:
   level:
-    root: WARN
-    org.springframework.web: INFO
+    root: ERROR
+    org.springframework.web: ERROR
     org.hibernate.SQL: WARN
-    org.springframework.security: INFO
+    org.springframework.security: ERROR
