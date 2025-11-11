@@ -15,7 +15,7 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
       getRecentProducts(10).then((res) => setRecentProducts(res.data));
       setModalList(list);
     }
-  }, [isOpen]);
+  }, [isOpen, list]);
 
   const saveMeal = async () => {
     await addMealItems(mealId, modalList);

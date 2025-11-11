@@ -38,7 +38,7 @@ function MenuDetails() {
       {daysPage.content?.length > 0 && daysPage.page.totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 flex-wrap">
           {/* First page */}
-          <a
+          <button
             onClick={() => getMealsPage(menu, 0)}
             className={`p-2.5 rounded-lg shadow-sm border border-gray-300 bg-white hover:bg-green-50 text-gray-600 transition-all duration-200 cursor-pointer ${
               currentPage === 0 ? "opacity-50 pointer-events-none" : ""
@@ -46,10 +46,10 @@ function MenuDetails() {
             title="First page"
           >
             <i className="bi bi-chevron-double-left text-sm"></i>
-          </a>
+          </button>
 
           {/* Previous page */}
-          <a
+          <button
             onClick={() => getMealsPage(menu, currentPage - 1)}
             className={`p-2.5 rounded-lg shadow-sm border border-gray-300 bg-white hover:bg-green-50 text-gray-600 transition-all duration-200 cursor-pointer ${
               currentPage === 0 ? "opacity-50 pointer-events-none" : ""
@@ -57,7 +57,7 @@ function MenuDetails() {
             title="Previous page"
           >
             <i className="bi bi-chevron-left text-sm"></i>
-          </a>
+          </button>
 
           {/* Current range */}
           <div className="my-auto flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg shadow-inner text-sm font-medium">
@@ -71,7 +71,7 @@ function MenuDetails() {
           </div>
 
           {/* Next page */}
-          <a
+          <button
             onClick={() => getMealsPage(menu, currentPage + 1)}
             className={`p-2.5 rounded-lg shadow-sm border border-gray-300 bg-white hover:bg-green-50 text-gray-600 transition-all duration-200 cursor-pointer ${
               currentPage === daysPage.page.totalPages - 1
@@ -81,10 +81,10 @@ function MenuDetails() {
             title="Next page"
           >
             <i className="bi bi-chevron-right text-sm"></i>
-          </a>
+          </button>
 
           {/* Last page */}
-          <a
+          <button
             onClick={() => getMealsPage(menu, daysPage.page.totalPages - 1)}
             className={`p-2.5 rounded-lg shadow-sm border border-gray-300 bg-white hover:bg-green-50 text-gray-600 transition-all duration-200 cursor-pointer ${
               currentPage === daysPage.page.totalPages - 1
@@ -94,7 +94,7 @@ function MenuDetails() {
             title="Last page"
           >
             <i className="bi bi-chevron-double-right text-sm"></i>
-          </a>
+          </button>
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import { searchProducts } from "api";
-import { use, useState } from "react";
+import { useState } from "react";
 import { TailSpin } from "react-loader-spinner";
 
 const SearchBar = ({ setProducts }) => {

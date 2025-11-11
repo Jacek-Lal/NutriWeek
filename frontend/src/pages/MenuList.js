@@ -116,7 +116,7 @@ function MenuList() {
         {menusPage.content?.length > 0 && menusPage.page.totalPages > 1 && (
           <div className="flex justify-center items-center gap-3 mt-10 flex-wrap">
             {/* Previous */}
-            <a
+            <button
               onClick={() => getAllMenus(currentPage - 1)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentPage === 0
@@ -125,12 +125,12 @@ function MenuList() {
               }`}
             >
               &laquo;
-            </a>
+            </button>
 
             {/* Pages */}
             {menusPage &&
               [...Array(menusPage.page.totalPages).keys()].map((page) => (
-                <a
+                <button
                   onClick={() => getAllMenus(page)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     currentPage === page
@@ -140,11 +140,11 @@ function MenuList() {
                   key={page}
                 >
                   {page + 1}
-                </a>
+                </button>
               ))}
 
             {/* Next */}
-            <a
+            <button
               onClick={() => getAllMenus(currentPage + 1)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentPage === menusPage.totalPages - 1
@@ -153,7 +153,7 @@ function MenuList() {
               }`}
             >
               &raquo;
-            </a>
+            </button>
           </div>
         )}
 

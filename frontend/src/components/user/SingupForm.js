@@ -46,7 +46,7 @@ const SignupForm = ({ onSuccess }) => {
       await getCsrf();
 
       const { confirmPassword, ...payload } = data;
-      const response = await registerUser(payload);
+      await registerUser(payload);
       onSuccess();
       setServerError("");
     } catch (error) {

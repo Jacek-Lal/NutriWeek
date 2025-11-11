@@ -1,5 +1,5 @@
 import React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { InputField, MacroField, DaysOrRange } from "../common/Inputs";
@@ -58,7 +58,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     event.preventDefault();
 
     let days = menuData.days;
-    if (menuData.rangeType == "dates")
+    if (menuData.rangeType === "dates")
       days = daysBetween(menuData.startDate, menuData.endDate);
 
     let { rangeType, endDate, ...rest } = menuData;
