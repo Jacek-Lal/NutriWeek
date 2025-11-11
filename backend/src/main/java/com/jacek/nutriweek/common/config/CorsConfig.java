@@ -19,7 +19,7 @@ public class CorsConfig {
     private  static final String X_XSRF_TOKEN = "X-XSRF-TOKEN";
     private  static final String XSRF_TOKEN = "XSRF-TOKEN";
 
-    @Value("${app.cors.allowed-origins}")
+    @Value("${FRONTEND_URL}")
     private String allowedOrigins;
 
     @Bean
