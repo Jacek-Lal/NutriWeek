@@ -32,7 +32,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
         config.setAllowedHeaders(List.of(ORIGIN, CONTENT_TYPE, ACCEPT, X_XSRF_TOKEN, XSRF_TOKEN));
-        config.setExposedHeaders(List.of("Set-Cookie", XSRF_COOKIE));
+        config.setExposedHeaders(List.of("Set-Cookie", XSRF_TOKEN));
 
         config.setAllowedMethods(List.of(
                 GET.name(), POST.name(), PUT.name(), PATCH.name(), DELETE.name(), OPTIONS.name()
