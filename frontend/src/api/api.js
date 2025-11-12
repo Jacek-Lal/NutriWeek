@@ -19,6 +19,8 @@ function getCsrfToken() {
 
 api.interceptors.request.use((config) => {
   const token = getCsrfToken();
+  console.log("CSRF token detected:", token);
+
   if (token) {
     config.headers["X-XSRF-TOKEN"] = token;
   }
