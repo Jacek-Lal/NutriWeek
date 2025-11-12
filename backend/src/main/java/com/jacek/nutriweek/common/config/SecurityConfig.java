@@ -58,11 +58,14 @@ public class SecurityConfig {
         return new HttpSessionSecurityContextRepository();
     }
     
-    @Bean
-    public CsrfTokenRepository csrfTokenRepository() {
+   @Bean
+   public CsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        repo.setCookiePath("/");
+        repo.setCookieCustomizer(cookie -> cookie
+            .path("/")
+            .secure(true)
+            .sameSite("None"));
         return repo;
-    }
+}
 
 }
