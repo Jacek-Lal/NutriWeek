@@ -109,7 +109,8 @@ public class AuthController {
         ));
     }
     @GetMapping("/csrf")
-    public ResponseEntity<CsrfToken> csrf(CsrfToken token) {
+    public ResponseEntity<CsrfToken> csrf(HttpServletRequest request) {
+        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         return ResponseEntity.ok().body(token);
     }
 }
