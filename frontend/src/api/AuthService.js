@@ -1,8 +1,11 @@
-import api, { ENDPOINTS } from "./api";
+import api, { ENDPOINTS, setCsrfToken } from "./api";
 
 const ENDPOINT = ENDPOINTS.AUTH;
 
-export const getCsrf = () => api.get(`${ENDPOINT}/csrf`);
+export const getCsrf = async () => {
+  const { data } = await api.get(`${ENDPOINT}/csrf`);
+  setCsrfToken(data.token); 
+};
 export const registerUser = (payload) =>
   api.post(`${ENDPOINT}/register`, payload);
 export const loginUser = (payload) => api.post(`${ENDPOINT}/login`, payload);

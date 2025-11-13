@@ -12,16 +12,16 @@ const api = axios.create({
   withCredentials: true,
 });
 
-function getCsrfToken() {
-  const match = document.cookie.match(new RegExp("(^| )XSRF-TOKEN=([^;]+)"));
-  return match ? decodeURIComponent(match[2]) : null;
+
+let csrfToken = null;
+
+export function setCsrfToken(token) {
+  csrfToken = token;
+  api.defaults.headers["X-XSRF-TOKEN"] = token;
 }
 
 api.interceptors.request.use((config) => {
-  const token = getCsrfToken();
-  console.log("CSRF token detected:", token);
-
-  if (token) {
+  if (csrfToken) {
     config.headers["X-XSRF-TOKEN"] = token;
   }
 
