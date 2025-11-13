@@ -22,7 +22,7 @@ export function setCsrfToken(token) {
 
 api.interceptors.request.use((config) => {
   if (csrfToken) {
-    config.headers["X-XSRF-TOKEN"] = token;
+    config.headers["X-XSRF-TOKEN"] = csrfToken;
   }
 
   return config;
