@@ -37,6 +37,8 @@ app:
     key: ${USDA_API_KEY}
   cors:
     allowed-origins: "http://localhost:3000"
+  csrf:
+    domain: "http://localhost:8080"
 
 logging:
   level:

@@ -39,10 +39,12 @@ app:
     key: ${USDA_API_KEY}
   cors:
     allowed-origins: ${FRONTEND_URL}
+  csrf:
+    domain: ${COOKIE_DOMAIN}
 
 logging:
   level:
-    root: ERROR
-    org.springframework.web: ERROR
-    org.hibernate.SQL: WARN
-    org.springframework.security: ERROR
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
