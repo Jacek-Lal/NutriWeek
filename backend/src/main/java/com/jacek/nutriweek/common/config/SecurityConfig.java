@@ -32,7 +32,7 @@ public class SecurityConfig {
                 )
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/", "/health", "/auth/**").permitAll()
                         .requestMatchers("/menus/**", "/meals/**", "/products/**").authenticated()
                 )
                 .securityContext(context -> context.requireExplicitSave(false))
