@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "hooks/useAuth";
-import { getCsrf } from "api";
+
 const LoginForm = () => {
   const { login } = useAuth();
   const {
@@ -19,7 +19,6 @@ const LoginForm = () => {
     setServerError("");
 
     try {
-      await getCsrf();
       const response = await login(data);
       navigate(response.data.redirect);
     } catch (error) {

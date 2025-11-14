@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
-import { getCsrf, registerUser } from "api";
+import { registerUser } from "api";
 
 const SignupForm = ({ onSuccess }) => {
   const {
@@ -44,7 +44,7 @@ const SignupForm = ({ onSuccess }) => {
   const onSubmit = async (data) => {
     try {
       const { confirmPassword, ...payload } = data;
-      await getCsrf().then(() => registerUser(payload));
+      await registerUser(payload);
       onSuccess();
       setServerError("");
     } catch (error) {

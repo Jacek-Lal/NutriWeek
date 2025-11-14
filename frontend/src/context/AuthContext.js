@@ -1,17 +1,19 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { loginUser, logoutUser, getUser } from "api";
+import { loginUser, logoutUser, getUser, getCsrf } from "api";
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    getUser()
+   useEffect(() => {
+    getCsrf()
+      .then(() => getUser())
       .then((res) => setUser(res.data))
-      .catch(() => setUser(null));
+      .catch(() => setUser(null))
   }, []);
 
   const login = async (credentials) => {
+    await getCsrf();
     const response = await loginUser(credentials);
     const { data } = await getUser();
     setUser(data);
