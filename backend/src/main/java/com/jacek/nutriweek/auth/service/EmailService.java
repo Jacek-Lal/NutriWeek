@@ -1,14 +1,18 @@
 package com.jacek.nutriweek.auth.service;
 
-import com.jacek.nutriweek.common.exception.VerificationMailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import sendinblue.ApiClient;
+import sendinblue.ApiException;
+import sendinblue.Configuration;
+import sibApi.TransactionalEmailsApi;
+import sibModel.SendSmtpEmail;
+import sibModel.SendSmtpEmailSender;
+import sibModel.SendSmtpEmailTo;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -16,14 +20,15 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-    private final JavaMailSender mailSender;
-    @Value("${app.mail.from}") private String from;
+    @Value("${app.mail.api-key}") private String apiKey;
+    @Value("${app.mail.sender-email}") private String senderEmail;
+    @Value("${app.mail.sender-name}") private String senderName;
     @Value("${app.urls.verify}") private String verifyUrl;
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
-    public void sendVerificationEmail(String to, String token){
+    public void sendVerificationEmail(String to, String token) {
         if(!isValidEmail(to)){
             log.error("Invalid email format: {}", to);
             throw new IllegalArgumentException("Email address invalid or empty");
@@ -33,24 +38,34 @@ public class EmailService {
             log.error("Invalid UUID token format: {}", token);
             throw new IllegalArgumentException("Token is not valid UUID or empty");
         }
-
         String link = verifyUrl + "?token=" + token;
+        String subject = "NutriWeek verification";
+        String htmlContent = """
+            <html>
+                <body>
+                    <p>Thanks for signing up!</p>
+                    <p>Please verify your email by clicking the link below:</p>
+                    <a href="%s">%s</a>
+                </body>
+            </html>
+            """.formatted(link, link);
 
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(from);
-        msg.setTo(to);
-        msg.setSubject("Confirm your registration");
-        msg.setText("""
-            Thanks for signing up!
-            Please verify your email by clicking the link below:
-            %s
-            """.formatted(link));
+        ApiClient client = Configuration.getDefaultApiClient();
+        client.setApiKey(apiKey);
+
+        TransactionalEmailsApi api = new TransactionalEmailsApi(client);
+
+        SendSmtpEmail email = new SendSmtpEmail()
+                .sender(new SendSmtpEmailSender().email(senderEmail).name(senderName))
+                .to(List.of(new SendSmtpEmailTo().email(to)))
+                .subject(subject)
+                .htmlContent(htmlContent);
 
         try {
-            mailSender.send(msg);
-        } catch (MailException e){
+            api.sendTransacEmail(email);
+        } catch (ApiException e) {
             log.error("Email send failed for {}: {}", to, e.getMessage());
-            throw new VerificationMailException("Verification mail send failed, please try again later.");
+            throw new RuntimeException("Failed to send email: " + e.getMessage());
         }
     }
 
