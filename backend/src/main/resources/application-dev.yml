@@ -28,7 +28,9 @@ spring:
 
 app:
   mail:
-    from: no-reply@nutriweek.local
+    api-key: ${BREVO_API_KEY}
+    sender-email: noreply.nutriweek@gmail.com
+    sender-name: NutriWeek
   urls:
     verify: http://localhost:8080/auth/verify
     frontendVerified: http://localhost:3000/login
@@ -38,7 +40,7 @@ app:
   cors:
     allowed-origins: "http://localhost:3000"
   csrf:
-    domain: "http://localhost:8080"
+    domain: localhost
 
 logging:
   level:
