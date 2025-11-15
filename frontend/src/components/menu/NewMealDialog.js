@@ -30,8 +30,8 @@ const NewMealDialog = ({ show, onSubmit }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`p-6 bg-white border border-gray-200 shadow-md flex flex-col gap-4 rounded-2xl w-full sm:w-80 transition-all ${
-        !show ? "collapse" : ""
+      className={`p-6 bg-white border border-gray-200 shadow-md flex flex-col gap-4 rounded-2xl w-full sm:w-70 transition-all ${
+        !show ? "hidden" : ""
       }`}
     >
       {/* Name */}

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
+
 import { getMenu, getMenuMeals } from "api";
 import Day from "../components/menu/Day.js";
 
@@ -8,8 +10,10 @@ function MenuDetails() {
   const [menu, setMenu] = useState({});
   const [daysPage, setDaysPage] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const getMealsPage = async (menu, page = 0, size = 7) => {
+    setLoading(true);
     try {
       setCurrentPage(page);
 
@@ -18,10 +22,12 @@ function MenuDetails() {
     } catch (e) {
       console.error(e);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     (async function () {
+      setLoading(true);
       try {
         const { data: menuData } = await getMenu(id);
         setMenu(menuData);
@@ -29,6 +35,7 @@ function MenuDetails() {
       } catch (e) {
         console.error(e);
       }
+      setLoading(false);
     })();
   }, [id]);
 
@@ -98,6 +105,14 @@ function MenuDetails() {
         </div>
       )}
 
+      <div className={`h-[50vh] flex justify-center items-center ${loading ? "visible" : "hidden"}`}>
+        <TailSpin
+          height="60"
+          width="60"
+          visible={true}
+        />
+      </div>
+      
       {/* Days grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 place-content-center">
         {daysPage?.content?.map((day, i) => (

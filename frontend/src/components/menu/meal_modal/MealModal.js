@@ -94,9 +94,6 @@ const MealModal = ({ isOpen, onClose, list, setList, mealId, targetKcal }) => {
 
         {/* Right side: Selected products */}
         <div className="h-min bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm overflow-y-auto">
-          <h1 className="font-semibold text-gray-700 text-lg mb-3">
-            Selected Products
-          </h1>
           <ProductList
             list={modalList}
             setList={setModalList}

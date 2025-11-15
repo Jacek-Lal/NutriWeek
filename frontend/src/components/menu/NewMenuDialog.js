@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 
 import { InputField, MacroField, DaysOrRange } from "../common/Inputs";
 import { addDays, daysBetween, formatDate } from "../../utility/Date";
@@ -8,6 +9,7 @@ import { addMenu } from "api";
 
 const NewMenuDialog = ({ modalRef, closeModal }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [menuData, setMenuData] = useState({
     name: "Meal Plan",
     days: 7,
@@ -56,6 +58,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     let days = menuData.days;
     if (menuData.rangeType === "dates")
@@ -66,6 +69,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
 
     const response = await addMenu(payload);
 
+    setLoading(false);
     navigate(`/menus/${response.data?.id}`);
   };
 
@@ -87,7 +91,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
   return (
     <dialog
       ref={modalRef}
-      className="w-11/12 md:w-3/4 lg:w-2/3 h-[90vh] bg-white text-gray-800 rounded-2xl shadow-2xl p-6 md:p-10 overflow-hidden border border-gray-200"
+      className="w-11/12 md:w-3/4 lg:w-2/3 h-[95vh] bg-white text-gray-800 rounded-2xl shadow-2xl p-6 md:p-10 overflow-hidden border border-gray-200"
     >
       {/* Header */}
       <div className="flex justify-between items-center border-b pb-4">
@@ -203,9 +207,16 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200"
+          className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200 flex justify-center"
+          disabled={loading}
         >
-          Create Menu
+          {loading ? 
+            <TailSpin
+              height="20"
+              width="20"
+              visible={true}
+              color="white"
+            /> : "Create Menu"}
         </button>
       </form>
     </dialog>

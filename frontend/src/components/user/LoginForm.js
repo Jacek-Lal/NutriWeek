@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { FormInput } from "components/common/Inputs";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "hooks/useAuth";
+import { TailSpin } from "react-loader-spinner";
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -13,17 +14,21 @@ const LoginForm = () => {
   } = useForm();
 
   const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    setLoading(true);
     setServerError("");
-
+  
     try {
       const response = await login(data);
       navigate(response.data.redirect);
     } catch (error) {
       setServerError(error.response.data);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -55,8 +60,14 @@ const LoginForm = () => {
           <p className="text-center text-red-500 text-sm">{serverError}</p>
         )}
 
-        <button type="submit" className="btn-primary w-full">
-          Log in
+        <button type="submit" className="btn-primary w-full flex justify-center" disabled={loading}>
+          {loading ? 
+          <TailSpin
+            height="20"
+            width="20"
+            visible={true}
+            color="white"
+          /> : "Log in"}
         </button>
       </div>
     </form>

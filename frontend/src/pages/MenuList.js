@@ -4,11 +4,13 @@ import { getMenus, deleteMenu } from "api";
 import NewMenuDialog from "../components/menu/NewMenuDialog.js";
 import ConfirmDialog from "../components/common/ConfirmDialog.js";
 import { formatDate } from "utility/Date.js";
+import { TailSpin } from "react-loader-spinner";
 
 function MenuList() {
   const [menusPage, setMenusPage] = useState({});
   const [menuToDelete, setMenuToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(false);
   const menuModalRef = useRef();
   const confirmModalRef = useRef();
 
@@ -34,6 +36,7 @@ function MenuList() {
   };
 
   const getAllMenus = async (page = 0, size = 5) => {
+    setLoading(true);
     try {
       setCurrentPage(page);
 
@@ -43,6 +46,7 @@ function MenuList() {
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -71,7 +75,16 @@ function MenuList() {
           closeModal={() => toggleModal(false)}
         />
 
-        {/* Menus List */}
+        <div className="flex justify-center items-center">
+          <TailSpin
+            height="40"
+            width="40"
+            visible={true}
+            wrapperStyle={{ visibility: loading ? "visible" : "hidden" }}
+          />
+        </div>
+
+          {/* Menus List */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
           {menusPage.content?.map((menu) => (
             <div

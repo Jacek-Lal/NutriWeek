@@ -39,21 +39,24 @@ const SearchBar = ({ setProducts }) => {
 
       <button
         type="button"
-        disabled={!input.trim()}
+        disabled={!input.trim() || loading}
         onClick={() => getProducts(input)}
         className="flex items-center justify-center gap-2 rounded-xl bg-green-500 px-5 py-2.5 text-white font-medium shadow-md hover:bg-green-600 active:scale-95 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
       >
-        <i className="bi bi-search"></i>
-        Search
+        {loading ? 
+          <TailSpin
+            height="20"
+            width="20"
+            visible={true}
+          /> : 
+          <>
+            <i className="bi bi-search"></i>
+            Search
+          </>
+        }
+       
       </button>
-      <TailSpin
-        height="40"
-        width="40"
-        visible={true}
-        wrapperStyle={{
-          visibility: loading ? "visible" : "hidden",
-        }}
-      />
+      
     </div>
   );
 };

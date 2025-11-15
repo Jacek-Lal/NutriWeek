@@ -1,6 +1,10 @@
+import { useState } from "react";
 import ProductOnList from "./ProductOnList";
+import { TailSpin } from "react-loader-spinner";
 
 const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
+  const [loading, setLoading] = useState(false);
+
   const removeProduct = (fdcId) => {
     setList((prevList) =>
       prevList.filter((item) => item.product.fdcId !== fdcId)
@@ -81,11 +85,26 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
 
       {/* Save button */}
       <button
-        onClick={() => saveMeal()}
+        onClick={() => {
+          setLoading(true);
+          saveMeal();
+        }}
         className="mt-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 flex items-center justify-center gap-2 transition-all duration-200 rounded-b-2xl"
+        disabled={loading}
       >
-        <i className="bi bi-floppy text-lg"></i>
-        Save
+        {loading ? 
+          <TailSpin
+            height="20"
+            width="20"
+            visible={true}
+            color="white"
+          /> : 
+          <>
+            <i className="bi bi-floppy text-lg"></i>
+            Save
+          </>
+        }
+        
       </button>
     </div>
   );
