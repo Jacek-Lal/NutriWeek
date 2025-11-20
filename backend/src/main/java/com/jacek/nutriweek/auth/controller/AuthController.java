@@ -5,6 +5,7 @@ import com.jacek.nutriweek.auth.dto.RegisterRequest;
 import com.jacek.nutriweek.auth.service.AuthService;
 import com.jacek.nutriweek.auth.service.LoginThrottleService;
 import com.jacek.nutriweek.auth.service.VerificationResult;
+import com.jacek.nutriweek.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -92,6 +94,35 @@ public class AuthController {
         }
         catch (AuthenticationException e) {
             log.warn("Failed login for user {}", loginRequest.username());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+    }
+
+    @PostMapping("/demo")
+    public ResponseEntity<?> demo(HttpServletRequest request,
+                                  HttpServletResponse response) {
+
+        String rawPassword = UUID.randomUUID().toString();
+        User demoUser = authService.createDemoUser(rawPassword);
+
+        try {
+            Authentication auth = authManager
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    demoUser.getUsername(),
+                                    rawPassword)
+                    );
+
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+
+            securityContextRepository.saveContext(context, request, response);
+
+            return ResponseEntity.ok(Map.of("message", "Login successful", "redirect", "/menus"));
+        }
+        catch (AuthenticationException e) {
+            log.warn("Failed demo login for user {}", demoUser.getUsername());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }

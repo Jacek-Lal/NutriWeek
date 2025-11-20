@@ -3,7 +3,6 @@ package com.jacek.nutriweek.auth.service;
 import com.jacek.nutriweek.auth.dto.RegisterRequest;
 import com.jacek.nutriweek.auth.entity.VerificationToken;
 import com.jacek.nutriweek.auth.repository.TokenRepository;
-import com.jacek.nutriweek.common.exception.ResourceNotFoundException;
 import com.jacek.nutriweek.common.exception.UserAlreadyExistsException;
 import com.jacek.nutriweek.user.entity.User;
 import com.jacek.nutriweek.user.repository.UserRepository;
@@ -86,6 +85,21 @@ public class AuthService implements UserDetailsService {
 
         return VerificationResult.SUCCESS;
     }
+
+    public User createDemoUser(String password) {
+        String id = UUID.randomUUID().toString().substring(0, 8);
+        String username = "guest_" + id;
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(username + "@demo.local");
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEnabled(true);
+        user.getRoles().add("ROLE_DEMO");
+
+        return userRepository.save(user);
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

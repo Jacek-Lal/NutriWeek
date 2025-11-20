@@ -1,9 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function LandingPage() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loginDemo } = useAuth();
+  const navigate = useNavigate();
+  const onLoginDemo = async () => {
+
+    try {
+      const response = await loginDemo();
+      navigate(response.data.redirect);
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-orange-50 text-gray-800 flex flex-col">
@@ -26,9 +36,9 @@ export default function LandingPage() {
               <Link to="/register" className="btn-primary text-lg px-6 py-3">
                 Get Started
               </Link>
-              <Link to="/login" className="btn-secondary text-lg px-6 py-3">
+              <button onClick={() => onLoginDemo()} className="btn-secondary text-lg px-6 py-3">
                 Explore Demo
-              </Link>
+              </button>
             </div>
           ) : (
             <div className="flex justify-center md:justify-start gap-4">

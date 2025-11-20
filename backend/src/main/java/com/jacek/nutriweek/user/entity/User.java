@@ -1,12 +1,14 @@
 package com.jacek.nutriweek.user.entity;
 
 import com.jacek.nutriweek.common.BaseEntity;
+import com.jacek.nutriweek.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -30,6 +32,14 @@ public class User extends BaseEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "owner",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Menu> menus;
 
     public User(String username, String password, String email, boolean enabled) {
         this.username = username;
