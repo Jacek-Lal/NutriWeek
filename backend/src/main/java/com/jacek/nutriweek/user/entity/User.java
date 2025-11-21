@@ -33,6 +33,8 @@ public class User extends BaseEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
+
+    @JsonIgnore
     @OneToMany(
             mappedBy = "owner",
             fetch = FetchType.LAZY,
