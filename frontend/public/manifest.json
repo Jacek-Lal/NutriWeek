@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "NutriWeek",
+  "name": "NutriWeek — Personalized nutrition planner and meal tracker.",
   "icons": [
     {
       "src": "favicon.ico",
