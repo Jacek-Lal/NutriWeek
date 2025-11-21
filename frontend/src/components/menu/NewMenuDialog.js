@@ -25,35 +25,39 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
   });
 
   const onChange = (event) => {
-    let value = event.target.value;
     const name = event.target.name;
+    let value = event.target.value;
 
-    if (typeof menuData[name] === "number") {
-      value = parseInt(value) || 0;
-      value = value < 0 ? 0 : value;
-    }
-
-    if (name === "meals") {
-      const newLength = value;
-      let newCaloriesPerMeal = [...menuData.caloriesPerMeal];
-
-      if (newLength > newCaloriesPerMeal.length) {
-        newCaloriesPerMeal = [
-          ...newCaloriesPerMeal,
-          ...Array(newLength - newCaloriesPerMeal.length).fill(0),
-        ];
-      } else if (newLength < newCaloriesPerMeal.length)
-        newCaloriesPerMeal = newCaloriesPerMeal.slice(0, newLength);
-
-      setMenuData({
-        ...menuData,
-        [name]: value,
-        caloriesPerMeal: newCaloriesPerMeal,
-      });
+    if (value === "") {
+      setMenuData({ ...menuData, [name]: "" });
       return;
     }
 
+    if (!/^\d+$/.test(value)) return;
+
+    value = parseInt(value);
     setMenuData({ ...menuData, [name]: value });
+  };
+
+  const changeMealsNumber = (event) => {
+    let value = parseInt(event.target.value);
+    const name = event.target.name;
+    const newLength = value;
+    let newCaloriesPerMeal = [...menuData.caloriesPerMeal];
+
+    if (newLength > newCaloriesPerMeal.length) {
+      newCaloriesPerMeal = [
+        ...newCaloriesPerMeal,
+        ...Array(newLength - newCaloriesPerMeal.length).fill(0),
+      ];
+    } else if (newLength < newCaloriesPerMeal.length)
+      newCaloriesPerMeal = newCaloriesPerMeal.slice(0, newLength);
+
+    setMenuData({
+      ...menuData,
+      [name]: value,
+      caloriesPerMeal: newCaloriesPerMeal,
+    });
   };
 
   const onSubmit = async (event) => {
@@ -128,16 +132,30 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
 
         {/* Meals and Calories */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputField
-            label="Meals per Day"
-            type="number"
-            name="meals"
-            value={menuData.meals}
-            onChange={onChange}
-          />
+          <div className="flex flex-col gap-2 w-full">
+            <label
+              htmlFor="meals"
+              className="font-semibold text-gray-700 text-sm"
+            >
+              Meals per day
+            </label>
+            <select
+              id="meals"
+              name="meals"
+              defaultValue={3}
+              className="rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200"
+              onChange={changeMealsNumber}
+            >
+              {[...Array(9)].map((_, i) => (
+                <option key={i} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+          </div>
           <InputField
             label="Total Calories per Day"
-            type="number"
+            type="text"
             name="calories"
             value={menuData.calories}
             onChange={onChange}
@@ -210,13 +228,11 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200 flex justify-center"
           disabled={loading}
         >
-          {loading ? 
-            <TailSpin
-              height="20"
-              width="20"
-              visible={true}
-              color="white"
-            /> : "Create Menu"}
+          {loading ? (
+            <TailSpin height="20" width="20" visible={true} color="white" />
+          ) : (
+            "Create Menu"
+          )}
         </button>
       </form>
     </dialog>

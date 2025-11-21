@@ -77,7 +77,7 @@ const DaysOrRange = ({ menuData, onChange }) => {
       {/* Conditional section */}
       {menuData.rangeType === "days" ? (
         <InputField
-          type="number"
+          type="text"
           name="days"
           value={menuData.days}
           onChange={onChange}

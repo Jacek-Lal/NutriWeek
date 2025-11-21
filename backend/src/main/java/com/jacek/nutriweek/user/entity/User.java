@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jacek.nutriweek.common.BaseEntity;
 import com.jacek.nutriweek.menu.entity.Menu;
 import jakarta.persistence.*;
