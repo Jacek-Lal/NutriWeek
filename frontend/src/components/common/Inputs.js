@@ -1,3 +1,5 @@
+import React from "react";
+
 const InputField = ({
   label,
   name,
@@ -17,6 +19,7 @@ const InputField = ({
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      required
       className={`rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200 ${
         className || ""
       }`}
@@ -24,38 +27,18 @@ const InputField = ({
   </div>
 );
 
-const MacroField = ({ label, calories, percent, name, onChange, factor }) => {
-  const grams = ((calories * percent) / 100 / factor).toFixed(1);
-  const kcal = ((calories * percent) / 100).toFixed(0);
-
-  return (
-    <div className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200">
-      <label className="font-semibold text-gray-700">{label}</label>
-      <p className="text-sm text-gray-600">{grams} g</p>
-      <p className="text-sm text-gray-600">{kcal} kcal</p>
-      <input
-        type="number"
-        name={name}
-        value={percent}
-        onChange={onChange}
-        placeholder={label}
-        className="w-full rounded-lg border border-gray-300 bg-white text-gray-900 px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
-      />
-    </div>
-  );
-};
-
 const DaysOrRange = ({ menuData, onChange }) => {
+  const { rangeType, startDate, endDate } = menuData;
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Radio controls */}
       <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-700">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
             name="rangeType"
             value="days"
-            checked={menuData.rangeType === "days"}
+            checked={rangeType === "days"}
             onChange={onChange}
             className="text-green-500 focus:ring-green-400"
           />
@@ -66,7 +49,7 @@ const DaysOrRange = ({ menuData, onChange }) => {
             type="radio"
             name="rangeType"
             value="dates"
-            checked={menuData.rangeType === "dates"}
+            checked={rangeType === "dates"}
             onChange={onChange}
             className="text-green-500 focus:ring-green-400"
           />
@@ -74,8 +57,7 @@ const DaysOrRange = ({ menuData, onChange }) => {
         </label>
       </div>
 
-      {/* Conditional section */}
-      {menuData.rangeType === "days" ? (
+      {rangeType === "days" ? (
         <InputField
           type="text"
           name="days"
@@ -89,14 +71,14 @@ const DaysOrRange = ({ menuData, onChange }) => {
           <InputField
             type="date"
             name="startDate"
-            value={menuData.startDate}
+            value={startDate}
             onChange={onChange}
             required
           />
           <InputField
             type="date"
             name="endDate"
-            value={menuData.endDate}
+            value={endDate}
             onChange={onChange}
             required
           />
@@ -126,4 +108,4 @@ const FormInput = ({ id, label, type, register, rules, error }) => {
   );
 };
 
-export { DaysOrRange, MacroField, InputField, FormInput };
+export { DaysOrRange, InputField, FormInput };

@@ -1,63 +1,122 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 
-import { InputField, MacroField, DaysOrRange } from "../common/Inputs";
+import { InputField, DaysOrRange } from "../common/Inputs";
 import { addDays, daysBetween, formatDate } from "../../utility/Date";
 import { addMenu } from "api";
+
+const NUMERIC_FIELDS = [
+  "days",
+  "calories",
+  "targetProtein",
+  "targetFat",
+  "targetCarb",
+];
+
+const VALID_DAYS_OR_PERCENTS_REGEX = /^([1-9]|[1-9][0-9]|100)$/; // 1–100
+const VALID_CALORIES_REGEX = /^([1-9][0-9]{0,3}|10000)$/; // 1–10000
+
+const MACROS = [
+  { label: "Protein", name: "targetProtein", factor: 4 },
+  { label: "Fat", name: "targetFat", factor: 9 },
+  { label: "Carbs", name: "targetCarb", factor: 4 },
+];
+
+const defaultMenuData = () => ({
+  name: "Meal Plan",
+  days: 7,
+  meals: 3,
+  calories: 2000,
+  startDate: formatDate(new Date()),
+  endDate: formatDate(addDays(new Date(), 7)),
+  targetFat: 25,
+  targetProtein: 25,
+  targetCarb: 50,
+  caloriesPerMeal: [30, 40, 30],
+  rangeType: "days",
+});
+
+const isValueInRange = (name, value) => {
+  if (
+    (name === "days" || name.startsWith("target")) &&
+    !VALID_DAYS_OR_PERCENTS_REGEX.test(value)
+  ) {
+    return false;
+  }
+
+  if (name === "calories" && !VALID_CALORIES_REGEX.test(value)) {
+    return false;
+  }
+
+  return true;
+};
 
 const NewMenuDialog = ({ modalRef, closeModal }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [menuData, setMenuData] = useState({
-    name: "Meal Plan",
-    days: 7,
-    meals: 3,
-    calories: 2000,
-    startDate: formatDate(new Date()),
-    endDate: formatDate(addDays(new Date(), 7)),
-    targetFat: 25,
-    targetProtein: 25,
-    targetCarb: 50,
-    caloriesPerMeal: [30, 40, 30],
-    rangeType: "days",
-  });
+  const [menuData, setMenuData] = useState(defaultMenuData);
 
   const onChange = (event) => {
-    const name = event.target.name;
-    let value = event.target.value;
+    const { name, value } = event.target;
 
-    if (value === "") {
-      setMenuData({ ...menuData, [name]: "" });
+    if (!NUMERIC_FIELDS.includes(name)) {
+      setMenuData((prev) => ({ ...prev, [name]: value }));
       return;
     }
 
-    // numbers from 1 to 100
-    if (!/^([1-9]|[1-9][0-9]|100)$/.test(value)) return;
+    if (value === "") {
+      setMenuData((prev) => ({ ...prev, [name]: "" }));
+      return;
+    }
 
-    value = parseInt(value);
-    setMenuData({ ...menuData, [name]: value });
+    if (!isValueInRange(name, value)) return;
+
+    setMenuData((prev) => ({ ...prev, [name]: parseInt(value) }));
   };
 
   const changeMealsNumber = (event) => {
-    let value = parseInt(event.target.value);
-    const name = event.target.name;
-    const newLength = value;
-    let newCaloriesPerMeal = [...menuData.caloriesPerMeal];
+    const { name, value } = event.target;
+    const mealsCount = parseInt(value);
 
-    if (newLength > newCaloriesPerMeal.length) {
-      newCaloriesPerMeal = [
-        ...newCaloriesPerMeal,
-        ...Array(newLength - newCaloriesPerMeal.length).fill(0),
-      ];
-    } else if (newLength < newCaloriesPerMeal.length)
-      newCaloriesPerMeal = newCaloriesPerMeal.slice(0, newLength);
+    setMenuData((prev) => {
+      const current = [...prev.caloriesPerMeal];
+      let newCaloriesPerMeal = current;
 
-    setMenuData({
-      ...menuData,
-      [name]: value,
-      caloriesPerMeal: newCaloriesPerMeal,
+      if (mealsCount > current.length) {
+        newCaloriesPerMeal = [
+          ...current,
+          ...Array(mealsCount - current.length).fill(0),
+        ];
+      } else if (mealsCount < current.length) {
+        newCaloriesPerMeal = current.slice(0, mealsCount);
+      }
+
+      return {
+        ...prev,
+        [name]: mealsCount,
+        caloriesPerMeal: newCaloriesPerMeal,
+      };
+    });
+  };
+
+  const handleMealCaloriesChange = (index) => (event) => {
+    const { value } = event.target;
+
+    setMenuData((prev) => {
+      const newMealCalories = [...prev.caloriesPerMeal];
+
+      if (value === "") {
+        newMealCalories[index] = "";
+        return { ...prev, caloriesPerMeal: newMealCalories };
+      }
+
+      if (!VALID_DAYS_OR_PERCENTS_REGEX.test(value)) {
+        return prev;
+      }
+
+      newMealCalories[index] = value;
+      return { ...prev, caloriesPerMeal: newMealCalories };
     });
   };
 
@@ -66,29 +125,24 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     setLoading(true);
 
     let days = menuData.days;
-    if (menuData.rangeType === "dates")
+    if (menuData.rangeType === "dates") {
       days = daysBetween(menuData.startDate, menuData.endDate);
+    }
 
-    let { rangeType, endDate, ...rest } = menuData;
-    const payload = { ...rest, days: days };
+    const { rangeType, endDate, ...rest } = menuData;
+    const payload = { ...rest, days };
 
     const response = await addMenu(payload);
 
     setLoading(false);
-
     navigate(`/menus/${response.data?.id}`);
   };
 
-  const macros = [
-    { label: "Protein", name: "targetProtein", factor: 4 },
-    { label: "Fat", name: "targetFat", factor: 9 },
-    { label: "Carbs", name: "targetCarb", factor: 4 },
-  ];
-
-  const totalMacro = macros.reduce(
-    (sum, m) => sum + parseInt(menuData[m.name] || 0),
+  const totalMacro = MACROS.reduce(
+    (sum, macro) => sum + parseInt(menuData[macro.name] || 0),
     0
   );
+
   const totalMealCalories = menuData.caloriesPerMeal.reduce(
     (sum, m) => sum + parseInt(m || 0),
     0
@@ -105,11 +159,11 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           Create <span className="text-green-600">Menu</span>
         </h2>
         <button
-          onClick={() => closeModal()}
+          onClick={closeModal}
           className="bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full p-2 transition"
           title="Close"
         >
-          <i className="bi bi-x text-2xl"></i>
+          <i className="bi bi-x text-2xl" />
         </button>
       </div>
 
@@ -132,8 +186,8 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
           <DaysOrRange menuData={menuData} onChange={onChange} />
         </div>
 
-        {/* Meals and Calories */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Meals */}
           <div className="flex flex-col gap-2 w-full">
             <label
               htmlFor="meals"
@@ -155,6 +209,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
               ))}
             </select>
           </div>
+          {/* Calories */}
           <InputField
             label="Total Calories per Day"
             type="text"
@@ -168,17 +223,38 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
         <div className="flex flex-col gap-3">
           <p className="font-semibold text-gray-700">Macro Distribution (%)</p>
           <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {macros.map((m) => (
-              <MacroField
-                key={m.name}
-                label={m.label}
-                name={m.name}
-                calories={menuData.calories}
-                percent={menuData[m.name]}
-                factor={m.factor}
-                onChange={onChange}
-              />
-            ))}
+            {MACROS.map((macro) => {
+              const grams = (
+                (menuData.calories * menuData[macro.name]) /
+                100 /
+                macro.factor
+              ).toFixed(1);
+
+              const kcal = (
+                (menuData.calories * menuData[macro.name]) /
+                100
+              ).toFixed(0);
+
+              return (
+                <div
+                  key={macro.name}
+                  className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <label className="font-semibold text-gray-700">
+                    {macro.label}
+                  </label>
+                  <p className="text-sm text-gray-600">{grams} g</p>
+                  <p className="text-sm text-gray-600">{kcal} kcal</p>
+                  <InputField
+                    type="text"
+                    name={macro.name}
+                    value={menuData[macro.name]}
+                    onChange={onChange}
+                    className={"w-[60%] mx-auto bg-white text-center"}
+                  />
+                </div>
+              );
+            })}
           </div>
           <p className="pt-2 text-end font-semibold text-gray-600">
             Total: {totalMacro}%
@@ -202,19 +278,12 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
                 <p className="text-sm text-gray-600 mb-1">
                   {(menuData.caloriesPerMeal[i] * menuData.calories) / 100} kcal
                 </p>
-                <input
-                  type="number"
-                  className="w-20 text-center rounded-lg border border-gray-300 p-2 text-gray-800 focus:ring-2 focus:ring-green-400 outline-none transition"
+                <InputField
+                  type="text"
+                  name={`meal-${i}`}
                   value={menuData.caloriesPerMeal[i] ?? 0}
-                  onChange={(e) => {
-                    const newMealCalories = [...menuData.caloriesPerMeal];
-                    if (Number(e.target.value) < 0) e.target.value = "";
-                    newMealCalories[i] = e.target.value;
-                    setMenuData({
-                      ...menuData,
-                      caloriesPerMeal: newMealCalories,
-                    });
-                  }}
+                  onChange={handleMealCaloriesChange(i)}
+                  className={"w-[60%] mx-auto bg-white text-center"}
                 />
               </div>
             ))}
