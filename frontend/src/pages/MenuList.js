@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 import { getMenus, deleteMenu } from "api";
 import NewMenuDialog from "../components/menu/NewMenuDialog.js";
 import ConfirmDialog from "../components/common/ConfirmDialog.js";
 import { formatDate } from "utility/Date.js";
-import { TailSpin } from "react-loader-spinner";
 
 function MenuList() {
   const [menusPage, setMenusPage] = useState({});
@@ -176,6 +176,8 @@ function MenuList() {
           message={`Are you sure you want to delete "${menuToDelete?.name}"?`}
           onConfirm={confirmDelete}
           onCancel={() => confirmModalRef.current.close()}
+          labelCancel="Cancel"
+          labelConfirm="Delete"
         />
       </div>
     </div>

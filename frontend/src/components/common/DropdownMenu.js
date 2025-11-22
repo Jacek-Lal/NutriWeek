@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import ConfirmDialog from "./ConfirmDialog";
+
 const DropdownMenu = ({ deleteMeal }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
@@ -48,6 +49,8 @@ const DropdownMenu = ({ deleteMeal }) => {
         message={`Are you sure you want to delete this meal?`}
         onConfirm={confirmDelete}
         onCancel={() => confirmDeleteRef.current.close()}
+        labelCancel="Cancel"
+        labelConfirm="Delete"
       />
     </div>
   );

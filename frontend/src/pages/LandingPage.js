@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 import { useAuth } from "../hooks/useAuth";
 
 export default function LandingPage() {
   const { isLoggedIn, loginDemo } = useAuth();
   const navigate = useNavigate();
-  const onLoginDemo = async () => {
+  const [loading, setLoading] = useState(false);
+  const confirmModalRef = useRef();
 
+  const onLoginDemo = async () => {
+    setLoading(true);
     try {
       const response = await loginDemo();
       navigate(response.data.redirect);
     } catch (error) {
       console.error(error.response.data);
     }
+    setLoading(false);
   };
 
   return (
@@ -36,7 +41,10 @@ export default function LandingPage() {
               <Link to="/register" className="btn-primary text-lg px-6 py-3">
                 Get Started
               </Link>
-              <button onClick={() => onLoginDemo()} className="btn-secondary text-lg px-6 py-3">
+              <button
+                onClick={() => confirmModalRef.current.showModal()}
+                className="btn-secondary text-lg px-6 py-3"
+              >
                 Explore Demo
               </button>
             </div>
@@ -105,6 +113,49 @@ export default function LandingPage() {
       <footer className="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
         © {new Date().getFullYear()} NutriWeek. Built with ❤️ for better living.
       </footer>
+
+      {/* Warning dialog window */}
+      <dialog
+        ref={confirmModalRef}
+        className="max-w-[60%] p-6 rounded-xl bg-white shadow-xl"
+      >
+        <div className="mb-6">
+          <p className="text-gray-800 mb-4">
+            You are about to sign in with a demo account. Any data you create
+            will be temporary and removed when you log out.
+          </p>
+
+          <p>
+            <i className="bi bi-exclamation-triangle text-yellow-600" />{" "}
+            <strong>Important note: </strong>
+            <br />
+            This application is hosted on a free tier. The first request after a
+            period of inactivity may take up to a minute to respond. Subsequent
+            requests will be significantly faster.
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={() => confirmModalRef.current.close()}
+            className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onLoginDemo}
+            className="inline-flex items-center justify-center w-24 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+            disabled={loading}
+          >
+            {loading ? (
+              <TailSpin height="20" width="20" visible={true} color="white" />
+            ) : (
+              "Proceed"
+            )}
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 }

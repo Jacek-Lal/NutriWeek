@@ -33,7 +33,8 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
       return;
     }
 
-    if (!/^\d+$/.test(value)) return;
+    // numbers from 1 to 100
+    if (!/^([1-9]|[1-9][0-9]|100)$/.test(value)) return;
 
     value = parseInt(value);
     setMenuData({ ...menuData, [name]: value });
@@ -74,6 +75,7 @@ const NewMenuDialog = ({ modalRef, closeModal }) => {
     const response = await addMenu(payload);
 
     setLoading(false);
+
     navigate(`/menus/${response.data?.id}`);
   };
 
