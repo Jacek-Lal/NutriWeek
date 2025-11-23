@@ -54,7 +54,9 @@ const SignupForm = ({ onSuccess }) => {
       await registerUser(payload);
       onSuccess();
     } catch (error) {
-      setServerError(error?.response?.data?.message ?? "Register failed. Please try again.");
+      setServerError(
+        error?.response?.data?.message ?? "Register failed. Please try again."
+      );
     }
     setLoading(false);
   };
@@ -137,7 +139,7 @@ const SignupForm = ({ onSuccess }) => {
           <i className="bi bi-exclamation-triangle text-yellow-600" />{" "}
           <strong>Important note:</strong> <br />
           This application is hosted on a free tier. The first request after a
-          period of inactivity may take up to a minute to respond. Subsequent
+          period of inactivity may take up a few minutes to respond. Subsequent
           requests will be significantly faster.
         </div>
 

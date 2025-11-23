@@ -31,7 +31,7 @@ spring:
 app:
   mail:
     api-key: ${BREVO_API_KEY}
-    sender-email: noreply.nutriweek@gmail.com
+    sender-email: ${SENDER_EMAIL}
     sender-name: NutriWeek
   urls:
     verify: ${USER_VERIFY_URL}

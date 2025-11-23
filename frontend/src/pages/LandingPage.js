@@ -111,7 +111,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} NutriWeek. Built with ❤️ for better living.
+        © {new Date().getFullYear()} NutriWeek.
       </footer>
 
       {/* Warning dialog window */}
@@ -130,8 +130,8 @@ export default function LandingPage() {
             <strong>Important note: </strong>
             <br />
             This application is hosted on a free tier. The first request after a
-            period of inactivity may take up to a minute to respond. Subsequent
-            requests will be significantly faster.
+            period of inactivity may take up a few minutes to respond.
+            Subsequent requests will be significantly faster.
           </p>
         </div>
 
