@@ -1,4 +1,6 @@
 const ProductOnList = ({ mealItem, removeProduct, updateAmount }) => {
+  const VALID_AMOUNT_REGEX = /^([1-9][0-9]{0,3}|10000)$/; // 1–10000
+
   const getNutrient = (n) =>
     mealItem.product.nutrients.find((x) => x.name === n) ?? null;
 
@@ -29,13 +31,20 @@ const ProductOnList = ({ mealItem, removeProduct, updateAmount }) => {
       <div className="flex items-center gap-2 text-sm text-gray-700">
         <span className="font-medium">Amount:</span>
         <input
-          type="number"
-          min={0}
-          max={9999}
-          value={mealItem.amount}
-          onChange={(e) =>
-            updateAmount(mealItem.product.fdcId, Number(e.target.value))
-          }
+          type="text"
+          value={mealItem.amount ?? ""}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            if (value === "") {
+              updateAmount(mealItem.product.fdcId, "");
+              return;
+            }
+
+            if (VALID_AMOUNT_REGEX.test(value)) {
+              updateAmount(mealItem.product.fdcId, Number(value));
+            }
+          }}
           className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all duration-200"
         />
         <span className="text-gray-500">g</span>

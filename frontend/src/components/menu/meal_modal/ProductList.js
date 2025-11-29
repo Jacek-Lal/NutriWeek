@@ -12,22 +12,29 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
   };
 
   const updateAmount = (fdcId, newAmount) => {
-    if (newAmount < 0 || newAmount > 9999) return;
     setList((prevList) =>
       prevList.map((item) =>
         item.product.fdcId === fdcId ? { ...item, amount: newAmount } : item
       )
     );
   };
-
+  const hasEmptyAmount = list.some(
+    (mi) => mi.amount === "" || mi.amount == null
+  );
   const macros = list.reduce(
     (acc, mi) => {
+      const amount =
+        typeof mi.amount === "number" && !Number.isNaN(mi.amount)
+          ? mi.amount
+          : 0;
+
       const get = (n) =>
-        mi.product.nutrients.find((x) => x.name === n)?.value ?? 0;
-      acc.kcal += (get("Energy") * mi.amount) / 100;
-      acc.protein += (get("Protein") * mi.amount) / 100;
-      acc.fat += (get("Total lipid (fat)") * mi.amount) / 100;
-      acc.carbs += (get("Carbohydrate, by difference") * mi.amount) / 100;
+        mi.product.nutrients.find((x) => x.name.includes(n))?.value ?? 0;
+
+      acc.kcal += (get("Energy") * amount) / 100;
+      acc.protein += (get("Protein") * amount) / 100;
+      acc.fat += (get("Total lipid (fat)") * amount) / 100;
+      acc.carbs += (get("Carbohydrate, by difference") * amount) / 100;
       return acc;
     },
     { kcal: 0, protein: 0, fat: 0, carbs: 0 }
@@ -86,25 +93,25 @@ const ProductList = ({ list, setList, saveMeal, targetKcal }) => {
       {/* Save button */}
       <button
         onClick={() => {
+          if (hasEmptyAmount) return;
           setLoading(true);
-          saveMeal();
+          try {
+            saveMeal();
+          } finally {
+            setLoading(false);
+          }
         }}
         className="mt-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 flex items-center justify-center gap-2 transition-all duration-200 rounded-b-2xl"
         disabled={loading}
       >
-        {loading ? 
-          <TailSpin
-            height="20"
-            width="20"
-            visible={true}
-            color="white"
-          /> : 
+        {loading ? (
+          <TailSpin height="20" width="20" visible={true} color="white" />
+        ) : (
           <>
             <i className="bi bi-floppy text-lg"></i>
             Save
           </>
-        }
-        
+        )}
       </button>
     </div>
   );
