@@ -1,5 +1,7 @@
 package com.jacek.nutriweek.menu.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jacek.nutriweek.common.TokenRateLimiter;
 import com.jacek.nutriweek.menu.dto.ProductDTO;
 import com.jacek.nutriweek.menu.dto.usda.ApiResponse;
@@ -8,12 +10,14 @@ import com.jacek.nutriweek.menu.mapper.ProductMapper;
 import com.jacek.nutriweek.menu.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,33 +48,21 @@ public class ProductService {
     }
 
     public Page<ProductDTO> searchProducts(String query, int page, int size) {
+
+        if(API_KEY.isBlank()) {
+            try {
+                return getJsonProducts(page, size);
+            } catch (IOException e) {
+                log.error("Failed loading JSON file with products: {}", e.getMessage());
+                return new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
+            }
+        }
+
         boolean requestAvailable = rateLimiter.tryConsume();
 
         if(requestAvailable) {
             try {
-                log.info("Requesting USDA products for '{}'", query);
-                ApiResponse response = webClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                                .path("/foods/search")
-                                .queryParam("query", query)
-                                .queryParam("pageSize", size)
-                                .queryParam("pageNumber", page)
-                                .queryParam("api_key", API_KEY)
-                                .build())
-                        .retrieve()
-                        .bodyToMono(ApiResponse.class)
-                        .block();
-
-                log.info("Successfull USDA call, {} tokens left", rateLimiter.tokens());
-
-                if(response == null){
-                    log.info("No USDA products found for query {}", query);
-                    return new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);}
-
-                List<ProductDTO> products = productMapper.fromApiToProductDtoList(response.foods());
-                log.info("Returning {} products for query {}", products.size(), query);
-                return new PageImpl<>(products, PageRequest.of(page, size), response.totalHits());
-
+                return getApiProducts(query, page, size);
             } catch (Exception e) {
                 log.error("Failed fetching USDA products: {}", e.getMessage());
                 return getDatabaseProducts(query, page, size);
@@ -81,11 +73,48 @@ public class ProductService {
         }
     }
 
+    private Page<ProductDTO> getApiProducts(String query, int page, int size){
+        log.info("Requesting USDA products for '{}'", query);
+        ApiResponse response = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/foods/search")
+                        .queryParam("query", query)
+                        .queryParam("pageSize", size)
+                        .queryParam("pageNumber", page)
+                        .queryParam("api_key", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .block();
+
+        log.info("Successfull USDA call, {} tokens left", rateLimiter.tokens());
+
+        if(response == null){
+            log.info("No USDA products found for query {}", query);
+            return new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);}
+
+        List<ProductDTO> products = productMapper.fromApiToProductDtoList(response.foods());
+        log.info("Returning {} products for query {}", products.size(), query);
+        return new PageImpl<>(products, PageRequest.of(page, size), response.totalHits());
+    }
     private Page<ProductDTO> getDatabaseProducts(String query, int page, int size){
         String cleaned = query.replace("\"", "").trim();
         log.info("Searching for term {}", cleaned);
         Page<Product> products = productRepository.findByQuery(cleaned, PageRequest.of(page, size));
         List<ProductDTO> mappedProducts = productMapper.toDtoList(products.getContent());
         return new PageImpl<>(mappedProducts, products.getPageable(), products.getTotalElements());
+    }
+
+    private Page<ProductDTO> getJsonProducts(int page, int size) throws IOException {
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        ClassPathResource resource = new ClassPathResource("products.json");
+        ApiResponse response = mapper.readValue(
+                resource.getInputStream(),
+                ApiResponse.class);
+
+        List<ProductDTO> products = productMapper.fromApiToProductDtoList(response.foods());
+        log.info("Returning {} products from local file", products.size());
+        return new PageImpl<>(products, PageRequest.of(page, size), response.totalHits());
     }
 }

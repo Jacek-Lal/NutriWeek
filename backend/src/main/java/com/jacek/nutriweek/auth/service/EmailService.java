@@ -1,5 +1,6 @@
 package com.jacek.nutriweek.auth.service;
 
+import com.jacek.nutriweek.common.exception.VerificationMailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,10 @@ public class EmailService {
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
     public void sendVerificationEmail(String to, String token) {
+        if(apiKey.isBlank()){
+            throw new VerificationMailException("Verification service currently unavailable. Try demo account.");
+        }
+
         if(!isValidEmail(to)){
             log.error("Invalid email format: {}", to);
             throw new IllegalArgumentException("Email address invalid or empty");

@@ -12,19 +12,10 @@ services:
 
   backend:
     build: ./backend
+    env_file:
+      - .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      FRONTEND_URL: ${FRONTEND_URL}
-      USER_VERIFY_URL: ${USER_VERIFY_URL}
-      FRONTEND_VERIFIED_URL: ${FRONTEND_VERIFIED_URL}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      BREVO_API_KEY: ${BREVO_API_KEY}
-      SENDER_EMAIL: ${SENDER_EMAIL}
-      USDA_API_KEY: ${USDA_API_KEY}
-      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
-
     ports:
       - "8080:8080"
     depends_on:
