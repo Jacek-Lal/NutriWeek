@@ -4,7 +4,7 @@ import { TailSpin } from "react-loader-spinner";
 import { getMenus, deleteMenu } from "api";
 import NewMenuDialog from "../components/menu/NewMenuDialog.js";
 import ConfirmDialog from "../components/common/ConfirmDialog.js";
-import { formatDate } from "utility/Date.js";
+import { addDays, formatDate } from "utility/Date.js";
 
 function MenuList() {
   const [menusPage, setMenusPage] = useState({});
@@ -84,7 +84,7 @@ function MenuList() {
           />
         </div>
 
-          {/* Menus List */}
+        {/* Menus List */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
           {menusPage.content?.map((menu) => (
             <div
@@ -103,10 +103,12 @@ function MenuList() {
                     {menu.name}
                   </p>
                   <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-600">
-                      Start date:
-                    </span>{" "}
+                    <span className="font-medium text-gray-600">Start:</span>{" "}
                     {menu.startDate}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    <span className="font-medium text-gray-600">End:</span>{" "}
+                    {formatDate(addDays(menu.startDate, menu.days))}
                   </p>
                   <p className="text-sm text-gray-500">
                     <span className="font-medium text-gray-600">Days:</span>{" "}

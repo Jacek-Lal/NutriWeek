@@ -36,11 +36,15 @@ const Day = ({ menuId, initialMeals, date }) => {
     setShowForm(false);
   };
 
+  const targetKcal = meals.reduce((acc, meal) => {
+    return acc + meal.targetKcal;
+  }, 0);
+
   const macros = meals.reduce(
     (acc, meal) => {
       meal.mealItems.forEach((mi) => {
         const get = (n, u = "G") =>
-          mi.product.nutrients.find((x) => x.name === n && x.unit === u)
+          mi.product.nutrients.find((x) => x.name.includes(n) && x.unit === u)
             ?.value ?? 0;
 
         acc.kcal += (get("Energy", "KCAL") * mi.amount) / 100;
@@ -54,18 +58,25 @@ const Day = ({ menuId, initialMeals, date }) => {
     { kcal: 0, protein: 0, fat: 0, carbs: 0 }
   );
 
-  const targetKcal = meals.reduce((acc, meal) => {
-    return acc + meal.targetKcal;
-  }, 0);
-
   return (
     <div className="min-w-64 flex flex-col gap-5 mt-6 p-6 rounded-2xl">
       {/* Date + macros summary */}
       <div className="flex flex-col items-center">
         <p className="font-semibold text-gray-700">{date}</p>
         <p className="text-sm text-gray-600">
-          <span className="text-green-600 font-semibold">{macros.kcal}</span> /{" "}
-          {targetKcal} kcal
+          <span
+            className={`font-semibold ${
+              macros.kcal > targetKcal * 1.1
+                ? "text-red-600"
+                : macros.kcal >= targetKcal * 0.9 &&
+                  macros.kcal <= targetKcal * 1.1
+                ? "text-green-600"
+                : "text-gray-800"
+            }`}
+          >
+            {macros.kcal}
+          </span>{" "}
+          / {targetKcal} kcal
         </p>
       </div>
 

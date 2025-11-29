@@ -57,8 +57,9 @@ const SignupForm = ({ onSuccess }) => {
       setServerError(
         error?.response?.data?.message ?? "Register failed. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

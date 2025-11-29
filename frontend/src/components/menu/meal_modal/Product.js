@@ -8,7 +8,7 @@ const Product = ({ product, list, setList }) => {
       setList((prevList) => [...prevList, { product: product, amount: 100 }]);
   };
   const getNutrient = (n) =>
-    product.nutrients.find((x) => x.name === n) ?? null;
+    product.nutrients.find((x) => x.name.includes(n)) ?? null;
 
   const nutKeys = {
     Energy: "Energy",
@@ -35,16 +35,17 @@ const Product = ({ product, list, setList }) => {
 
       {/* Nutrients list */}
       <div className="space-y-1.5 text-sm text-gray-700">
-        {Object.keys(nutKeys).map((key) => {
+        {Object.keys(nutKeys).map((key, i) => {
           const n = getNutrient(key);
           if (n === null) return null;
 
+          const nutName = Object.values(nutKeys)[i];
           return (
             <p
               key={`${n.name}|${n.unit}`}
               className="flex justify-between items-center border-b border-gray-100 pb-1 last:border-0"
             >
-              <span className="truncate">{nutKeys[n.name]}</span>
+              <span className="truncate">{nutName}</span>
               <span className="font-medium text-gray-800">
                 {n.value} {n.unit}
               </span>

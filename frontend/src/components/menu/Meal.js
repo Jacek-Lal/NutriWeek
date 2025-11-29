@@ -23,8 +23,8 @@ const Meal = ({ meal, onUpdateItems, onDelete }) => {
   const macros = productList.reduce(
     (acc, mi) => {
       const get = (n, u = "G") =>
-        mi.product.nutrients.find((x) => x.name === n && x.unit === u)?.value ??
-        0;
+        mi.product.nutrients.find((x) => x.name.includes(n) && x.unit === u)
+          ?.value ?? 0;
       acc.kcal += (get("Energy", "KCAL") * mi.amount) / 100;
       acc.protein += (get("Protein") * mi.amount) / 100;
       acc.fat += (get("Total lipid (fat)") * mi.amount) / 100;
