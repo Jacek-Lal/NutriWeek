@@ -11,9 +11,9 @@ It lets you:
 
 The app is structured wih production-grade system in mind, with:
 
-- Secure, session-based authentication and email verification
+- Session-based authentication and email verification
 - Per-user data isolation
-- Server-side and client-side validation
+- Server-side validation
 - Automated tests (JUnit 5 + Mockito)
 
 ---
@@ -42,8 +42,8 @@ The app is structured wih production-grade system in mind, with:
 [![Postgres][Postgres.com]][Postgres-url]
 [![Docker][Docker.com]][Docker-url]
 
-**Backend:** Java 21 · Spring Boot 3 · Spring Security 6 · Spring Data JPA · PostgreSQL  
-**Frontend:** JavaScript · React · React Router · Axios · TailwindCSS  
+**Backend:** Java 21 | Spring Boot 3 | Spring Security 6 | Spring Data JPA | PostgreSQL 16  
+**Frontend:** JavaScript | React | Axios | Tailwind CSS 3  
 **DevOps:** Docker · Docker Compose  
 **Testing:** JUnit 5 · Mockito · H2 (integration tests)  
 **Hosting:** Vercel (Frontend) · Render (Backend) · Neon (Database) · Brevo (email API)
@@ -78,6 +78,7 @@ The app is structured wih production-grade system in mind, with:
   - Session-based auth (`JSESSIONID`)
   - CSRF protection using `CookieCsrfTokenRepository` and `X-XSRF-TOKEN` header
   - CORS configured to allow only the React frontend origins (local + production)
+  - Rate limiting for login attempts (to prevent brute-force attacks) and USDA API requests (to avoid reaching it's limit)
 
 - **Architecture**
 
@@ -88,20 +89,16 @@ The app is structured wih production-grade system in mind, with:
 
   - Spring `@Scheduled` job that deletes expired verification tokens and unverified/demo users
 
-- **Emails**
+- **Email Verification**
 
   - Email verification implemented via Brevo email API
   - Tokenized verify link and redirect back to frontend with proper status (`success`, `expired`, etc.)
 
 - **Dockerized Dev & Prod**
 
-  - `docker-compose.dev.yml` – hot-reload dev setup (Maven `spring-boot:run` + `npm start`)
-  - `docker-compose.yml` – production-like setup (built JAR + built React served by Nginx)
+  - `docker-compose.dev.yml` - hot-reload dev setup (Maven `spring-boot:run` + `npm start`)
+  - `docker-compose.yml` - production-like setup (built JAR + built React served by Nginx)
   - Dedicated `Dockerfile` for backend and frontend, plus `application-dev.yml` / `application-prod.yml`
-
-- **Testing**
-  - JUnit 5 + Mockito for unit tests
-  - Service-layer tests (e.g. `AuthService`, `MenuService`, `MealService`, `EmailService`)
 
 ---
 
@@ -110,8 +107,14 @@ The app is structured wih production-grade system in mind, with:
 ### 1. Prerequisites
 
 - Docker & Docker Compose
-- USDA API key (FoodData Central)
-- Brevo API key (for email verification) – or disable mail locally if you don’t care
+
+#### Optional (but recommended):
+
+- USDA API key (products data)
+- Brevo API key (email verification)
+
+> ⚠️ **Without USDA API key** product search will only use the local products.json file. \
+> ⚠️ **Without Brevo API key** verification emails will not be sent and normal registration will not work. You can still use the app via the demo account by clicking the “Explore Demo” button.
 
 ### 2. Clone the repo
 
@@ -120,66 +123,50 @@ git clone https://github.com/Jacek-Lal/NutriWeek.git
 cd NutriWeek
 ```
 
-### 3. Environment variables
+### 3. Set environmental variables (optional)
 
-Create a .env file in the project root (same level as docker-compose.yml), for example:
+All variables below can be put into a .env file in the project root.
+The file **must exist** for Docker Compose to work, but it can be left empty if you are fine with defaults and/or limited functionality.
 
-```
+```.env
 # Database
-
 DB_URL=jdbc:postgresql://<host>:<port>/<database>
 DB_USER=<your_db_username>
 DB_PASSWORD=<your_db_password>
 
 # Frontend URLs
-
-FRONTEND_URL=http://localhost:3000
-FRONTEND_VERIFIED_URL=http://localhost:3000/login
-USER_VERIFY_URL=http://localhost:8080/auth/verify
-
-# API base URL for frontend container
-
-REACT_APP_API_URL=http://localhost:8080
-
-# External APIs / email
-
-USDA_API_KEY=your_usda_key_here
-BREVO_API_KEY=your_brevo_key_here
-SENDER_EMAIL=your_email
+FRONTEND_URL=http://localhost:3000 # CORS allowed origin
+FRONTEND_VERIFIED_URL=http://localhost:3000/login # Redirect after email verification
+USER_VERIFY_URL=http://localhost:8080/auth/verify # Backend verification endpoint
 
 # CSRF cookie domain (for prod host)
-
 COOKIE_DOMAIN=localhost
+
+# External APIs / email
+USDA_API_KEY=your_usda_key_here   # Enables USDA products search
+BREVO_API_KEY=your_brevo_key_here # Enables email verification
+SENDER_EMAIL=your_email
 ```
 
-For production deployment, these values are set in Render / Vercel / Neon dashboards and adjusted to real domains.
+### 4. Run via Docker Compose
 
-### 4. Run in development mode (recommended)
-
-This gives you hot reload on backend and frontend.
-Make sure to enable hot reloading in your IDE.
-
-```
-docker compose -f docker-compose.dev.yml up --build
-```
-
-Backend: http://localhost:8080 \
-Frontend: http://localhost:3000
-
-**⚠️ Important note:**
-
-> Hot reloading tested only for Linux with docker-compose plugin. Windows setup, especially with Docker Desktop may require additional configuration.
-
-### 5. Run production-like locally
-
-Build and run the production Docker images (Spring Boot JAR + React build served by Nginx):
+#### Production-like mode:
 
 ```
 docker compose up --build
 ```
 
-Backend: http://localhost:8080 \
-Frontend: http://localhost:3000
+#### Development mode (with hot reload)
+
+```
+docker compose -f docker-compose.dev.yml up --build
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8080
+
+> ⚠️ Hot reloading has been tested only on Linux with the docker compose plugin. \
+> On Windows (especially with Docker Desktop), additional configuration may be required for backend hot reload to work reliably.
 
 ## Roadmap
 
