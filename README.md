@@ -42,7 +42,7 @@ The app is structured wih production-grade system in mind, with:
 [![Postgres][Postgres.com]][Postgres-url]
 [![Docker][Docker.com]][Docker-url]
 
-**Backend:** Java 21 | Spring Boot 3 | Spring Security 6 | Spring Data JPA | PostgreSQL 16  
+**Backend:** Java 21 | Spring Boot 3 | Spring Security 6 | Spring Web MVC | Spring Data JPA | PostgreSQL 16  
 **Frontend:** JavaScript | React | Axios | Tailwind CSS 3  
 **DevOps:** Docker · Docker Compose  
 **Testing:** JUnit 5 · Mockito · H2 (integration tests)  
