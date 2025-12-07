@@ -25,6 +25,13 @@ The app is structured wih production-grade system in mind, with:
 **⚠️ Important note:**
 
 > First request after a longer pause can be slow and take up few minutes because all services run on free tiers and need to warm up. Subsequent requests will be faster.
+---
+
+## Screenshots
+<img width="500" height="333" alt="Image" src="https://github.com/user-attachments/assets/041e8d93-0724-448e-b0d9-2c4205afd3f5" />
+<img width="500" height="333" alt="Image" src="https://github.com/user-attachments/assets/efd35818-44c3-4b27-b8d8-9c2690a8c913" />
+<img width="500" height="333" alt="Image" src="https://github.com/user-attachments/assets/b5d59e38-f89e-401b-9ce6-e40599439599" />
+<img width="500" height="333" alt="Image" src="https://github.com/user-attachments/assets/6b4a0622-d0f3-4edf-8e6a-49f27fcf5f21" />
 
 ---
 
